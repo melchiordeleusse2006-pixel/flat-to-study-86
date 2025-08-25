@@ -67,9 +67,11 @@ export default function Header() {
           )}
 
           {user && profile?.user_type === 'agency' && (
-            <Button size="sm" className="hero-gradient text-white border-0">
-              Post Listing
-            </Button>
+            <Link to="/create-listing">
+              <Button size="sm" className="hero-gradient text-white border-0">
+                Post Listing
+              </Button>
+            </Link>
           )}
 
           {!user && (
