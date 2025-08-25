@@ -1,8 +1,10 @@
 import { Button } from '@/components/ui/button';
-import { Heart, User, Menu, Home } from 'lucide-react';
+import { Heart, User, Menu, Home, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Header() {
+  const { user, profile, signOut, loading } = useAuth();
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
@@ -38,19 +40,45 @@ export default function Header() {
 
         {/* User Actions */}
         <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="sm" className="hidden md:flex">
-            <Heart className="h-4 w-4 mr-2" />
-            Favorites
-          </Button>
+          {user && (
+            <Button variant="ghost" size="sm" className="hidden md:flex">
+              <Heart className="h-4 w-4 mr-2" />
+              Favorites
+            </Button>
+          )}
           
-          <Button variant="ghost" size="sm">
-            <User className="h-4 w-4 mr-2" />
-            Sign In
-          </Button>
+          {user ? (
+            <div className="flex items-center space-x-2">
+              <span className="text-sm hidden md:block">
+                Hello, {profile?.full_name || user.email}
+              </span>
+              <Button variant="ghost" size="sm" onClick={signOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
+          ) : (
+            <Link to="/auth">
+              <Button variant="ghost" size="sm">
+                <User className="h-4 w-4 mr-2" />
+                Sign In
+              </Button>
+            </Link>
+          )}
 
-          <Button size="sm" className="hero-gradient text-white border-0">
-            Post Listing
-          </Button>
+          {user && profile?.user_type === 'agency' && (
+            <Button size="sm" className="hero-gradient text-white border-0">
+              Post Listing
+            </Button>
+          )}
+
+          {!user && (
+            <Link to="/auth">
+              <Button size="sm" className="hero-gradient text-white border-0">
+                Get Started
+              </Button>
+            </Link>
+          )}
 
           {/* Mobile menu */}
           <Button variant="ghost" size="sm" className="md:hidden">
