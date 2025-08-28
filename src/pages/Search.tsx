@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
-import MapView from '@/components/map/MapView';
 import ListingCard from '@/components/listings/ListingCard';
 import SearchFilters from '@/components/search/SearchFilters';
 import { mockListings } from '@/data/mockData';
@@ -8,18 +7,16 @@ import { Listing, SearchFilters as SearchFiltersType } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search as SearchIcon, MapIcon, List, Grid } from 'lucide-react';
+import { Search as SearchIcon, List, Grid } from 'lucide-react';
 
-type ViewMode = 'map' | 'list' | 'grid';
+type ViewMode = 'list' | 'grid';
 
 export default function Search() {
   const [listings, setListings] = useState<Listing[]>(mockListings);
   const [filters, setFilters] = useState<SearchFiltersType>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('relevance');
-  const [viewMode, setViewMode] = useState<ViewMode>('map');
-  const [hoveredListingId, setHoveredListingId] = useState<string | null>(null);
-  const [selectedListingId, setSelectedListingId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
 
   // Filter listings based on search criteria
   useEffect(() => {
@@ -101,8 +98,8 @@ export default function Search() {
   }, [searchQuery, filters, sortBy]);
 
   const handleListingClick = (listingId: string) => {
-    setSelectedListingId(listingId);
     // In a real app, this would navigate to the listing detail page
+    console.log('Opening listing:', listingId);
     window.open(`/listing/${listingId}`, '_blank');
   };
 
@@ -141,18 +138,10 @@ export default function Search() {
               {/* View Mode Toggle */}
               <div className="flex rounded-lg border">
                 <Button
-                  variant={viewMode === 'map' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('map')}
-                  className="rounded-r-none border-r"
-                >
-                  <MapIcon className="h-4 w-4" />
-                </Button>
-                <Button
                   variant={viewMode === 'list' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('list')}
-                  className="rounded-none border-r"
+                  className="rounded-r-none border-r"
                 >
                   <List className="h-4 w-4" />
                 </Button>
@@ -189,84 +178,34 @@ export default function Search() {
 
           {/* Results */}
           <div className="flex-1">
-            {viewMode === 'map' ? (
-              /* Map + List View (Spotahome style) */
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
-                {/* Map */}
-                <div className="order-2 lg:order-1">
-                  <MapView
-                    listings={listings}
-                    onListingHover={setHoveredListingId}
-                    onListingClick={handleListingClick}
-                    hoveredListingId={hoveredListingId}
-                    selectedListingId={selectedListingId}
-                    className="h-full"
-                  />
+            {/* List/Grid View */}
+            <div className={`grid gap-6 ${
+              viewMode === 'grid' 
+                ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
+                : 'grid-cols-1'
+            }`}>
+              {listings.map((listing) => (
+                <ListingCard
+                  key={listing.id}
+                  listing={listing}
+                  onClick={() => handleListingClick(listing.id)}
+                  className="cursor-pointer"
+                />
+              ))}
+              
+              {listings.length === 0 && (
+                <div className="col-span-full text-center py-12">
+                  <p className="text-muted-foreground">No properties match your search criteria.</p>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setFilters({})}
+                    className="mt-4"
+                  >
+                    Clear Filters
+                  </Button>
                 </div>
-
-                 {/* Listings List */}
-                <div className="order-1 lg:order-2 overflow-y-auto">
-                  <div className="space-y-4 pr-2">
-                    {listings.map((listing) => (
-                      <ListingCard
-                        key={listing.id}
-                        listing={listing}
-                        onHover={setHoveredListingId}
-                        onClick={() => handleListingClick(listing.id)}
-                        isHovered={hoveredListingId === listing.id}
-                        className={`cursor-pointer transition-all duration-200 ${
-                          hoveredListingId === listing.id ? 'ring-2 ring-primary shadow-lg scale-[1.02]' : ''
-                        } ${
-                          selectedListingId === listing.id ? 'ring-2 ring-secondary shadow-lg' : ''
-                        }`}
-                      />
-                    ))}
-                    
-                    {listings.length === 0 && (
-                      <div className="text-center py-12">
-                        <p className="text-muted-foreground">No properties match your search criteria.</p>
-                        <Button 
-                          variant="outline" 
-                          onClick={() => setFilters({})}
-                          className="mt-4"
-                        >
-                          Clear Filters
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              /* List/Grid View */
-              <div className={`grid gap-6 ${
-                viewMode === 'grid' 
-                  ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
-                  : 'grid-cols-1'
-              }`}>
-                {listings.map((listing) => (
-                  <ListingCard
-                    key={listing.id}
-                    listing={listing}
-                    onClick={handleListingClick}
-                    className="cursor-pointer"
-                  />
-                ))}
-                
-                {listings.length === 0 && (
-                  <div className="col-span-full text-center py-12">
-                    <p className="text-muted-foreground">No properties match your search criteria.</p>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setFilters({})}
-                      className="mt-4"
-                    >
-                      Clear Filters
-                    </Button>
-                  </div>
-                )}
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>

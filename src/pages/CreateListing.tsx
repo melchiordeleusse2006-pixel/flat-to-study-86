@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -13,7 +13,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { ListingType } from '@/types';
 
 export default function CreateListing() {
-  const { user, profile } = useAuth();
+  const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -35,10 +35,33 @@ export default function CreateListing() {
     availabilityDate: '',
   });
 
-  // Redirect if not an agency
+  // Handle authentication and authorization
+  useEffect(() => {
+    if (!loading && user && profile?.user_type !== 'agency') {
+      navigate('/');
+    }
+  }, [user, profile, loading, navigate]);
+
+  // Show loading state while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container max-w-4xl mx-auto py-8">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading...</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Show access denied for non-agency users
   if (user && profile?.user_type !== 'agency') {
-    navigate('/');
-    return null;
+    return null; // Will redirect via useEffect
   }
 
   const handleSubmit = (e: React.FormEvent) => {
