@@ -45,18 +45,18 @@ const createCustomIcon = (isHovered: boolean, isSelected: boolean) => {
   });
 };
 
-function MapUpdater({ listings, hoveredListingId, selectedListingId }: { 
-  listings: Listing[]; 
-  hoveredListingId?: string | null;
-  selectedListingId?: string | null;
-}) {
+function MapUpdater({ listings }: { listings: Listing[] }) {
   const map = useMap();
   
   useEffect(() => {
     if (listings.length > 0) {
-      const markers = listings.map(listing => L.marker([listing.lat, listing.lng]));
-      const group = L.featureGroup(markers);
-      map.fitBounds(group.getBounds().pad(0.1));
+      try {
+        const markers = listings.map(listing => L.marker([listing.lat, listing.lng]));
+        const group = L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.1));
+      } catch (error) {
+        console.error('Error fitting map bounds:', error);
+      }
     }
   }, [listings, map]);
 
@@ -71,8 +71,6 @@ export default function MapView({
   selectedListingId,
   className 
 }: MapViewProps) {
-  const [map, setMap] = useState<L.Map | null>(null);
-
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
       style: 'currency',
@@ -81,24 +79,28 @@ export default function MapView({
     }).format(price);
   };
 
+  if (!listings || listings.length === 0) {
+    return (
+      <div className={`map-container ${className} flex items-center justify-center bg-muted`}>
+        <p className="text-muted-foreground">No listings to display on map</p>
+      </div>
+    );
+  }
+
   return (
     <div className={`map-container ${className}`}>
       <MapContainer
         center={[45.4642, 9.1900]} // Milan center
         zoom={13}
         className="w-full h-full"
-        ref={setMap}
+        key={`map-${listings.length}`} // Force re-render when listings change
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         
-        <MapUpdater 
-          listings={listings} 
-          hoveredListingId={hoveredListingId}
-          selectedListingId={selectedListingId}
-        />
+        <MapUpdater listings={listings} />
         
         {listings.map((listing) => (
           <Marker
@@ -117,7 +119,7 @@ export default function MapView({
             <Popup>
               <div className="w-64 p-2">
                 <div className="flex items-start space-x-3">
-                  {listing.images[0] && (
+                  {listing.images && listing.images[0] && (
                     <img 
                       src={listing.images[0]}
                       alt={listing.title}
