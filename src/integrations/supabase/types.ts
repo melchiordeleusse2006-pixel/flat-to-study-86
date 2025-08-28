@@ -14,6 +14,104 @@ export type Database = {
   }
   public: {
     Tables: {
+      listings: {
+        Row: {
+          address_line: string
+          agency_id: string
+          amenities: Json | null
+          availability_date: string
+          bathrooms: number
+          bedrooms: number
+          bills_included: boolean | null
+          city: string
+          country: string
+          created_at: string | null
+          deposit_eur: number
+          description: string
+          expires_at: string | null
+          floor: string | null
+          furnished: boolean | null
+          id: string
+          images: Json | null
+          lat: number
+          lng: number
+          published_at: string | null
+          rent_monthly_eur: number
+          size_sqm: number | null
+          status: string | null
+          title: string
+          type: string
+          updated_at: string | null
+          video_url: string | null
+        }
+        Insert: {
+          address_line: string
+          agency_id: string
+          amenities?: Json | null
+          availability_date: string
+          bathrooms: number
+          bedrooms: number
+          bills_included?: boolean | null
+          city: string
+          country: string
+          created_at?: string | null
+          deposit_eur: number
+          description: string
+          expires_at?: string | null
+          floor?: string | null
+          furnished?: boolean | null
+          id?: string
+          images?: Json | null
+          lat: number
+          lng: number
+          published_at?: string | null
+          rent_monthly_eur: number
+          size_sqm?: number | null
+          status?: string | null
+          title: string
+          type: string
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          address_line?: string
+          agency_id?: string
+          amenities?: Json | null
+          availability_date?: string
+          bathrooms?: number
+          bedrooms?: number
+          bills_included?: boolean | null
+          city?: string
+          country?: string
+          created_at?: string | null
+          deposit_eur?: number
+          description?: string
+          expires_at?: string | null
+          floor?: string | null
+          furnished?: boolean | null
+          id?: string
+          images?: Json | null
+          lat?: number
+          lng?: number
+          published_at?: string | null
+          rent_monthly_eur?: number
+          size_sqm?: number | null
+          status?: string | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listings_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           agency_name: string | null
