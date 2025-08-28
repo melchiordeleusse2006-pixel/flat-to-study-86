@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import ListingCard from '@/components/listings/ListingCard';
 import SearchFilters from '@/components/search/SearchFilters';
-import { mockListings } from '@/data/mockData';
 import { Listing, SearchFilters as SearchFiltersType } from '@/types';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,15 +12,110 @@ import { Search as SearchIcon, List, Grid } from 'lucide-react';
 type ViewMode = 'list' | 'grid';
 
 export default function Search() {
-  const [listings, setListings] = useState<Listing[]>(mockListings);
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [allListings, setAllListings] = useState<Listing[]>([]);
   const [filters, setFilters] = useState<SearchFiltersType>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('relevance');
   const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [loading, setLoading] = useState(true);
+
+  // Fetch listings from database
+  useEffect(() => {
+    const fetchListings = async () => {
+      try {
+        // Query listings with agency info using a join
+        const { data, error } = await supabase
+          .from('listings')
+          .select(`
+            id,
+            title,
+            type,
+            description,
+            address_line,
+            city,
+            country,
+            lat,
+            lng,
+            rent_monthly_eur,
+            deposit_eur,
+            bills_included,
+            furnished,
+            bedrooms,
+            bathrooms,
+            floor,
+            size_sqm,
+            amenities,
+            availability_date,
+            images,
+            video_url,
+            created_at,
+            published_at,
+            status,
+            profiles!listings_agency_id_fkey (
+              agency_name,
+              phone,
+              email
+            )
+          `)
+          .eq('status', 'PUBLISHED')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching listings:', error);
+          return;
+        }
+
+        // Transform the data to match our Listing type
+        const transformedListings: Listing[] = (data || []).map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          type: item.type,
+          description: item.description,
+          addressLine: item.address_line,
+          city: item.city,
+          country: item.country,
+          lat: item.lat,
+          lng: item.lng,
+          rentMonthlyEUR: item.rent_monthly_eur,
+          depositEUR: item.deposit_eur,
+          billsIncluded: item.bills_included,
+          furnished: item.furnished,
+          bedrooms: item.bedrooms,
+          bathrooms: item.bathrooms,
+          floor: item.floor,
+          sizeSqm: item.size_sqm,
+          amenities: item.amenities || [],
+          availabilityDate: item.availability_date,
+          images: item.images || [],
+          videoUrl: item.video_url,
+          createdAt: item.created_at,
+          publishedAt: item.published_at,
+          status: item.status,
+          agency: {
+            id: item.id, // Using listing id as agency id for now
+            ownerUserId: '',
+            name: item.profiles?.agency_name || 'Unknown Agency',
+            phone: item.profiles?.phone || '',
+            billingEmail: item.profiles?.email || '',
+            createdAt: item.created_at
+          }
+        }));
+
+        setAllListings(transformedListings);
+      } catch (error) {
+        console.error('Error fetching listings:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchListings();
+  }, []);
 
   // Filter listings based on search criteria
   useEffect(() => {
-    let filtered = [...mockListings];
+    let filtered = [...allListings];
 
     // Search query
     if (searchQuery) {
@@ -95,7 +190,7 @@ export default function Search() {
     }
 
     setListings(filtered);
-  }, [searchQuery, filters, sortBy]);
+  }, [searchQuery, filters, sortBy, allListings]);
 
   const handleListingClick = (listingId: string) => {
     // In a real app, this would navigate to the listing detail page
@@ -178,12 +273,18 @@ export default function Search() {
 
           {/* Results */}
           <div className="flex-1">
-            {/* List/Grid View */}
-            <div className={`grid gap-6 ${
-              viewMode === 'grid' 
-                ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
-                : 'grid-cols-1'
-            }`}>
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <span className="ml-2 text-muted-foreground">Loading listings...</span>
+              </div>
+            ) : (
+              /* List/Grid View */
+              <div className={`grid gap-6 ${
+                viewMode === 'grid' 
+                  ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
+                  : 'grid-cols-1'
+              }`}>
               {listings.map((listing) => (
                 <ListingCard
                   key={listing.id}
@@ -205,7 +306,8 @@ export default function Search() {
                   </Button>
                 </div>
               )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -11,6 +11,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import { useAuth } from '@/hooks/useAuth';
 import { ListingType } from '@/types';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 export default function CreateListing() {
   const { user, profile, loading } = useAuth();
@@ -64,10 +66,94 @@ export default function CreateListing() {
     return null; // Will redirect via useEffect
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement listing creation logic
-    console.log('Creating listing:', formData);
+    
+    if (!profile?.id) {
+      toast({
+        title: "Error",
+        description: "User profile not found",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate required fields
+    if (!formData.title || !formData.type || !formData.description || !formData.addressLine || 
+        !formData.city || !formData.country || !formData.rentMonthlyEUR || !formData.depositEUR ||
+        !formData.bedrooms || !formData.bathrooms || !formData.availabilityDate) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // For now, set default coordinates (Milan city center)
+      // In a real app, you'd geocode the address
+      const defaultLat = 45.4642;
+      const defaultLng = 9.1900;
+
+      const listingData = {
+        agency_id: profile.id,
+        title: formData.title,
+        type: formData.type,
+        description: formData.description,
+        address_line: formData.addressLine,
+        city: formData.city,
+        country: formData.country,
+        lat: defaultLat,
+        lng: defaultLng,
+        rent_monthly_eur: parseInt(formData.rentMonthlyEUR),
+        deposit_eur: parseInt(formData.depositEUR),
+        bills_included: formData.billsIncluded,
+        furnished: formData.furnished,
+        bedrooms: parseInt(formData.bedrooms),
+        bathrooms: parseInt(formData.bathrooms),
+        floor: formData.floor || null,
+        size_sqm: formData.sizeSqm ? parseInt(formData.sizeSqm) : null,
+        amenities: formData.amenities,
+        availability_date: formData.availabilityDate,
+        status: 'PUBLISHED'
+      };
+
+      const { error } = await supabase
+        .from('listings')
+        .insert([listingData]);
+
+      if (error) {
+        console.error('Error creating listing:', error);
+        toast({
+          title: "Error",
+          description: "Failed to create listing. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Success!",
+        description: "Your listing has been published successfully.",
+      });
+
+      // Navigate to search page to see the new listing
+      navigate('/search');
+    } catch (error) {
+      console.error('Error creating listing:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const commonAmenities = [
@@ -329,8 +415,13 @@ export default function CreateListing() {
 
           {/* Submit Buttons */}
           <div className="flex gap-4 pt-6">
-            <Button type="submit" size="lg" className="hero-gradient text-white border-0">
-              Create Listing
+            <Button 
+              type="submit" 
+              size="lg" 
+              className="hero-gradient text-white border-0"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Creating...' : 'Create Listing'}
             </Button>
             <Button type="button" variant="outline" size="lg" onClick={() => navigate('/')}>
               Cancel
