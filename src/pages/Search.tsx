@@ -204,7 +204,7 @@ export default function Search() {
                   />
                 </div>
 
-                {/* Listings List */}
+                 {/* Listings List */}
                 <div className="order-1 lg:order-2 overflow-y-auto">
                   <div className="space-y-4 pr-2">
                     {listings.map((listing) => (
@@ -212,9 +212,13 @@ export default function Search() {
                         key={listing.id}
                         listing={listing}
                         onHover={setHoveredListingId}
-                        onClick={handleListingClick}
+                        onClick={() => handleListingClick(listing.id)}
                         isHovered={hoveredListingId === listing.id}
-                        className="cursor-pointer"
+                        className={`cursor-pointer transition-all duration-200 ${
+                          hoveredListingId === listing.id ? 'ring-2 ring-primary shadow-lg scale-[1.02]' : ''
+                        } ${
+                          selectedListingId === listing.id ? 'ring-2 ring-secondary shadow-lg' : ''
+                        }`}
                       />
                     ))}
                     
