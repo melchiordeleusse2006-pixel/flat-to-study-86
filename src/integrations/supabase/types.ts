@@ -104,6 +104,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_listings_agency_id"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "listings_agency_id_fkey"
             columns: ["agency_id"]
             isOneToOne: false
@@ -156,10 +163,99 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      listings_with_agencies: {
+        Row: {
+          address_line: string | null
+          agency_contact_name: string | null
+          agency_email: string | null
+          agency_id: string | null
+          agency_name: string | null
+          agency_phone: string | null
+          amenities: Json | null
+          availability_date: string | null
+          bathrooms: number | null
+          bedrooms: number | null
+          bills_included: boolean | null
+          city: string | null
+          country: string | null
+          created_at: string | null
+          deposit_eur: number | null
+          description: string | null
+          expires_at: string | null
+          floor: string | null
+          furnished: boolean | null
+          id: string | null
+          images: Json | null
+          lat: number | null
+          lng: number | null
+          published_at: string | null
+          rent_monthly_eur: number | null
+          size_sqm: number | null
+          status: string | null
+          title: string | null
+          type: string | null
+          updated_at: string | null
+          video_url: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_listings_agency_id"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listings_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
-      [_ in never]: never
+      get_listings_with_agency: {
+        Args: {
+          p_city?: string
+          p_limit?: number
+          p_listing_type?: string
+          p_max_price?: number
+          p_min_bedrooms?: number
+          p_min_price?: number
+          p_offset?: number
+        }
+        Returns: {
+          address_line: string
+          agency_email: string
+          agency_name: string
+          agency_phone: string
+          amenities: Json
+          availability_date: string
+          bathrooms: number
+          bedrooms: number
+          bills_included: boolean
+          city: string
+          country: string
+          created_at: string
+          deposit_eur: number
+          description: string
+          floor: string
+          furnished: boolean
+          id: string
+          images: Json
+          lat: number
+          lng: number
+          published_at: string
+          rent_monthly_eur: number
+          size_sqm: number
+          status: string
+          title: string
+          type: string
+          video_url: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
