@@ -132,14 +132,14 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
         <div className="space-y-3">
           <Label className="text-sm font-medium">Near University</Label>
           <Select 
-            value={filters.universityId || ''} 
-            onValueChange={(value) => onFiltersChange({ ...filters, universityId: value || undefined })}
+            value={filters.universityId || 'any'} 
+            onValueChange={(value) => onFiltersChange({ ...filters, universityId: value === 'any' ? undefined : value })}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select university" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Any university</SelectItem>
+              <SelectItem value="any">Any university</SelectItem>
               {universities.map((uni) => (
                 <SelectItem key={uni.id} value={uni.id}>
                   {uni.name}
@@ -172,17 +172,17 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
         <div className={`space-y-3 ${!isExpanded ? 'hidden md:block' : ''}`}>
           <Label className="text-sm font-medium">Bedrooms</Label>
           <Select 
-            value={filters.bedrooms?.toString() || ''} 
+            value={filters.bedrooms?.toString() || 'any'} 
             onValueChange={(value) => onFiltersChange({ 
               ...filters, 
-              bedrooms: value ? parseInt(value) : undefined 
+              bedrooms: value === 'any' ? undefined : parseInt(value) 
             })}
           >
             <SelectTrigger>
               <SelectValue placeholder="Any" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Any</SelectItem>
+              <SelectItem value="any">Any</SelectItem>
               <SelectItem value="1">1 bedroom</SelectItem>
               <SelectItem value="2">2 bedrooms</SelectItem>
               <SelectItem value="3">3+ bedrooms</SelectItem>
