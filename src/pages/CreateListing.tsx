@@ -123,15 +123,18 @@ export default function CreateListing() {
         status: 'PUBLISHED'
       };
 
+      console.log('Attempting to create listing with data:', listingData);
+      console.log('Current user profile:', profile);
+
       const { error } = await supabase
         .from('listings')
         .insert([listingData]);
 
       if (error) {
-        console.error('Error creating listing:', error);
+        console.error('Detailed error creating listing:', error);
         toast({
           title: "Error",
-          description: "Failed to create listing. Please try again.",
+          description: `Failed to create listing: ${error.message}`,
           variant: "destructive",
         });
         return;
