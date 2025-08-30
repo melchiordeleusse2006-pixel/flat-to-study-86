@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import CreateListing from "./pages/CreateListing";
 import MyListings from "./pages/MyListings";
 import Messages from "./pages/Messages";
+import ListingDetails from "./pages/ListingDetails";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/create-listing" element={<CreateListing />} />
           <Route path="/my-listings" element={<MyListings />} />
           <Route path="/messages" element={<Messages />} />
+          <Route path="/listing/:id" element={<ListingDetails />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

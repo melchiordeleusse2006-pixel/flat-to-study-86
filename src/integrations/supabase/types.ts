@@ -170,13 +170,6 @@ export type Database = {
             referencedRelation: "listings"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "messages_listing_id_fkey"
-            columns: ["listing_id"]
-            isOneToOne: false
-            referencedRelation: "listings_with_agencies"
-            referencedColumns: ["id"]
-          },
         ]
       }
       profiles: {
@@ -223,58 +216,7 @@ export type Database = {
       }
     }
     Views: {
-      listings_with_agencies: {
-        Row: {
-          address_line: string | null
-          agency_contact_name: string | null
-          agency_email: string | null
-          agency_fee: string | null
-          agency_id: string | null
-          agency_name: string | null
-          agency_phone: string | null
-          amenities: Json | null
-          availability_date: string | null
-          bathrooms: number | null
-          bedrooms: number | null
-          bills_included: boolean | null
-          city: string | null
-          country: string | null
-          created_at: string | null
-          deposit_eur: number | null
-          description: string | null
-          expires_at: string | null
-          floor: string | null
-          furnished: boolean | null
-          id: string | null
-          images: Json | null
-          lat: number | null
-          lng: number | null
-          published_at: string | null
-          rent_monthly_eur: number | null
-          size_sqm: number | null
-          status: string | null
-          title: string | null
-          type: string | null
-          updated_at: string | null
-          video_url: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_listings_agency_id"
-            columns: ["agency_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "listings_agency_id_fkey"
-            columns: ["agency_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       get_listings_with_agency: {
