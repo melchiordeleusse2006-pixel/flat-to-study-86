@@ -122,6 +122,63 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          agency_id: string
+          created_at: string
+          id: string
+          listing_id: string
+          message: string
+          read_at: string | null
+          replied_at: string | null
+          sender_id: string
+          sender_name: string
+          sender_phone: string | null
+          sender_university: string | null
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          id?: string
+          listing_id: string
+          message: string
+          read_at?: string | null
+          replied_at?: string | null
+          sender_id: string
+          sender_name: string
+          sender_phone?: string | null
+          sender_university?: string | null
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          id?: string
+          listing_id?: string
+          message?: string
+          read_at?: string | null
+          replied_at?: string | null
+          sender_id?: string
+          sender_name?: string
+          sender_phone?: string | null
+          sender_university?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings_with_agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           agency_name: string | null
