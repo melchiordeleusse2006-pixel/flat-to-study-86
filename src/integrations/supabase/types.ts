@@ -171,6 +171,7 @@ export type Database = {
           address_line: string | null
           agency_contact_name: string | null
           agency_email: string | null
+          agency_fee: string | null
           agency_id: string | null
           agency_name: string | null
           agency_phone: string | null
