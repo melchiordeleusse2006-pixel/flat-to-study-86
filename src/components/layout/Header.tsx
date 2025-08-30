@@ -18,12 +18,22 @@ export default function Header() {
 
         {/* Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          <Link 
-            to="/search" 
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Find a place
-          </Link>
+          {user && profile?.user_type === 'agency' && (
+            <Link 
+              to="/my-listings" 
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              My Listings
+            </Link>
+          )}
+          {user && (
+            <Link 
+              to="/messages" 
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Messages
+            </Link>
+          )}
           <Link 
             to="/agency" 
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"

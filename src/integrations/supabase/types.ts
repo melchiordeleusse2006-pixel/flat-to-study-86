@@ -17,6 +17,7 @@ export type Database = {
       listings: {
         Row: {
           address_line: string
+          agency_fee: string | null
           agency_id: string
           amenities: Json | null
           availability_date: string
@@ -46,6 +47,7 @@ export type Database = {
         }
         Insert: {
           address_line: string
+          agency_fee?: string | null
           agency_id: string
           amenities?: Json | null
           availability_date: string
@@ -75,6 +77,7 @@ export type Database = {
         }
         Update: {
           address_line?: string
+          agency_fee?: string | null
           agency_id?: string
           amenities?: Json | null
           availability_date?: string

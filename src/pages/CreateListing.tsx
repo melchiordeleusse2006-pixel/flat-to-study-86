@@ -27,6 +27,7 @@ export default function CreateListing() {
     country: '',
     rentMonthlyEUR: '',
     depositEUR: '',
+    agencyFee: '',
     billsIncluded: false,
     furnished: false,
     bedrooms: '',
@@ -36,6 +37,10 @@ export default function CreateListing() {
     amenities: [] as string[],
     availabilityDate: '',
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
 
   // Handle authentication and authorization
   useEffect(() => {
@@ -66,7 +71,45 @@ export default function CreateListing() {
     return null; // Will redirect via useEffect
   }
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    const newImages: string[] = [];
+
+    for (const file of Array.from(files)) {
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('listing-images')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          continue;
+        }
+
+        const { data } = supabase.storage
+          .from('listing-images')
+          .getPublicUrl(filePath);
+
+        newImages.push(data.publicUrl);
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
+    }
+
+    setUploadedImages([...uploadedImages, ...newImages]);
+    setUploading(false);
+  };
+
+  const removeImage = (index: number) => {
+    setUploadedImages(uploadedImages.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,6 +163,8 @@ export default function CreateListing() {
         size_sqm: formData.sizeSqm ? parseInt(formData.sizeSqm) : null,
         amenities: formData.amenities,
         availability_date: formData.availabilityDate,
+        agency_fee: formData.agencyFee || null,
+        images: uploadedImages,
         status: 'PUBLISHED'
       };
 
@@ -229,6 +274,53 @@ export default function CreateListing() {
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Images */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Camera className="h-5 w-5" />
+                Property Images
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="images">Upload Images</Label>
+                <Input
+                  id="images"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                />
+                {uploading && <p className="text-sm text-muted-foreground">Uploading images...</p>}
+              </div>
+              
+              {uploadedImages.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {uploadedImages.map((image, index) => (
+                    <div key={index} className="relative">
+                      <img 
+                        src={image} 
+                        alt={`Property ${index + 1}`}
+                        className="w-full h-24 object-cover rounded-lg border"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="absolute -top-2 -right-2 h-6 w-6 p-0"
+                        onClick={() => removeImage(index)}
+                      >
+                        ×
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -344,10 +436,20 @@ export default function CreateListing() {
                     value={formData.sizeSqm}
                     onChange={(e) => setFormData({...formData, sizeSqm: e.target.value})}
                   />
-                </div>
-              </div>
+                 </div>
+               </div>
 
-              <div className="flex gap-6">
+               <div className="space-y-2">
+                 <Label htmlFor="agencyFee">Agency Fee</Label>
+                 <Input
+                   id="agencyFee"
+                   placeholder="e.g., 500 EUR or 1 month rent"
+                   value={formData.agencyFee}
+                   onChange={(e) => setFormData({...formData, agencyFee: e.target.value})}
+                 />
+               </div>
+
+               <div className="flex gap-6">
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="furnished"

@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Listing } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Heart, MapPin, Bed, Bath, Calendar, Wifi, Car, Users } from 'lucide-react';
+import { Heart, MapPin, Bed, Bath, Calendar, Wifi, Car, Users, Map } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ListingMap from '@/components/map/ListingMap';
 
 interface ListingCardProps {
   listing: Listing;
@@ -22,6 +23,7 @@ export default function ListingCard({
 }: ListingCardProps) {
   const [isFavorited, setIsFavorited] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showMap, setShowMap] = useState(false);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
@@ -188,6 +190,17 @@ export default function ListingCard({
           )}
         </div>
 
+        {/* Map Section */}
+        {showMap && (
+          <div className="mb-4">
+            <ListingMap 
+              lat={listing.lat} 
+              lng={listing.lng} 
+              address={`${listing.addressLine}, ${listing.city}`}
+            />
+          </div>
+        )}
+
         {/* Agency */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
@@ -201,15 +214,27 @@ export default function ListingCard({
             <span className="text-sm text-muted-foreground">{listing.agency.name}</span>
           </div>
           
-          <Link to={`/listing/${listing.id}`}>
-            <Button 
-              size="sm" 
-              className="hero-gradient text-white border-0 hover:opacity-90"
-              onClick={(e) => e.stopPropagation()}
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowMap(!showMap);
+              }}
             >
-              View Details
+              <Map className="h-4 w-4" />
             </Button>
-          </Link>
+            <Link to={`/listing/${listing.id}`}>
+              <Button 
+                size="sm" 
+                className="hero-gradient text-white border-0 hover:opacity-90"
+                onClick={(e) => e.stopPropagation()}
+              >
+                View Details
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
