@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { MessageCircle, Send, Users } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import { useAuth } from '@/hooks/useAuth';
+import { ConversationList } from '@/components/messages/ConversationList';
+import { ConversationDetail } from '@/components/messages/ConversationDetail';
+import type { Conversation } from '@/types/messages';
 
 export default function Messages() {
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
+  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
 
   // Redirect non-authenticated users
   useEffect(() => {
@@ -54,48 +56,35 @@ export default function Messages() {
           </div>
         </div>
 
-        {/* Messages Coming Soon */}
-        <Card className="text-center py-16">
-          <CardContent>
-            <div className="flex items-center justify-center mb-6">
-              <div className="relative">
-                <div className="flex h-16 w-16 items-center justify-center rounded-lg hero-gradient">
-                  <MessageCircle className="h-8 w-8 text-white" />
-                </div>
-                <div className="absolute -top-1 -right-1 h-6 w-6 bg-orange-500 rounded-full flex items-center justify-center">
-                  <span className="text-xs text-white font-bold">!</span>
-                </div>
-              </div>
-            </div>
-            
-            <h3 className="text-2xl font-semibold mb-4">Messages Coming Soon!</h3>
-            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              We're working hard to bring you a comprehensive messaging system. 
-              Soon you'll be able to:
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto mb-8">
-              <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
-                <Send className="h-5 w-5 text-primary" />
-                <div className="text-left">
-                  <p className="font-medium">Direct Messaging</p>
-                  <p className="text-sm text-muted-foreground">Chat with agencies</p>
+        {/* Messages Interface */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
+          {/* Conversations List */}
+          <div className="h-full">
+            <ConversationList 
+              onSelectConversation={setSelectedConversation}
+              selectedConversationId={selectedConversation ? `${selectedConversation.listing.id}-${selectedConversation.studentName || 'student'}` : undefined}
+            />
+          </div>
+
+          {/* Conversation Detail */}
+          <div className="h-full">
+            {selectedConversation ? (
+              <ConversationDetail conversation={selectedConversation} />
+            ) : (
+              <div className="h-full flex items-center justify-center bg-muted/10 rounded-lg border border-dashed border-muted-foreground/25">
+                <div className="text-center p-8">
+                  <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-muted-foreground mb-2">
+                    Select a conversation
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Choose a conversation from the list to view messages
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
-                <Users className="h-5 w-5 text-primary" />
-                <div className="text-left">
-                  <p className="font-medium">Group Inquiries</p>
-                  <p className="text-sm text-muted-foreground">Multiple responses</p>
-                </div>
-              </div>
-            </div>
-            
-            <p className="text-sm text-muted-foreground">
-              In the meantime, you can contact agencies directly through their listing details.
-            </p>
-          </CardContent>
-        </Card>
+            )}
+          </div>
+        </div>
       </main>
     </div>
   );
