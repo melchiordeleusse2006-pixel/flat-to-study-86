@@ -58,9 +58,9 @@ export default function Messages() {
         </div>
 
         {/* Messages Interface */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
-          {/* Conversations List */}
-          <div className="h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-240px)] overflow-hidden">
+          {/* Conversations List - Fixed */}
+          <div className="h-full overflow-hidden">
             <ConversationList 
               onSelectConversation={setSelectedConversation}
               selectedConversationId={selectedConversation ? 
@@ -71,8 +71,8 @@ export default function Messages() {
             />
           </div>
 
-          {/* Conversation Detail */}
-          <div className="h-full">
+          {/* Conversation Detail - Independently Scrollable */}
+          <div className="h-full overflow-hidden">
             {selectedConversation ? (
               <ConversationDetail 
                 conversation={selectedConversation} 
