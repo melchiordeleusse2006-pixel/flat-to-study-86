@@ -134,6 +134,27 @@ export default function ListingDetails() {
       return;
     }
 
+    // Debug logging
+    console.log('Sending message with data:', {
+      listing_id: listing.id,
+      sender_id: user.id,
+      agency_id: listing.agency.id,
+      agency: listing.agency,
+      message: message.trim(),
+      sender_name: profile.full_name || 'Student',
+      sender_phone: profile.phone,
+      sender_university: profile.university
+    });
+
+    if (!listing.agency.id) {
+      toast({
+        title: "Error",
+        description: "Agency information is missing. Please try refreshing the page.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setSendingMessage(true);
     try {
       const { error } = await supabase
@@ -148,7 +169,10 @@ export default function ListingDetails() {
           sender_university: profile.university
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       toast({
         title: "Message Sent",
