@@ -1,10 +1,13 @@
 import { Button } from '@/components/ui/button';
-import { Heart, User, Menu, Home, LogOut } from 'lucide-react';
+import { Heart, User, Menu, Home, LogOut, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useUnreadMessagesCount } from '@/hooks/useUnreadMessagesCount';
+import { Badge } from '@/components/ui/badge';
 
 export default function Header() {
   const { user, profile, signOut, loading } = useAuth();
+  const unreadCount = useUnreadMessagesCount();
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
@@ -29,9 +32,15 @@ export default function Header() {
           {user && (
             <Link 
               to="/messages" 
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-1 relative"
             >
-              Messages
+              <MessageSquare className="h-4 w-4" />
+              <span>Messages</span>
+              {unreadCount > 0 && (
+                <Badge variant="destructive" className="absolute -top-2 -right-2 min-w-[1.2rem] h-5 flex items-center justify-center text-xs px-1">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </Badge>
+              )}
             </Link>
           )}
           <Link 
