@@ -266,6 +266,10 @@ export type Database = {
           video_url: string
         }[]
       }
+      user_has_sent_messages_to_listing: {
+        Args: { p_listing_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
