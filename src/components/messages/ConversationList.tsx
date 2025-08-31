@@ -59,7 +59,7 @@ export function ConversationList({ onSelectConversation, selectedConversationId 
               city,
               address_line
             ),
-            agencies:agency_id (
+            profiles:agency_id (
               id,
               agency_name,
               phone,
@@ -91,7 +91,7 @@ export function ConversationList({ onSelectConversation, selectedConversationId 
         if (!conversationMap.has(key)) {
           conversationMap.set(key, {
             listing,
-            agency: message.agencies,
+            agency: message.profiles,
             lastMessage: message,
             unreadCount: 0,
             studentName: profile.user_type === 'agency' ? message.sender_name : undefined
