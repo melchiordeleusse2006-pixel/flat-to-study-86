@@ -18,6 +18,7 @@ export function useUnreadMessagesCount() {
           .from('messages')
           .select('id')
           .eq('agency_id', profile.id)
+          .neq('sender_id', user.id) // Only count messages not sent by the agency
           .is('read_at', null);
 
         if (error) {

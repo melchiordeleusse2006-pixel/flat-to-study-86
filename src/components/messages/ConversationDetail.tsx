@@ -62,13 +62,13 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
     if (profile?.user_type !== 'agency') return;
 
     try {
-      // Mark messages from the student as read
+      // Mark all unread messages from students in this conversation as read
       const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
       const { error } = await supabase
         .from('messages')
         .update({ read_at: new Date().toISOString() })
         .eq('listing_id', conversation.listing.id)
-        .eq('sender_id', studentId)
+        .eq('sender_id', studentId) // Only mark student messages as read
         .eq('agency_id', profile.id)
         .is('read_at', null);
       
