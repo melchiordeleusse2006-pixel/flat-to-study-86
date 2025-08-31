@@ -59,9 +59,17 @@ export default function ListingDetails() {
         .from('profiles')
         .select('id, agency_name, phone, email, full_name')
         .eq('id', listingData.agency_id)
-        .single();
+        .maybeSingle();
 
-      if (agencyError) throw agencyError;
+      if (agencyError) {
+        console.error('Error fetching agency profile:', agencyError);
+        throw agencyError;
+      }
+
+      if (!agencyData) {
+        console.error('Agency profile not found for ID:', listingData.agency_id);
+        throw new Error('Agency profile not found');
+      }
 
       // Transform the data to match the Listing type
       const transformedListing: Listing = {
