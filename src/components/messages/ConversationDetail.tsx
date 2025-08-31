@@ -30,11 +30,17 @@ export function ConversationDetail({ conversation }: ConversationDetailProps) {
 
   const fetchMessages = async () => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('messages')
         .select('*')
-        .eq('listing_id', conversation.listing.id)
-        .order('created_at', { ascending: true });
+        .eq('listing_id', conversation.listing.id);
+
+      // For agencies, filter by sender_id to avoid mixing conversations
+      if (profile?.user_type === 'agency') {
+        query = query.eq('sender_id', conversation.lastMessage.sender_id);
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: true });
 
       if (error) {
         console.error('Error fetching messages:', error);
@@ -57,6 +63,7 @@ export function ConversationDetail({ conversation }: ConversationDetailProps) {
         .from('messages')
         .update({ read_at: new Date().toISOString() })
         .eq('listing_id', conversation.listing.id)
+        .eq('sender_id', conversation.lastMessage.sender_id)
         .eq('agency_id', profile.id)
         .is('read_at', null);
     } catch (error) {

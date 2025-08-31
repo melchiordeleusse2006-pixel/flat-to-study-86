@@ -44,12 +44,6 @@ export default function Header() {
             </Link>
           )}
           <Link 
-            to="/agency" 
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            For Agencies
-          </Link>
-          <Link 
             to="/about" 
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >

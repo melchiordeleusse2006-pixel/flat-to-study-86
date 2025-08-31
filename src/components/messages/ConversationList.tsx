@@ -85,7 +85,7 @@ export function ConversationList({ onSelectConversation, selectedConversationId 
         if (!listing) return;
 
         const key = profile.user_type === 'agency' 
-          ? `${listing.id}-${message.sender_name}` 
+          ? `${listing.id}-${message.sender_id}` 
           : listing.id;
 
         if (!conversationMap.has(key)) {
@@ -150,9 +150,9 @@ export function ConversationList({ onSelectConversation, selectedConversationId 
         <div className="p-4 space-y-2">
           {conversations.map((conversation) => (
             <ConversationItem
-              key={`${conversation.listing.id}-${conversation.studentName || 'student'}`}
+              key={`${conversation.listing.id}-${conversation.lastMessage.sender_id}`}
               conversation={conversation}
-              isSelected={selectedConversationId === `${conversation.listing.id}-${conversation.studentName || 'student'}`}
+              isSelected={selectedConversationId === `${conversation.listing.id}-${conversation.lastMessage.sender_id}`}
               onClick={() => onSelectConversation(conversation)}
               userType={profile?.user_type || 'student'}
             />

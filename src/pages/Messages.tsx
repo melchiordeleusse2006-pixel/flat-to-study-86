@@ -62,7 +62,7 @@ export default function Messages() {
           <div className="h-full">
             <ConversationList 
               onSelectConversation={setSelectedConversation}
-              selectedConversationId={selectedConversation ? `${selectedConversation.listing.id}-${selectedConversation.studentName || 'student'}` : undefined}
+              selectedConversationId={selectedConversation ? `${selectedConversation.listing.id}-${selectedConversation.lastMessage.sender_id}` : undefined}
             />
           </div>
 
