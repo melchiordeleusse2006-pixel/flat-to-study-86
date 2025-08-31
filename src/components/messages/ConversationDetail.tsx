@@ -13,9 +13,10 @@ import type { Conversation, Message } from '@/types/messages';
 
 interface ConversationDetailProps {
   conversation: Conversation;
+  onMessagesRead?: () => void;
 }
 
-export function ConversationDetail({ conversation }: ConversationDetailProps) {
+export function ConversationDetail({ conversation, onMessagesRead }: ConversationDetailProps) {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -59,13 +60,18 @@ export function ConversationDetail({ conversation }: ConversationDetailProps) {
     if (profile?.user_type !== 'agency') return;
 
     try {
-      await supabase
+      const { error } = await supabase
         .from('messages')
         .update({ read_at: new Date().toISOString() })
         .eq('listing_id', conversation.listing.id)
         .eq('sender_id', conversation.lastMessage.sender_id)
         .eq('agency_id', profile.id)
         .is('read_at', null);
+      
+      if (!error) {
+        // Trigger refresh of conversations list to update unread counts
+        onMessagesRead?.();
+      }
     } catch (error) {
       console.error('Error marking messages as read:', error);
     }

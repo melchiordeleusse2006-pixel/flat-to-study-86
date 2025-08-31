@@ -11,6 +11,7 @@ export default function Messages() {
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
+  const [refreshConversations, setRefreshConversations] = useState(0);
 
   // Redirect non-authenticated users
   useEffect(() => {
@@ -63,13 +64,17 @@ export default function Messages() {
             <ConversationList 
               onSelectConversation={setSelectedConversation}
               selectedConversationId={selectedConversation ? `${selectedConversation.listing.id}-${selectedConversation.lastMessage.sender_id}` : undefined}
+              key={refreshConversations}
             />
           </div>
 
           {/* Conversation Detail */}
           <div className="h-full">
             {selectedConversation ? (
-              <ConversationDetail conversation={selectedConversation} />
+              <ConversationDetail 
+                conversation={selectedConversation} 
+                onMessagesRead={() => setRefreshConversations(prev => prev + 1)}
+              />
             ) : (
               <div className="h-full flex items-center justify-center bg-muted/10 rounded-lg border border-dashed border-muted-foreground/25">
                 <div className="text-center p-8">
