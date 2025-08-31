@@ -184,45 +184,44 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header */}
-      <Card className="flex-shrink-0 mb-4">
-        <CardHeader className="pb-4">
-          <div className="flex gap-4">
+      {/* Header - Compact */}
+      <Card className="flex-shrink-0 mb-3">
+        <CardHeader className="pb-3 py-3">
+          <div className="flex gap-3">
             <img
               src={listingImage}
               alt={conversation.listing.title}
-              className="w-20 h-20 rounded-lg object-cover"
+              className="w-16 h-16 rounded-lg object-cover"
               onError={(e) => {
                 e.currentTarget.src = '/placeholder.svg';
               }}
             />
             <div className="flex-1">
-              <CardTitle className="text-lg mb-2">{conversation.listing.title}</CardTitle>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
+              <CardTitle className="text-base mb-1">{conversation.listing.title}</CardTitle>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground mb-1">
                 <div className="flex items-center gap-1">
                   <MapPin className="h-4 w-4" />
                   <span>{conversation.listing.address_line}, {conversation.listing.city}</span>
                 </div>
-                <Badge variant="secondary">€{conversation.listing.rent_monthly_eur}/month</Badge>
+                <Badge variant="secondary" className="text-xs">€{conversation.listing.rent_monthly_eur}/month</Badge>
               </div>
               
-              {/* Contact Info */}
               {profile?.user_type === 'agency' && conversation.studentName && (
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Users className="h-4 w-4" />
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-2 text-xs">
+                    <Users className="h-3 w-3" />
                     <span className="font-medium">Student:</span>
                     <span>{conversation.studentName}</span>
                   </div>
                   {conversation.lastMessage.sender_university && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar className="h-4 w-4" />
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Calendar className="h-3 w-3" />
                       <span>{conversation.lastMessage.sender_university}</span>
                     </div>
                   )}
                   {conversation.lastMessage.sender_phone && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Phone className="h-4 w-4" />
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Phone className="h-3 w-3" />
                       <span>{conversation.lastMessage.sender_phone}</span>
                     </div>
                   )}
@@ -230,21 +229,21 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
               )}
 
               {profile?.user_type === 'student' && conversation.agency && (
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Users className="h-4 w-4" />
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-2 text-xs">
+                    <Users className="h-3 w-3" />
                     <span className="font-medium">Agency:</span>
                     <span>{conversation.agency.agency_name}</span>
                   </div>
                   {conversation.agency.phone && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Phone className="h-4 w-4" />
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Phone className="h-3 w-3" />
                       <span>{conversation.agency.phone}</span>
                     </div>
                   )}
                   {conversation.agency.email && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Mail className="h-4 w-4" />
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Mail className="h-3 w-3" />
                       <span>{conversation.agency.email}</span>
                     </div>
                   )}
