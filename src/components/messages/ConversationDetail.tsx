@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -23,11 +23,48 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
   const [loading, setLoading] = useState(true);
   const [replyText, setReplyText] = useState('');
   const [sending, setSending] = useState(false);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchMessages();
     markMessagesAsRead();
-  }, [conversation]);
+
+    // Set up real-time subscription for new messages
+    const channel = supabase
+      .channel(`messages-${conversation.listing.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `listing_id=eq.${conversation.listing.id}`
+        },
+        (payload) => {
+          const newMessage = payload.new as Message;
+          setMessages(prev => [...prev, newMessage]);
+          
+          // Show notification for students when they receive agency replies
+          if (profile?.user_type === 'student' && newMessage.sender_id !== user?.id) {
+            toast({
+              title: "New message",
+              description: `${newMessage.sender_name} replied to your message`,
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [conversation, profile?.user_type, user?.id]);
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const fetchMessages = async () => {
     try {
@@ -81,40 +118,46 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
     }
   };
 
-  const sendReply = async () => {
-    if (!replyText.trim() || !user || !profile || profile.user_type !== 'agency') return;
+  const sendMessage = async () => {
+    if (!replyText.trim() || !user || !profile) return;
 
     setSending(true);
     try {
+      const messageData = {
+        message: replyText.trim(),
+        sender_name: profile.user_type === 'agency' 
+          ? (profile.agency_name || profile.full_name || 'Agency')
+          : (profile.full_name || 'Student'),
+        sender_phone: profile.phone,
+        sender_university: profile.user_type === 'student' ? profile.university : null,
+        listing_id: conversation.listing.id,
+        agency_id: conversation.agency?.id || profile.id,
+        sender_id: user.id
+      };
+
       const { error } = await supabase
         .from('messages')
-        .insert({
-          message: replyText.trim(),
-          sender_name: profile.agency_name || profile.full_name || 'Agency',
-          sender_phone: profile.phone,
-          listing_id: conversation.listing.id,
-          agency_id: profile.id,
-          sender_id: user.id
-        });
+        .insert(messageData);
 
       if (error) throw error;
 
-      // Update replied_at for the original message
-      await supabase
-        .from('messages')
-        .update({ replied_at: new Date().toISOString() })
-        .eq('listing_id', conversation.listing.id)
-        .is('replied_at', null);
+      // Update replied_at for the original message if this is an agency reply
+      if (profile.user_type === 'agency') {
+        await supabase
+          .from('messages')
+          .update({ replied_at: new Date().toISOString() })
+          .eq('listing_id', conversation.listing.id)
+          .is('replied_at', null);
+      }
 
       setReplyText('');
-      fetchMessages();
       
       toast({
-        title: "Reply sent",
+        title: "Message sent",
         description: "Your message has been sent successfully.",
       });
     } catch (error) {
-      console.error('Error sending reply:', error);
+      console.error('Error sending message:', error);
       toast({
         title: "Error",
         description: "Failed to send message. Please try again.",
@@ -213,56 +256,69 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
       </Card>
 
       {/* Messages */}
-      <Card className="flex-1 flex flex-col">
-        <CardHeader className="pb-3">
+      <Card className="flex-1 flex flex-col min-h-0">
+        <CardHeader className="pb-3 flex-shrink-0">
           <CardTitle className="text-base">Conversation</CardTitle>
         </CardHeader>
-        <CardContent className="flex-1 flex flex-col">
-          <ScrollArea className="flex-1 pr-4">
-            <div className="space-y-4">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`p-4 rounded-lg max-w-[80%] ${
-                    message.sender_id === user?.id
-                      ? 'ml-auto bg-primary text-primary-foreground'
-                      : 'bg-muted'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-sm">{message.sender_name}</span>
-                    <span className="text-xs opacity-70">
-                      {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
-                    </span>
-                  </div>
-                  <p className="text-sm leading-relaxed">{message.message}</p>
+        <CardContent className="flex-1 flex flex-col min-h-0 p-0">
+          <ScrollArea className="flex-1 px-6" ref={scrollAreaRef}>
+            <div className="space-y-4 py-4">
+              {messages.length === 0 ? (
+                <div className="text-center text-muted-foreground py-8">
+                  No messages yet. Start the conversation!
                 </div>
-              ))}
+              ) : (
+                messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`p-4 rounded-lg max-w-[80%] ${
+                      message.sender_id === user?.id
+                        ? 'ml-auto bg-primary text-primary-foreground'
+                        : 'bg-muted'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-sm">{message.sender_name}</span>
+                      <span className="text-xs opacity-70">
+                        {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
+                      </span>
+                    </div>
+                    <p className="text-sm leading-relaxed">{message.message}</p>
+                  </div>
+                ))
+              )}
+              <div ref={messagesEndRef} />
             </div>
           </ScrollArea>
 
-          {/* Reply Section (only for agencies) */}
-          {profile?.user_type === 'agency' && (
-            <div className="mt-4 space-y-3">
+          {/* Message Input Section */}
+          <div className="border-t p-6 flex-shrink-0">
+            <div className="space-y-3">
               <Textarea
-                placeholder="Type your reply..."
+                placeholder={profile?.user_type === 'agency' ? "Type your reply..." : "Type your message..."}
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
                 className="resize-none"
                 rows={3}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                  }
+                }}
               />
               <div className="flex justify-end">
                 <Button 
-                  onClick={sendReply} 
+                  onClick={sendMessage} 
                   disabled={!replyText.trim() || sending}
                   size="sm"
                 >
                   <Send className="h-4 w-4 mr-2" />
-                  {sending ? 'Sending...' : 'Send Reply'}
+                  {sending ? 'Sending...' : 'Send Message'}
                 </Button>
               </div>
             </div>
-          )}
+          </div>
         </CardContent>
       </Card>
     </div>
