@@ -44,59 +44,60 @@ export default function ListingDetails() {
 
   const fetchListing = async () => {
     try {
-      const { data, error } = await supabase
+      // First fetch the listing
+      const { data: listingData, error: listingError } = await supabase
         .from('listings')
-        .select(`
-          *,
-          profiles!listings_agency_id_fkey(
-            id,
-            agency_name,
-            phone,
-            email,
-            full_name
-          )
-        `)
+        .select('*')
         .eq('id', id)
         .eq('status', 'PUBLISHED')
         .single();
 
-      if (error) throw error;
+      if (listingError) throw listingError;
+
+      // Then fetch the agency profile
+      const { data: agencyData, error: agencyError } = await supabase
+        .from('profiles')
+        .select('id, agency_name, phone, email, full_name')
+        .eq('id', listingData.agency_id)
+        .single();
+
+      if (agencyError) throw agencyError;
 
       // Transform the data to match the Listing type
       const transformedListing: Listing = {
-        id: data.id,
-        title: data.title,
-        type: data.type as ListingType,
-        description: data.description,
-        addressLine: data.address_line,
-        city: data.city,
-        country: data.country,
-        lat: data.lat,
-        lng: data.lng,
-        rentMonthlyEUR: data.rent_monthly_eur,
-        depositEUR: data.deposit_eur,
-        billsIncluded: data.bills_included,
-        furnished: data.furnished,
-        bedrooms: data.bedrooms,
-        bathrooms: data.bathrooms,
-        floor: data.floor,
-        sizeSqm: data.size_sqm,
-        amenities: Array.isArray(data.amenities) ? data.amenities.map(item => String(item)) : [],
-        availabilityDate: data.availability_date,
-        images: Array.isArray(data.images) ? data.images.map(item => String(item)) : [],
-        videoUrl: data.video_url,
-        createdAt: data.created_at,
-        publishedAt: data.published_at,
-        status: data.status as ListingStatus,
-        expiresAt: data.expires_at,
+        id: listingData.id,
+        title: listingData.title,
+        type: listingData.type as ListingType,
+        description: listingData.description,
+        addressLine: listingData.address_line,
+        city: listingData.city,
+        country: listingData.country,
+        lat: listingData.lat,
+        lng: listingData.lng,
+        rentMonthlyEUR: listingData.rent_monthly_eur,
+        depositEUR: listingData.deposit_eur,
+        billsIncluded: listingData.bills_included,
+        furnished: listingData.furnished,
+        bedrooms: listingData.bedrooms,
+        bathrooms: listingData.bathrooms,
+        floor: listingData.floor,
+        sizeSqm: listingData.size_sqm,
+        amenities: Array.isArray(listingData.amenities) ? listingData.amenities.map(item => String(item)) : [],
+        availabilityDate: listingData.availability_date,
+        images: Array.isArray(listingData.images) ? listingData.images.map(item => String(item)) : [],
+        videoUrl: listingData.video_url,
+        createdAt: listingData.created_at,
+        publishedAt: listingData.published_at,
+        status: listingData.status as ListingStatus,
+        expiresAt: listingData.expires_at,
         agency: {
-          id: data.profiles?.id || '',
-          name: data.profiles?.agency_name || 'Agency',
-          phone: data.profiles?.phone || '',
+          id: agencyData.id,
+          name: agencyData.agency_name || 'Agency',
+          phone: agencyData.phone || '',
           logoUrl: undefined,
           ownerUserId: '',
           website: undefined,
-          billingEmail: data.profiles?.email,
+          billingEmail: agencyData.email,
           createdAt: ''
         }
       };
