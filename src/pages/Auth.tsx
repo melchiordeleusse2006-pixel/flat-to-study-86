@@ -12,11 +12,13 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export default function Auth() {
   const navigate = useNavigate();
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, resetPassword } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('signin');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
 
   // Sign In Form State
   const [signInEmail, setSignInEmail] = useState('');
@@ -100,6 +102,23 @@ export default function Auth() {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const { error } = await resetPassword(resetEmail);
+    
+    if (error) {
+      setError(error.message || 'Failed to send reset email');
+    } else {
+      setSuccess('Password reset email sent! Check your inbox and follow the instructions.');
+      setShowForgotPassword(false);
+      setResetEmail('');
+    }
+    setLoading(false);
+  };
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -141,36 +160,90 @@ export default function Auth() {
               )}
 
               <TabsContent value="signin">
-                <form onSubmit={handleSignIn} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-email">Email</Label>
-                    <Input
-                      id="signin-email"
-                      type="email"
-                      placeholder="your.email@example.com"
-                      value={signInEmail}
-                      onChange={(e) => setSignInEmail(e.target.value)}
-                      required
-                    />
-                  </div>
+                {!showForgotPassword ? (
+                  <form onSubmit={handleSignIn} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="signin-email">Email</Label>
+                      <Input
+                        id="signin-email"
+                        type="email"
+                        placeholder="your.email@example.com"
+                        value={signInEmail}
+                        onChange={(e) => setSignInEmail(e.target.value)}
+                        required
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-password">Password</Label>
-                    <Input
-                      id="signin-password"
-                      type="password"
-                      placeholder="Enter your password"
-                      value={signInPassword}
-                      onChange={(e) => setSignInPassword(e.target.value)}
-                      required
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signin-password">Password</Label>
+                      <Input
+                        id="signin-password"
+                        type="password"
+                        placeholder="Enter your password"
+                        value={signInPassword}
+                        onChange={(e) => setSignInPassword(e.target.value)}
+                        required
+                      />
+                    </div>
 
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Sign In
-                  </Button>
-                </form>
+                    <Button type="submit" className="w-full" disabled={loading}>
+                      {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Sign In
+                    </Button>
+
+                    <div className="text-center">
+                      <button
+                        type="button"
+                        onClick={() => setShowForgotPassword(true)}
+                        className="text-sm text-primary hover:underline"
+                      >
+                        Forgot your password?
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="text-center">
+                      <h3 className="font-medium mb-2">Reset your password</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Enter your email address and we'll send you a link to reset your password.
+                      </p>
+                    </div>
+                    
+                    <form onSubmit={handleForgotPassword} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="reset-email">Email</Label>
+                        <Input
+                          id="reset-email"
+                          type="email"
+                          placeholder="your.email@example.com"
+                          value={resetEmail}
+                          onChange={(e) => setResetEmail(e.target.value)}
+                          required
+                        />
+                      </div>
+
+                      <Button type="submit" className="w-full" disabled={loading}>
+                        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Send Reset Email
+                      </Button>
+
+                      <div className="text-center">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowForgotPassword(false);
+                            setResetEmail('');
+                            setError(null);
+                          }}
+                          className="text-sm text-muted-foreground hover:underline"
+                        >
+                          Back to sign in
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="signup">
