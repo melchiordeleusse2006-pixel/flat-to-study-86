@@ -58,7 +58,7 @@ export default function Messages() {
         </div>
 
         {/* Messages Interface */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-240px)] overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-180px)] overflow-hidden">
           {/* Conversations List - Fixed */}
           <div className="h-full overflow-hidden">
             <ConversationList 
