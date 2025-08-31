@@ -34,4 +34,5 @@ export interface Conversation {
   lastMessage: Message;
   unreadCount: number;
   studentName?: string;
+  studentSenderId?: string;
 }

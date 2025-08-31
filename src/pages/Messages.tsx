@@ -63,7 +63,10 @@ export default function Messages() {
           <div className="h-full">
             <ConversationList 
               onSelectConversation={setSelectedConversation}
-              selectedConversationId={selectedConversation ? `${selectedConversation.listing.id}-${selectedConversation.lastMessage.sender_id}` : undefined}
+              selectedConversationId={selectedConversation ? 
+                (profile?.user_type === 'agency' 
+                  ? `${selectedConversation.listing.id}-${selectedConversation.studentSenderId}`
+                  : selectedConversation.listing.id) : undefined}
               key={refreshConversations}
             />
           </div>

@@ -36,9 +36,11 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
         .select('*')
         .eq('listing_id', conversation.listing.id);
 
-      // For agencies, filter by sender_id to avoid mixing conversations
+      // For agencies, get all messages in this conversation (both from student and agency)
       if (profile?.user_type === 'agency') {
-        query = query.eq('sender_id', conversation.lastMessage.sender_id);
+        // Get all messages between this agency and this specific student
+        const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
+        query = query.or(`sender_id.eq.${studentId},sender_id.eq.${user?.id}`);
       }
 
       const { data, error } = await query.order('created_at', { ascending: true });
@@ -60,11 +62,13 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
     if (profile?.user_type !== 'agency') return;
 
     try {
+      // Mark messages from the student as read
+      const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
       const { error } = await supabase
         .from('messages')
         .update({ read_at: new Date().toISOString() })
         .eq('listing_id', conversation.listing.id)
-        .eq('sender_id', conversation.lastMessage.sender_id)
+        .eq('sender_id', studentId)
         .eq('agency_id', profile.id)
         .is('read_at', null);
       
