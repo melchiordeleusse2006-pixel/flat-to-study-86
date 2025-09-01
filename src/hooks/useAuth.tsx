@@ -35,9 +35,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('Setting up auth state listener');
+    
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
+        console.log('Auth state change:', event, !!session);
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -55,34 +58,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', !!session);
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchProfile(session.user.id);
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    // Fallback timeout to ensure loading doesn't stay true indefinitely
+    const timeoutId = setTimeout(() => {
+      console.log('Auth loading timeout reached, setting loading to false');
+      setLoading(false);
+    }, 5000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   const fetchProfile = async (userId: string) => {
     try {
+      console.log('Fetching profile for user:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
       
       if (error) {
         console.error('Error fetching profile:', error);
-        // Set profile to null so we know the fetch failed
+        // Don't let profile errors block auth - user can still be authenticated
         setProfile(null);
-      } else {
+      } else if (data) {
+        console.log('Profile fetched successfully');
         setProfile(data as Profile);
+      } else {
+        console.log('No profile found for user');
+        setProfile(null);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
+      // Don't let profile errors block auth
       setProfile(null);
     }
   };
@@ -112,17 +132,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.log('Attempting sign in for:', email);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Sign in error:', error);
+        throw error;
+      }
       
+      console.log('Sign in successful');
       // Don't force page reload - let React Router handle navigation
       // The onAuthStateChange callback will update the session state
       return { error: null };
     } catch (error) {
+      console.error('Sign in failed:', error);
       return { error };
     }
   };

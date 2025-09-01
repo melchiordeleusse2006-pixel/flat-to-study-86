@@ -23,18 +23,20 @@ export default function Auth() {
 
   // Redirect authenticated users to home (only after auth is fully loaded)
   useEffect(() => {
+    console.log('Auth page - authLoading:', authLoading, 'user:', !!user);
     if (!authLoading && user) {
+      console.log('Redirecting authenticated user to home');
       navigate('/', { replace: true });
     }
   }, [user, authLoading, navigate]);
 
-  // Show loading while auth is initializing
+  // Show loading while auth is initializing, but with a timeout
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading...</span>
+          <span>Checking authentication...</span>
         </div>
       </div>
     );
