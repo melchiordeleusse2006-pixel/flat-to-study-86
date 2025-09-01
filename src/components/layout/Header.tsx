@@ -47,7 +47,7 @@ export default function Header() {
               <Logo size={16} className="md:w-5 md:h-5" />
             </div>
             <span className={`text-lg md:text-xl font-bold transition-colors duration-300 ${
-              shouldShowBackground ? 'text-foreground' : 'text-white'
+              shouldShowBackground ? 'text-primary' : 'text-primary'
             }`}>flat2study</span>
           </Link>
         </div>
