@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import ListingCard from '@/components/listings/ListingCard';
 import SearchFilters from '@/components/search/SearchFilters';
+import MobileCompactControls from '@/components/search/MobileCompactControls';
 import SimpleMapView from '@/components/map/SimpleMapView';
 import { Listing, SearchFilters as SearchFiltersType } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
@@ -268,68 +269,85 @@ export default function Search() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Unified Search Section - No visual separation */}
+      {/* Search Section */}
       <div className="sticky top-16 z-40 bg-background/95 backdrop-blur">
         {/* Search Bar */}
         <div className="container py-4 pb-2">
-          <div className="flex flex-col md:flex-row gap-4 items-center">
-            <div className="flex-1 relative">
-              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search by location, university, or amenities..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-11"
-              />
-            </div>
-            
-            {/* Sort Controls */}
-            <div className="flex items-center gap-3 min-w-0 flex-shrink-0">
-              <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by:</span>
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-44">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="z-50 bg-popover border shadow-lg">
-                  <SelectItem value="relevance">Relevance</SelectItem>
-                  <SelectItem value="price-low">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high">Price: High to Low</SelectItem>
-                  <SelectItem value="newest">Newest First</SelectItem>
-                  <SelectItem value="distance">Distance</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            {/* View Mode Toggle */}
-            <div className="flex rounded-lg border">
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-                className="rounded-r-none border-r"
-              >
-                <Grid className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'map' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('map')}
-                className="rounded-l-none"
-              >
-                <Map className="h-4 w-4" />
-              </Button>
-            </div>
+          <div className="relative">
+            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Search by location, university, or amenities..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 h-11"
+            />
           </div>
         </div>
         
-        {/* Filters - Seamlessly connected with reduced spacing */}
-        <div className="border-b">
-          <SearchFilters 
+        {/* Mobile Compact Controls vs Desktop Full Controls */}
+        {isMobile ? (
+          <MobileCompactControls
             filters={filters}
             onFiltersChange={setFilters}
-            className="max-w-none"
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
           />
-        </div>
+        ) : (
+          <>
+            {/* Desktop Sort Controls and View Toggle */}
+            <div className="container pb-2">
+              <div className="flex items-center gap-4 justify-end">
+                {/* Sort Controls */}
+                <div className="flex items-center gap-3 min-w-0 flex-shrink-0">
+                  <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by:</span>
+                  <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger className="w-44">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="z-50 bg-popover border shadow-lg">
+                      <SelectItem value="relevance">Relevance</SelectItem>
+                      <SelectItem value="price-low">Price: Low to High</SelectItem>
+                      <SelectItem value="price-high">Price: High to Low</SelectItem>
+                      <SelectItem value="newest">Newest First</SelectItem>
+                      <SelectItem value="distance">Distance</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {/* View Mode Toggle */}
+                <div className="flex rounded-lg border">
+                  <Button
+                    variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('grid')}
+                    className="rounded-r-none border-r"
+                  >
+                    <Grid className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === 'map' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('map')}
+                    className="rounded-l-none"
+                  >
+                    <Map className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            {/* Desktop Filters */}
+            <div className="border-b">
+              <SearchFilters 
+                filters={filters}
+                onFiltersChange={setFilters}
+                className="max-w-none"
+              />
+            </div>
+          </>
+        )}
       </div>
 
       {/* Main Content - Full width layout */}
@@ -341,7 +359,7 @@ export default function Search() {
       ) : viewMode === 'map' ? (
         /* Map View - Use absolute positioning to fill remaining space */
         isMobile ? (
-          <div className="absolute top-[var(--header-height)] left-0 right-0 bottom-0" style={{"--header-height": "200px"} as any}>
+          <div className="absolute top-[var(--header-height)] left-0 right-0 bottom-0" style={{"--header-height": "160px"} as any}>
             <SimpleMapView 
               listings={listings}
               onListingClick={handleListingClick}
