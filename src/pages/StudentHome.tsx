@@ -101,6 +101,68 @@ const StudentHome = () => {
               </div>
             </form>
           </div>
+
+          {/* Quick Actions - Three Icons */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mt-24 mb-16">
+            <Link to="/messages" className="group text-center">
+              <div className="relative inline-block mb-4">
+                <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+                  <MessageSquare className="h-10 w-10 text-gray-700" />
+                </div>
+                {unreadCount > 0 && (
+                  <Badge variant="destructive" className="absolute -top-2 -right-2 min-w-[1.5rem] h-6 flex items-center justify-center text-sm px-2">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </Badge>
+                )}
+              </div>
+              <h3 className="text-xl font-semibold text-black mb-2">My Messages</h3>
+              <p className="text-gray-600">
+                Chat with landlords and agencies
+              </p>
+            </Link>
+
+            <Link to="/favorites" className="group text-center">
+              <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-colors mb-4 mx-auto">
+                <Heart className="h-10 w-10 text-gray-700" />
+              </div>
+              <h3 className="text-xl font-semibold text-black mb-2">Saved Listings</h3>
+              <p className="text-gray-600">
+                Your favorite properties
+              </p>
+            </Link>
+
+            <Link to="/search" className="group text-center">
+              <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-colors mb-4 mx-auto">
+                <Search className="h-10 w-10 text-gray-700" />
+              </div>
+              <h3 className="text-xl font-semibold text-black mb-2">Explore</h3>
+              <p className="text-gray-600">
+                Discover new properties
+              </p>
+            </Link>
+          </div>
+
+          {/* Recent Activity */}
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-gray-50 rounded-2xl p-8">
+              <h2 className="text-2xl font-semibold text-black mb-6 flex items-center">
+                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-3">
+                  <Search className="h-4 w-4 text-gray-600" />
+                </div>
+                Recent Activity
+              </h2>
+              <div className="text-center py-12">
+                <p className="text-gray-600 text-lg mb-6">
+                  No recent activity yet. Start exploring properties to see updates here!
+                </p>
+                <Link to="/search">
+                  <button className="bg-black text-white px-8 py-3 rounded-full hover:bg-gray-800 transition-colors font-medium">
+                    Start Exploring
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
