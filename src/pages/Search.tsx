@@ -343,7 +343,7 @@ export default function Search() {
       ) : viewMode === 'map' ? (
         /* Map View - Full height seamless layout */
         isMobile ? (
-          <div className="h-[calc(100vh-240px)]">
+          <div className="h-[calc(100vh-260px)]">
             <SimpleMapView 
               listings={listings}
               onListingClick={handleListingClick}
@@ -354,19 +354,19 @@ export default function Search() {
             />
           </div>
         ) : (
-          <div className="flex h-[calc(100vh-240px)]">
+          <div className="flex h-[calc(100vh-260px)]">
             {/* Listings Panel - Left Side */}
             <div className="w-1/2 flex flex-col bg-background border-r">
               {/* Results count header */}
-              <div className="flex items-center justify-between p-4 border-b bg-background/50">
+              <div className="flex items-center justify-between px-4 py-3 border-b bg-background/50">
                 <p className="text-sm text-muted-foreground">
                   {visibleListings.length} properties in current view
                 </p>
               </div>
               
-              {/* Scrollable listings */}
-              <div className="flex-1 overflow-y-auto p-4">
-                <div className="grid gap-4">
+              {/* Scrollable listings - Full height with no bottom padding */}
+              <div className="flex-1 overflow-y-auto">
+                <div className="grid gap-4 p-4 pb-0">
                   {visibleListings.map((listing) => (
                     <div
                       key={listing.id}
