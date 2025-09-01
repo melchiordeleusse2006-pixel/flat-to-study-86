@@ -55,6 +55,14 @@ export default function SimpleMapView({
     });
 
     if (listings && listings.length > 0) {
+      console.log('Placing markers for listings:', listings.map(l => ({
+        id: l.id,
+        title: l.title,
+        address: l.addressLine,
+        lat: l.lat,
+        lng: l.lng
+      })));
+      
       const markers: L.Marker[] = [];
       
       listings.forEach((listing) => {
