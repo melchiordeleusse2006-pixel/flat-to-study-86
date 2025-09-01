@@ -198,6 +198,7 @@ export default function ListingCard({
               lat={listing.lat} 
               lng={listing.lng} 
               address={`${listing.addressLine}, ${listing.city}`}
+              className="h-48"
             />
           </div>
         )}
