@@ -316,30 +316,6 @@ export default function Search() {
         />
       </div>
 
-      {/* Sort Section - Sticky below filters */}
-      <div className="sticky top-[200px] z-20 border-b bg-background/95 backdrop-blur">
-        <div className="container py-3">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              {viewMode === 'map' ? `${visibleListings.length} properties in current view` : `${listings.length} properties found`}
-            </p>
-            
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-48">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="z-[9999]">
-                <SelectItem value="relevance">Relevance</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="distance">Distance</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="container-fluid py-6">
         <div className="flex gap-6">
@@ -354,7 +330,7 @@ export default function Search() {
             ) : viewMode === 'map' ? (
               /* Map View - Mobile shows only map, Desktop shows 50/50 split */
               isMobile ? (
-                <div className="fixed top-[248px] left-0 right-0 bottom-0 z-10">
+                <div className="h-[calc(100vh-280px)]">
                   <SimpleMapView 
                     listings={listings}
                     onListingClick={handleListingClick}
@@ -365,10 +341,32 @@ export default function Search() {
                   />
                 </div>
               ) : (
-                <div className="flex gap-4 fixed top-[248px] left-0 right-0 bottom-0 z-10">
+                <div className="flex gap-4 h-[calc(100vh-280px)]">
                   {/* Listings Panel - Left Side */}
-                  <div className="w-1/2 overflow-y-auto bg-background border-r px-4">
-                      <div className="grid gap-4 pr-2 py-4">
+                  <div className="w-1/2 flex flex-col">
+                    {/* Sort Section - Above listings, not sticky */}
+                    <div className="flex items-center justify-between mb-4 pb-3 border-b">
+                      <p className="text-sm text-muted-foreground">
+                        {visibleListings.length} properties in current view
+                      </p>
+                      
+                      <Select value={sortBy} onValueChange={setSortBy}>
+                        <SelectTrigger className="w-48">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="z-[9999]">
+                          <SelectItem value="relevance">Relevance</SelectItem>
+                          <SelectItem value="price-low">Price: Low to High</SelectItem>
+                          <SelectItem value="price-high">Price: High to Low</SelectItem>
+                          <SelectItem value="newest">Newest First</SelectItem>
+                          <SelectItem value="distance">Distance</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    {/* Scrollable listings */}
+                    <div className="flex-1 overflow-y-auto">
+                      <div className="grid gap-4 pr-2">
                         {visibleListings.map((listing) => (
                           <div
                             key={listing.id}
@@ -390,6 +388,7 @@ export default function Search() {
                           </div>
                         )}
                       </div>
+                    </div>
                   </div>
                   
                   {/* Map - Right Side */}
