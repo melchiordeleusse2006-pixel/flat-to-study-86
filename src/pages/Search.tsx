@@ -232,18 +232,20 @@ export default function Search() {
         </div>
       </div>
 
+      {/* Search Filters - Always visible under search bar */}
+      <div className="border-b bg-background/95 backdrop-blur">
+        <div className="container py-4">
+          <SearchFilters 
+            filters={filters}
+            onFiltersChange={setFilters}
+            className="max-w-none"
+          />
+        </div>
+      </div>
+
       {/* Main Content */}
       <div className="container-fluid py-6">
         <div className="flex gap-6">
-          {/* Filters Sidebar - Hide in map view */}
-          {viewMode !== 'map' && (
-            <div className="hidden lg:block w-80 flex-shrink-0">
-              <SearchFilters 
-                filters={filters}
-                onFiltersChange={setFilters}
-              />
-            </div>
-          )}
 
           {/* Results */}
           <div className="flex-1">
