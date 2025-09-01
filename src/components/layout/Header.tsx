@@ -15,7 +15,9 @@ export default function Header() {
     loading
   } = useAuth();
   const unreadCount = useUnreadMessagesCount();
-  const { t } = useLanguage();
+  const {
+    t
+  } = useLanguage();
   return <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Left section with Logo and Language */}
@@ -26,11 +28,9 @@ export default function Header() {
             </div>
             <span className="text-xl font-bold">flat2study</span>
           </Link>
-          {!user && (
-            <div className="hidden md:block">
+          {!user && <div className="hidden md:block">
               <LanguageSelector variant="compact" />
-            </div>
-          )}
+            </div>}
         </div>
 
         {/* Navigation */}
@@ -45,9 +45,7 @@ export default function Header() {
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </Badge>}
             </Link>}
-          {!user && <Link to="/auth" className="px-3 py-1.5 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 rounded-md transition-colors">
-              {t('header.publishListings')}
-            </Link>}
+          {!user}
           <Link to="/about" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t('header.about')}
         </Link>
         </nav>
