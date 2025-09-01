@@ -26,6 +26,7 @@ export default function Search() {
   const [loading, setLoading] = useState(true);
   const [hoveredListingId, setHoveredListingId] = useState<string | null>(null);
   const [geocodingComplete, setGeocodingComplete] = useState(false);
+  const [visibleListings, setVisibleListings] = useState<Listing[]>([]);
 
   // Fetch listings from database
   useEffect(() => {
@@ -171,7 +172,11 @@ export default function Search() {
     }
 
     setListings(filtered);
-  }, [searchQuery, filters, sortBy, allListings]);
+    // Initialize visible listings for map view
+    if (viewMode === 'map') {
+      setVisibleListings(filtered);
+    }
+  }, [searchQuery, filters, sortBy, allListings, viewMode]);
 
   const handleListingClick = (listingId: string) => {
     // In a real app, this would navigate to the listing detail page
@@ -249,6 +254,16 @@ export default function Search() {
     }
   };
 
+  const handleMapBoundsChange = (bounds: { north: number; south: number; east: number; west: number }) => {
+    const visible = listings.filter(listing => 
+      listing.lat >= bounds.south && 
+      listing.lat <= bounds.north && 
+      listing.lng >= bounds.west && 
+      listing.lng <= bounds.east
+    );
+    setVisibleListings(visible);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -305,7 +320,7 @@ export default function Search() {
           
           <div className="flex items-center justify-between mt-4">
             <p className="text-sm text-muted-foreground">
-              {listings.length} properties found
+              {viewMode === 'map' ? `${visibleListings.length} properties in current view` : `${listings.length} properties found`}
             </p>
           </div>
         </div>
@@ -342,6 +357,7 @@ export default function Search() {
                     onListingClick={handleListingClick}
                     hoveredListingId={hoveredListingId}
                     onListingHover={setHoveredListingId}
+                    onBoundsChange={handleMapBoundsChange}
                     className="h-full"
                   />
                 </div>
@@ -350,7 +366,7 @@ export default function Search() {
                   {/* Listings Panel - Left Side */}
                   <div className="w-1/2 overflow-y-auto">
                       <div className="grid gap-4 pr-2">
-                        {listings.map((listing) => (
+                        {visibleListings.map((listing) => (
                           <div
                             key={listing.id}
                             onMouseEnter={() => setHoveredListingId(listing.id)}
@@ -363,20 +379,14 @@ export default function Search() {
                             />
                           </div>
                         ))}
-                      
-                      {listings.length === 0 && (
-                        <div className="text-center py-12">
-                          <p className="text-muted-foreground">No properties match your search criteria.</p>
-                          <Button 
-                            variant="outline" 
-                            onClick={() => setFilters({})}
-                            className="mt-4"
-                          >
-                            Clear Filters
-                          </Button>
-                        </div>
-                      )}
-                    </div>
+                        
+                        {visibleListings.length === 0 && (
+                          <div className="text-center py-12">
+                            <p className="text-muted-foreground">No properties in current view.</p>
+                            <p className="text-sm text-muted-foreground mt-2">Move the map to see listings in different areas</p>
+                          </div>
+                        )}
+                      </div>
                   </div>
                   
                   {/* Map - Right Side */}
@@ -386,6 +396,7 @@ export default function Search() {
                       onListingClick={handleListingClick}
                       hoveredListingId={hoveredListingId}
                       onListingHover={setHoveredListingId}
+                      onBoundsChange={handleMapBoundsChange}
                       className="h-full"
                     />
                   </div>

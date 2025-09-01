@@ -15,6 +15,7 @@ interface SimpleMapViewProps {
   listings: Listing[];
   onListingClick?: (listingId: string) => void;
   onListingHover?: (listingId: string | null) => void;
+  onBoundsChange?: (bounds: { north: number; south: number; east: number; west: number }) => void;
   hoveredListingId?: string | null;
   className?: string;
 }
@@ -23,6 +24,7 @@ export default function SimpleMapView({
   listings, 
   onListingClick,
   onListingHover,
+  onBoundsChange,
   hoveredListingId,
   className 
 }: SimpleMapViewProps) {
@@ -54,6 +56,19 @@ export default function SimpleMapView({
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(mapInstanceRef.current);
+
+      // Add bounds change listener
+      if (onBoundsChange) {
+        mapInstanceRef.current.on('moveend', () => {
+          const bounds = mapInstanceRef.current!.getBounds();
+          onBoundsChange({
+            north: bounds.getNorth(),
+            south: bounds.getSouth(),
+            east: bounds.getEast(),
+            west: bounds.getWest()
+          });
+        });
+      }
     }
 
     const map = mapInstanceRef.current;
@@ -163,7 +178,7 @@ export default function SimpleMapView({
     return () => {
       // Markers will be cleared by the forEach loop above
     };
-  }, [listings, onListingClick, onListingHover, hoveredListingId]);
+  }, [listings, onListingClick, onListingHover, hoveredListingId, onBoundsChange]);
 
   // Cleanup map on unmount
   useEffect(() => {
