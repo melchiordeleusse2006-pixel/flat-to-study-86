@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Heart, User, Menu, Home, LogOut, MessageSquare, Settings } from 'lucide-react';
+import { Heart, User, Menu, LogOut, MessageSquare, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useUnreadMessagesCount } from '@/hooks/useUnreadMessagesCount';
@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { LanguageSelector } from '@/components/ui/language-selector';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Logo } from '@/components/ui/logo';
 export default function Header() {
   const {
     user,
@@ -23,8 +24,8 @@ export default function Header() {
         {/* Left section with Logo and Language */}
         <div className="flex items-center space-x-4">
           <Link to="/" className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg hero-gradient">
-              <Home className="h-5 w-5 text-white" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg hero-gradient text-white">
+              <Logo size={20} />
             </div>
             <span className="text-xl font-bold">flat2study</span>
           </Link>

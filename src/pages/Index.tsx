@@ -2,10 +2,23 @@ import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Link } from 'react-router-dom';
-import { Search, Users, Shield, MapPin, Heart, Clock } from 'lucide-react';
+import { Link, Navigate } from 'react-router-dom';
+import { Search, Users, Shield, MapPin, Heart } from 'lucide-react';
 import { universities, mockListings } from '@/data/mockData';
+import { useAuth } from '@/hooks/useAuth';
+import { Logo } from '@/components/ui/logo';
 const Index = () => {
+  const { user, profile, loading } = useAuth();
+
+  // Redirect authenticated users to appropriate homepage
+  if (!loading && user && profile) {
+    if (profile.user_type === 'student') {
+      return <Navigate to="/student-home" replace />;
+    } else if (profile.user_type === 'agency' || profile.user_type === 'admin') {
+      return <Navigate to="/sell-side-home" replace />;
+    }
+  }
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
       style: 'currency',
@@ -187,8 +200,8 @@ const Index = () => {
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg hero-gradient">
-                <Search className="h-5 w-5 text-white" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg hero-gradient text-white">
+                <Logo size={20} />
               </div>
               <span className="text-xl font-bold">flat2study</span>
             </div>
