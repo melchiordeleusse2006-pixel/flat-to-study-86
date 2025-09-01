@@ -1,8 +1,6 @@
 import Header from '@/components/layout/Header';
-
 export default function About() {
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Header />
       
       <main className="container mx-auto px-4 py-16">
@@ -10,11 +8,11 @@ export default function About() {
           <h1 className="text-4xl font-bold text-center mb-8">About Us</h1>
           
           <div className="prose prose-lg mx-auto text-center space-y-8">
-            <p className="text-lg text-muted-foreground leading-relaxed">
+            <p className="text-lg leading-relaxed text-slate-950">
               Tired of the low quality of real estate services in Milan, we decided to build a platform to make it safer and easier for students who move to University to find a place to live.
             </p>
             
-            <p className="text-lg text-muted-foreground leading-relaxed">
+            <p className="text-lg leading-relaxed text-slate-950">
               We carefully select the real estate companies and landowners who share their announcements on this platform based on various criteria–quality-price ratio, responsiveness, comfort–in order to reduce the stress of students as much as possible. We also make sure that only students can make purchases on this platform in order to protect landowners. Enjoy the website and good luck finding your perfect home!
             </p>
             
@@ -43,6 +41,5 @@ export default function About() {
           </div>
         </div>
       </main>
-    </div>
-  );
+    </div>;
 }
