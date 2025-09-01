@@ -14,12 +14,13 @@ const Index = () => {
       maximumFractionDigits: 0
     }).format(price);
   };
-  return <div className="min-h-screen bg-background">
+  return (
+    <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Hero Section */}
-      <section className="relative py-20 px-4 hero-gradient text-white overflow-hidden">
-        <div className="container mx-auto text-center relative z-10">
+      {/* Hero Section - Full viewport height */}
+      <section className="relative h-screen flex items-center justify-center hero-gradient text-white overflow-hidden">
+        <div className="container mx-auto text-center relative z-10 px-4">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
             Find Your Perfect Student Home in Milan
           </h1>
@@ -212,6 +213,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
