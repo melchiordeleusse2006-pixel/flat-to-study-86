@@ -271,60 +271,58 @@ export default function Search() {
       {/* Unified Search Section - No visual separation */}
       <div className="sticky top-16 z-40 bg-background/95 backdrop-blur">
         {/* Search Bar */}
-        <div className="border-b">
-          <div className="container py-4">
-            <div className="flex flex-col md:flex-row gap-4 items-center">
-              <div className="flex-1 relative">
-                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  placeholder="Search by location, university, or amenities..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 h-11"
-                />
-              </div>
-              
-              {/* Sort Controls */}
-              <div className="flex items-center gap-3 min-w-0 flex-shrink-0">
-                <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by:</span>
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="w-44">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="z-50 bg-popover border shadow-lg">
-                    <SelectItem value="relevance">Relevance</SelectItem>
-                    <SelectItem value="price-low">Price: Low to High</SelectItem>
-                    <SelectItem value="price-high">Price: High to Low</SelectItem>
-                    <SelectItem value="newest">Newest First</SelectItem>
-                    <SelectItem value="distance">Distance</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              {/* View Mode Toggle */}
-              <div className="flex rounded-lg border">
-                <Button
-                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('grid')}
-                  className="rounded-r-none border-r"
-                >
-                  <Grid className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={viewMode === 'map' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('map')}
-                  className="rounded-l-none"
-                >
-                  <Map className="h-4 w-4" />
-                </Button>
-              </div>
+        <div className="container py-4 pb-2">
+          <div className="flex flex-col md:flex-row gap-4 items-center">
+            <div className="flex-1 relative">
+              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Search by location, university, or amenities..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 h-11"
+              />
+            </div>
+            
+            {/* Sort Controls */}
+            <div className="flex items-center gap-3 min-w-0 flex-shrink-0">
+              <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by:</span>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-44">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="z-50 bg-popover border shadow-lg">
+                  <SelectItem value="relevance">Relevance</SelectItem>
+                  <SelectItem value="price-low">Price: Low to High</SelectItem>
+                  <SelectItem value="price-high">Price: High to Low</SelectItem>
+                  <SelectItem value="newest">Newest First</SelectItem>
+                  <SelectItem value="distance">Distance</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {/* View Mode Toggle */}
+            <div className="flex rounded-lg border">
+              <Button
+                variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('grid')}
+                className="rounded-r-none border-r"
+              >
+                <Grid className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'map' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('map')}
+                className="rounded-l-none"
+              >
+                <Map className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
         
-        {/* Filters - Seamlessly connected */}
+        {/* Filters - Seamlessly connected with reduced spacing */}
         <div className="border-b">
           <SearchFilters 
             filters={filters}
@@ -358,7 +356,7 @@ export default function Search() {
             {/* Listings Panel - Left Side */}
             <div className="w-1/2 flex flex-col bg-background border-r">
               {/* Results count header */}
-              <div className="flex items-center justify-between px-4 py-2 border-b bg-background/50 flex-shrink-0">
+              <div className="flex items-center justify-between px-4 py-3 bg-background/50 flex-shrink-0">
                 <p className="text-sm text-muted-foreground">
                   {visibleListings.length} properties in current view
                 </p>
