@@ -126,7 +126,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
               <ChevronDown className="h-4 w-4 ml-1" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-80">
+          <PopoverContent className="w-80 z-50">
             <div className="space-y-4">
               <Label className="text-sm font-medium">Price Range (Monthly)</Label>
               <div className="px-2">
@@ -160,7 +160,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
               <ChevronDown className="h-4 w-4 ml-1" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-64">
+          <PopoverContent className="w-64 z-50">
             <div className="space-y-3">
               <Label className="text-sm font-medium">Property Type</Label>
               <div className="space-y-2">
@@ -181,6 +181,33 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
           </PopoverContent>
         </Popover>
 
+        {/* Availability Date Filter - Third position */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button 
+              variant={filters.availabilityDate ? "default" : "outline"} 
+              size="sm" 
+              className="whitespace-nowrap"
+            >
+              Available From
+              <ChevronDown className="h-4 w-4 ml-1" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64 z-50">
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Available From</Label>
+              <Input 
+                type="date"
+                value={filters.availabilityDate || ''}
+                onChange={(e) => onFiltersChange({ 
+                  ...filters, 
+                  availabilityDate: e.target.value || undefined 
+                })}
+              />
+            </div>
+          </PopoverContent>
+        </Popover>
+
         {/* University Filter */}
         <Popover>
           <PopoverTrigger asChild>
@@ -194,7 +221,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
               <ChevronDown className="h-4 w-4 ml-1" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-64">
+          <PopoverContent className="w-64 z-50">
             <div className="space-y-3">
               <Label className="text-sm font-medium">Near University</Label>
               <Select 
@@ -230,7 +257,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
               <ChevronDown className="h-4 w-4 ml-1" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-64">
+          <PopoverContent className="w-64 z-50">
             <div className="space-y-3">
               <Label className="text-sm font-medium">Bedrooms</Label>
               <Select 
@@ -281,7 +308,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
               <ChevronDown className="h-4 w-4 ml-1" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-64">
+          <PopoverContent className="w-64 z-50">
             <div className="space-y-3">
               <Label className="text-sm font-medium">Amenities</Label>
               <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -298,33 +325,6 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
                   </div>
                 ))}
               </div>
-            </div>
-          </PopoverContent>
-        </Popover>
-
-        {/* Availability Date Filter */}
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button 
-              variant={filters.availabilityDate ? "default" : "outline"} 
-              size="sm" 
-              className="whitespace-nowrap"
-            >
-              Available From
-              <ChevronDown className="h-4 w-4 ml-1" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-64">
-            <div className="space-y-3">
-              <Label className="text-sm font-medium">Available From</Label>
-              <Input 
-                type="date"
-                value={filters.availabilityDate || ''}
-                onChange={(e) => onFiltersChange({ 
-                  ...filters, 
-                  availabilityDate: e.target.value || undefined 
-                })}
-              />
             </div>
           </PopoverContent>
         </Popover>
