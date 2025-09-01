@@ -44,7 +44,7 @@ export default function ListingDetails() {
 
   const fetchListing = async () => {
     try {
-      // First fetch the listing
+      // First, get basic listing from direct query since we need all fields
       const { data: listingData, error: listingError } = await supabase
         .from('listings')
         .select('*')
@@ -54,21 +54,25 @@ export default function ListingDetails() {
 
       if (listingError) throw listingError;
 
-      // Then fetch the agency profile
-      const { data: agencyData, error: agencyError } = await supabase
-        .from('profiles')
-        .select('id, agency_name, phone, email, full_name')
-        .eq('id', listingData.agency_id)
-        .maybeSingle();
+      // Get the agency name using the secure function
+      const { data: agencyInfo } = await supabase.rpc(
+        'get_agency_business_info',
+        { agency_id_param: listingData.agency_id }
+      );
 
-      if (agencyError) {
-        console.error('Error fetching agency profile:', agencyError);
-        throw agencyError;
-      }
-
-      if (!agencyData) {
-        console.error('Agency profile not found for ID:', listingData.agency_id);
-        throw new Error('Agency profile not found');
+      // Try to get agency contact info if user has legitimate access
+      let agencyContactInfo = null;
+      if (user) {
+        try {
+          const { data: contactInfo } = await supabase.rpc(
+            'get_agency_contact_for_conversation',
+            { agency_id_param: listingData.agency_id }
+          );
+          agencyContactInfo = contactInfo?.[0] || null;
+        } catch (error) {
+          // User doesn't have access to contact info - this is expected for non-conversational users
+          console.log('No contact access - user has not messaged this agency');
+        }
       }
 
       // Transform the data to match the Listing type
@@ -99,13 +103,13 @@ export default function ListingDetails() {
         status: listingData.status as ListingStatus,
         expiresAt: listingData.expires_at,
         agency: {
-          id: agencyData.id,
-          name: agencyData.agency_name || 'Agency',
-          phone: agencyData.phone || '',
+          id: listingData.agency_id,
+          name: agencyInfo?.[0]?.agency_name || 'Agency',
+          phone: agencyContactInfo?.agency_phone || '',
           logoUrl: undefined,
           ownerUserId: '',
           website: undefined,
-          billingEmail: agencyData.email,
+          billingEmail: agencyContactInfo?.agency_email || '',
           createdAt: ''
         }
       };
@@ -465,16 +469,34 @@ export default function ListingDetails() {
                   </div>
                   
                   {listing.agency.phone && (
-                    <div className="flex items-center space-x-2">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
-                      <span>{listing.agency.phone}</span>
+                    <div className="flex items-center space-x-2 text-muted-foreground">
+                      <Phone className="h-4 w-4" />
+                      <span className="text-sm">Contact available after messaging</span>
                     </div>
                   )}
                   
                   {listing.agency.billingEmail && (
-                    <div className="flex items-center space-x-2">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
-                      <span>{listing.agency.billingEmail}</span>
+                    <div className="flex items-center space-x-2 text-muted-foreground">
+                      <Mail className="h-4 w-4" />
+                      <span className="text-sm">Contact available after messaging</span>
+                    </div>
+                  )}
+
+                  {/* Show actual contact info only if user has access */}
+                  {(listing.agency.phone || listing.agency.billingEmail) && (
+                    <div className="space-y-2">
+                      {listing.agency.phone && (
+                        <div className="flex items-center space-x-2">
+                          <Phone className="h-4 w-4 text-muted-foreground" />
+                          <span>{listing.agency.phone}</span>
+                        </div>
+                      )}
+                      {listing.agency.billingEmail && (
+                        <div className="flex items-center space-x-2">
+                          <Mail className="h-4 w-4 text-muted-foreground" />
+                          <span>{listing.agency.billingEmail}</span>
+                        </div>
+                      )}
                     </div>
                   )}
 

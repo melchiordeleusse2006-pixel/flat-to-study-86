@@ -250,6 +250,12 @@ export type Database = {
       get_agency_business_info: {
         Args: { agency_id_param: string }
         Returns: {
+          agency_name: string
+        }[]
+      }
+      get_agency_contact_for_conversation: {
+        Args: { agency_id_param: string }
+        Returns: {
           agency_email: string
           agency_name: string
           agency_phone: string
@@ -267,9 +273,7 @@ export type Database = {
         }
         Returns: {
           address_line: string
-          agency_email: string
           agency_name: string
-          agency_phone: string
           amenities: Json
           availability_date: string
           bathrooms: number

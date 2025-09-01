@@ -89,10 +89,10 @@ export default function Favorites() {
             id: listing.id, // Using listing id as agency id since we don't have proper agency id
             ownerUserId: '', // Not available from this query
             name: listing.agency_name || '',
-            phone: listing.agency_phone || '',
+            phone: '', // Contact info no longer exposed for security
             website: undefined,
             logoUrl: undefined,
-            billingEmail: listing.agency_email || '',
+            billingEmail: '', // Contact info no longer exposed for security
             createdAt: listing.created_at
           }
         })) || [];

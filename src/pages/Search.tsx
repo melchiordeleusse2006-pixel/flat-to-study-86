@@ -27,42 +27,11 @@ export default function Search() {
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        // Query listings with agency info using a join
-        const { data, error } = await supabase
-          .from('listings')
-          .select(`
-            id,
-            title,
-            type,
-            description,
-            address_line,
-            city,
-            country,
-            lat,
-            lng,
-            rent_monthly_eur,
-            deposit_eur,
-            bills_included,
-            furnished,
-            bedrooms,
-            bathrooms,
-            floor,
-            size_sqm,
-            amenities,
-            availability_date,
-            images,
-            video_url,
-            created_at,
-            published_at,
-            status,
-            profiles!listings_agency_id_fkey (
-              agency_name,
-              phone,
-              email
-            )
-          `)
-          .eq('status', 'PUBLISHED')
-          .order('created_at', { ascending: false });
+        // Use the secure function to get listings with agency names only
+        const { data, error } = await supabase.rpc('get_listings_with_agency', {
+          p_limit: 100,
+          p_offset: 0
+        });
 
         if (error) {
           console.error('Error fetching listings:', error);
@@ -98,9 +67,9 @@ export default function Search() {
           agency: {
             id: item.id, // Using listing id as agency id for now
             ownerUserId: '',
-            name: item.profiles?.agency_name || 'Unknown Agency',
-            phone: item.profiles?.phone || '',
-            billingEmail: item.profiles?.email || '',
+            name: item.agency_name || 'Unknown Agency',
+            phone: '', // Contact info no longer exposed for security
+            billingEmail: '', // Contact info no longer exposed for security
             createdAt: item.created_at
           }
         }));
