@@ -30,6 +30,7 @@ export default function SimpleMapView({
 }: SimpleMapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
+  const initialBoundsSet = useRef(false);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
@@ -167,10 +168,11 @@ export default function SimpleMapView({
         markers.push(marker);
       });
 
-      // Fit bounds to show all markers
-      if (markers.length > 0) {
+      // Only fit bounds on initial load, not on every update
+      if (markers.length > 0 && !initialBoundsSet.current) {
         const group = L.featureGroup(markers);
         map.fitBounds(group.getBounds().pad(0.1));
+        initialBoundsSet.current = true;
       }
     }
 
