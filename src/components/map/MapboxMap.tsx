@@ -102,19 +102,24 @@ export default function MapboxMap({ listings, className, onListingClick }: Mapbo
         .setLngLat([listing.lng, listing.lat])
         .addTo(map.current!);
 
-      // Create popup
+      // Create popup with improved preview
       const popup = new mapboxgl.Popup({
         offset: 25,
         closeButton: false,
         className: 'listing-popup'
       }).setHTML(`
-        <div class="p-3 min-w-[200px]">
-          <h3 class="font-semibold text-sm mb-1">${listing.title}</h3>
+        <div class="p-4 min-w-[250px] cursor-pointer" onclick="window.open('/listing/${listing.id}', '_blank')">
+          ${listing.images[0] ? `<img src="${listing.images[0]}" alt="${listing.title}" class="w-full h-24 object-cover rounded-lg mb-2">` : ''}
+          <h3 class="font-semibold text-sm mb-1 line-clamp-2">${listing.title}</h3>
           <p class="text-xs text-gray-600 mb-2">${listing.addressLine}</p>
-          <div class="flex justify-between items-center">
-            <span class="font-bold text-primary">${price}/month</span>
-            <span class="text-xs text-gray-500">${listing.bedrooms} bed</span>
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-bold text-blue-600">${price}/month</span>
+            <span class="text-xs text-gray-500">${listing.bedrooms} bed • ${listing.bathrooms} bath</span>
           </div>
+          <div class="text-xs text-gray-500">
+            ${listing.furnished ? '• Furnished' : '• Unfurnished'} • ${listing.sizeSqm ? listing.sizeSqm + ' m²' : 'Size N/A'}
+          </div>
+          <div class="text-xs text-blue-600 mt-2 font-medium">Click to view details →</div>
         </div>
       `);
 
