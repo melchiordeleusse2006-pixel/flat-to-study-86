@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import ListingCard from '@/components/listings/ListingCard';
-import CompactFilters from '@/components/search/CompactFilters';
+import SearchFilters from '@/components/search/SearchFilters';
 import SimpleMapView from '@/components/map/SimpleMapView';
 import { Listing, SearchFilters as SearchFiltersType } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,7 +9,7 @@ import { geocodeAllListings } from '@/utils/geocoding';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search as SearchIcon, Grid, Map, ArrowUpDown } from 'lucide-react';
+import { Search as SearchIcon, Grid, Map, MapPin } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/hooks/use-toast';
 
@@ -268,38 +268,29 @@ export default function Search() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Compact Search Section */}
-      <div className="sticky top-16 z-40 bg-background/95 backdrop-blur border-b">
-        <div className="container py-4">
-          {/* Search Bar */}
-          <div className="relative mb-3">
-            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Search by location, university, or amenities..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-11"
-            />
-          </div>
-          
-          {/* Control Row */}
-          <div className="flex items-center gap-3 justify-between">
-            <div className="flex items-center gap-3">
-              {/* Filters Button */}
-              <CompactFilters 
-                filters={filters}
-                onFiltersChange={setFilters}
+      {/* Unified Search Section - No visual separation */}
+      <div className="sticky top-16 z-40 bg-background/95 backdrop-blur">
+        {/* Search Bar */}
+        <div className="container py-4 pb-2">
+          <div className="flex flex-col md:flex-row gap-4 items-center">
+            <div className="flex-1 relative">
+              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Search by location, university, or amenities..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 h-11"
               />
-              
-              {/* Sort Button */}
+            </div>
+            
+            {/* Sort Controls */}
+            <div className="flex items-center gap-3 min-w-0 flex-shrink-0">
+              <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by:</span>
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <ArrowUpDown className="h-4 w-4" />
-                    Sort
-                  </Button>
+                <SelectTrigger className="w-44">
+                  <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="z-50">
+                <SelectContent className="z-50 bg-popover border shadow-lg">
                   <SelectItem value="relevance">Relevance</SelectItem>
                   <SelectItem value="price-low">Price: Low to High</SelectItem>
                   <SelectItem value="price-high">Price: High to Low</SelectItem>
@@ -330,6 +321,15 @@ export default function Search() {
             </div>
           </div>
         </div>
+        
+        {/* Filters - Seamlessly connected with reduced spacing */}
+        <div className="border-b">
+          <SearchFilters 
+            filters={filters}
+            onFiltersChange={setFilters}
+            className="max-w-none"
+          />
+        </div>
       </div>
 
       {/* Main Content - Full width layout */}
@@ -341,7 +341,7 @@ export default function Search() {
       ) : viewMode === 'map' ? (
         /* Map View - Use absolute positioning to fill remaining space */
         isMobile ? (
-          <div className="absolute top-[var(--header-height)] left-0 right-0 bottom-0" style={{"--header-height": "170px"} as any}>
+          <div className="absolute top-[var(--header-height)] left-0 right-0 bottom-0" style={{"--header-height": "200px"} as any}>
             <SimpleMapView 
               listings={listings}
               onListingClick={handleListingClick}
@@ -352,7 +352,7 @@ export default function Search() {
             />
           </div>
         ) : (
-          <div className="absolute top-[170px] left-0 right-0 bottom-0 flex">
+          <div className="absolute top-[200px] left-0 right-0 bottom-0 flex">
             {/* Listings Panel - Left Side */}
             <div className="w-1/2 flex flex-col bg-background border-r">
               {/* Results count header */}
