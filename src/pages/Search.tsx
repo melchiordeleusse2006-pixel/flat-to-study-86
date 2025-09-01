@@ -268,8 +268,8 @@ export default function Search() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Search Bar - Sticky */}
-      <div className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur mt-4">
+      {/* Search Bar - Sticky below header */}
+      <div className="sticky top-16 z-40 border-b bg-background/95 backdrop-blur mt-4">
         <div className="container py-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
@@ -308,7 +308,7 @@ export default function Search() {
       </div>
 
       {/* Search Filters - Sticky below search bar */}
-      <div className="sticky top-[88px] z-30 border-b bg-background/95 backdrop-blur">
+      <div className="sticky top-[152px] z-30 border-b bg-background/95 backdrop-blur">
         <SearchFilters 
           filters={filters}
           onFiltersChange={setFilters}
@@ -317,7 +317,7 @@ export default function Search() {
       </div>
 
       {/* Sort Section - Sticky below filters */}
-      <div className="sticky top-[136px] z-20 border-b bg-background/95 backdrop-blur">
+      <div className="sticky top-[200px] z-20 border-b bg-background/95 backdrop-blur">
         <div className="container py-3">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
