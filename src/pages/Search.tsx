@@ -268,8 +268,8 @@ export default function Search() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Search Bar */}
-      <div className="border-b bg-background/95 backdrop-blur mt-4">
+      {/* Search Bar - Sticky */}
+      <div className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur mt-4">
         <div className="container py-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
@@ -283,19 +283,6 @@ export default function Search() {
             </div>
             
             <div className="flex items-center space-x-2">
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-40">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="relevance">Relevance</SelectItem>
-                  <SelectItem value="price-low">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high">Price: High to Low</SelectItem>
-                  <SelectItem value="newest">Newest First</SelectItem>
-                  <SelectItem value="distance">Distance</SelectItem>
-                </SelectContent>
-              </Select>
-
               {/* View Mode Toggle */}
               <div className="flex rounded-lg border">
                 <Button
@@ -317,23 +304,39 @@ export default function Search() {
               </div>
             </div>
           </div>
-          
-          <div className="flex items-center justify-between mt-4">
-            <p className="text-sm text-muted-foreground">
-              {viewMode === 'map' ? `${visibleListings.length} properties in current view` : `${listings.length} properties found`}
-            </p>
-          </div>
         </div>
       </div>
 
-      {/* Search Filters - Always visible under search bar */}
-      <div className="border-b bg-background/95 backdrop-blur">
-        <div className="container py-4">
-          <SearchFilters 
-            filters={filters}
-            onFiltersChange={setFilters}
-            className="max-w-none"
-          />
+      {/* Search Filters - Sticky below search bar */}
+      <div className="sticky top-[88px] z-30 border-b bg-background/95 backdrop-blur">
+        <SearchFilters 
+          filters={filters}
+          onFiltersChange={setFilters}
+          className="max-w-none"
+        />
+      </div>
+
+      {/* Sort Section - Sticky below filters */}
+      <div className="sticky top-[136px] z-20 border-b bg-background/95 backdrop-blur">
+        <div className="container py-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              {viewMode === 'map' ? `${visibleListings.length} properties in current view` : `${listings.length} properties found`}
+            </p>
+            
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="z-[9999]">
+                <SelectItem value="relevance">Relevance</SelectItem>
+                <SelectItem value="price-low">Price: Low to High</SelectItem>
+                <SelectItem value="price-high">Price: High to Low</SelectItem>
+                <SelectItem value="newest">Newest First</SelectItem>
+                <SelectItem value="distance">Distance</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
