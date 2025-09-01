@@ -25,14 +25,14 @@ export default function Header() {
   }, []);
 
   return (
-    <header className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+    <header className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
       isScrolled 
         ? 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b' 
         : 'bg-transparent'
     }`}>
       <div className="container flex h-16 items-center justify-between">
-        {/* Left section with Logo and Language */}
-        <div className="flex items-center space-x-4">
+        {/* Left section with Logo and Language - Fixed positioning */}
+        <div className="flex items-center space-x-4 min-w-0 flex-shrink-0">
           <Link to="/" className="flex items-center space-x-2">
             <div className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300 ${
               isScrolled ? 'hero-gradient' : 'bg-white/20'
@@ -92,7 +92,15 @@ export default function Header() {
                       ? 'text-foreground hover:text-foreground/80' 
                       : 'text-white hover:text-white/80 hover:bg-white/10'
                   }`}>
-                    <User className="h-4 w-4 mr-2" />
+                    {profile?.avatar_url ? (
+                      <img 
+                        src={profile.avatar_url} 
+                        alt="Profile" 
+                        className="h-6 w-6 rounded-full object-cover mr-2" 
+                      />
+                    ) : (
+                      <User className="h-4 w-4 mr-2" />
+                    )}
                     {profile?.full_name || user.email?.split('@')[0] || 'Account'}
                   </Button>
                 </DropdownMenuTrigger>

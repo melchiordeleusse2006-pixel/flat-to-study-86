@@ -13,6 +13,7 @@ interface Profile {
   agency_name: string | null;
   company_size: string | null;
   description: string | null;
+  avatar_url: string | null;
 }
 
 interface AuthContextType {
