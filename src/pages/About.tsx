@@ -1,9 +1,21 @@
 import Header from '@/components/layout/Header';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
 export default function About() {
   return <div className="min-h-screen bg-background">
       <Header />
       
       <main className="container mx-auto px-4 py-16">
+        <div className="mb-6">
+          <Link to="/">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back Home
+            </Button>
+          </Link>
+        </div>
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold text-center mb-8">About Us</h1>
           
@@ -34,9 +46,17 @@ export default function About() {
             
             <div className="bg-primary/5 p-8 rounded-lg border border-primary/20 mt-8">
               <h2 className="text-2xl font-semibold mb-4">Want to partner with us?</h2>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground mb-6">
                 Write at <span className="font-medium text-foreground">bhousingmilano@gmail.com</span>
               </p>
+              <div className="flex justify-center">
+                <Link to="/">
+                  <Button variant="outline">
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back Home
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
