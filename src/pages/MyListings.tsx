@@ -230,7 +230,12 @@ export default function MyListings() {
                       <Eye className="h-4 w-4 mr-1" />
                       View
                     </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => navigate(`/edit-listing/${listing.id}`)}
+                    >
                       <Edit className="h-4 w-4 mr-1" />
                       Edit
                     </Button>

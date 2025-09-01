@@ -20,6 +20,7 @@ import SignupPrivate from "./pages/SignupPrivate";
 import SignupStudent from "./pages/SignupStudent";
 import StudentHome from "./pages/StudentHome";
 import SellSideHome from "./pages/SellSideHome";
+import EditListing from "./pages/EditListing";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/signup/student" element={<SignupStudent />} />
           <Route path="/about" element={<About />} />
           <Route path="/create-listing" element={<CreateListing />} />
+          <Route path="/edit-listing/:id" element={<EditListing />} />
           <Route path="/my-listings" element={<MyListings />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/favorites" element={<Favorites />} />
