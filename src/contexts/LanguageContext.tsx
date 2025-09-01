@@ -30,6 +30,19 @@ const translations = {
     // Languages
     'language.english': 'English',
     'language.italian': 'Italian',
+    
+    // About Page
+    'about.title': 'About Us',
+    'about.backHome': 'Back Home',
+    'about.intro1': 'Tired of the low quality of real estate services in Milan, we decided to build a platform to make it safer and easier for students who move to University to find a place to live.',
+    'about.intro2': 'We carefully select the real estate companies and landowners who share their announcements on this platform based on various criteria–quality-price ratio, responsiveness, comfort–in order to reduce the stress of students as much as possible. We also make sure that only students can make purchases on this platform in order to protect landowners. Enjoy the website and good luck finding your perfect home!',
+    'about.founders': 'Melchior and Teo',
+    'about.contactInfo': 'Contact Information',
+    'about.email': 'Email:',
+    'about.partnerTitle': 'Want to partner with us?',
+    'about.partnerText': 'Write at',
+    'about.partnerOr': 'or schedule a meeting right now',
+    'about.scheduleMeeting': 'Schedule Meeting',
   },
   it: {
     // Header
@@ -50,6 +63,19 @@ const translations = {
     // Languages
     'language.english': 'Inglese',
     'language.italian': 'Italiano',
+    
+    // About Page
+    'about.title': 'Chi Siamo',
+    'about.backHome': 'Torna alla Home',
+    'about.intro1': 'Stanchi della bassa qualità dei servizi immobiliari a Milano, abbiamo deciso di costruire una piattaforma per rendere più sicuro e facile per gli studenti che si trasferiscono all\'Università trovare un posto dove vivere.',
+    'about.intro2': 'Selezioniamo attentamente le società immobiliari e i proprietari di case che condividono i loro annunci su questa piattaforma basandoci su vari criteri: rapporto qualità-prezzo, reattività, comfort, al fine di ridurre il più possibile lo stress degli studenti. Ci assicuriamo anche che solo gli studenti possano effettuare acquisti su questa piattaforma per proteggere i proprietari. Godetevi il sito web e buona fortuna nel trovare la vostra casa perfetta!',
+    'about.founders': 'Melchior e Teo',
+    'about.contactInfo': 'Informazioni di Contatto',
+    'about.email': 'Email:',
+    'about.partnerTitle': 'Vuoi collaborare con noi?',
+    'about.partnerText': 'Scrivi a',
+    'about.partnerOr': 'o programma un incontro subito',
+    'about.scheduleMeeting': 'Programma Incontro',
   }
 };
 
