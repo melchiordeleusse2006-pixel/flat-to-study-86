@@ -12,12 +12,14 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search as SearchIcon, Grid, Map, MapPin } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from '@/hooks/use-toast';
 
 type ViewMode = 'grid' | 'map';
 
 export default function Search() {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   const [listings, setListings] = useState<Listing[]>([]);
   const [allListings, setAllListings] = useState<Listing[]>([]);
   const [filters, setFilters] = useState<SearchFiltersType>({});
@@ -277,7 +279,7 @@ export default function Search() {
             <div className="relative">
               <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder="Search by location, university, or amenities..."
+                placeholder={t('search.placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 h-11"
@@ -288,7 +290,7 @@ export default function Search() {
               <div className="flex-1 relative">
                 <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Search by location, university, or amenities..."
+                  placeholder={t('search.placeholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 h-11"
@@ -297,17 +299,17 @@ export default function Search() {
               
               {/* Sort Controls */}
               <div className="flex items-center gap-3 min-w-0 flex-shrink-0">
-                <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by:</span>
+                <span className="text-sm text-muted-foreground whitespace-nowrap">{t('search.sortBy')}</span>
                 <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger className="w-44">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="z-50 bg-popover border shadow-lg">
-                    <SelectItem value="relevance">Relevance</SelectItem>
-                    <SelectItem value="price-low">Price: Low to High</SelectItem>
-                    <SelectItem value="price-high">Price: High to Low</SelectItem>
-                    <SelectItem value="newest">Newest First</SelectItem>
-                    <SelectItem value="distance">Distance</SelectItem>
+                    <SelectItem value="relevance">{t('search.relevance')}</SelectItem>
+                    <SelectItem value="price-low">{t('search.priceLowHigh')}</SelectItem>
+                    <SelectItem value="price-high">{t('search.priceHighLow')}</SelectItem>
+                    <SelectItem value="newest">{t('search.newest')}</SelectItem>
+                    <SelectItem value="distance">{t('search.distance')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -360,7 +362,7 @@ export default function Search() {
       {loading ? (
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          <span className="ml-2 text-muted-foreground">Loading listings...</span>
+          <span className="ml-2 text-muted-foreground">{t('search.loading')}</span>
         </div>
       ) : viewMode === 'map' ? (
         /* Map View - Use absolute positioning to fill remaining space */
@@ -382,7 +384,7 @@ export default function Search() {
               {/* Results count header */}
               <div className="flex items-center justify-between px-4 py-3 bg-background/50 flex-shrink-0">
                 <p className="text-sm text-muted-foreground">
-                  {visibleListings.length} properties in current view
+                  {visibleListings.length} {t('search.propertiesInView')}
                 </p>
               </div>
               
@@ -405,8 +407,8 @@ export default function Search() {
                   
                   {visibleListings.length === 0 && (
                     <div className="text-center py-8">
-                      <p className="text-muted-foreground">No properties in current view.</p>
-                      <p className="text-sm text-muted-foreground mt-1">Move the map to see listings in different areas</p>
+                      <p className="text-muted-foreground">{t('search.noPropertiesView')}</p>
+                      <p className="text-sm text-muted-foreground mt-1">{t('search.moveMap')}</p>
                     </div>
                   )}
                 </div>
@@ -441,13 +443,13 @@ export default function Search() {
           
             {listings.length === 0 && (
               <div className="col-span-full text-center py-12">
-                <p className="text-muted-foreground">No properties match your search criteria.</p>
+                <p className="text-muted-foreground">{t('search.noResults')}</p>
                 <Button 
                   variant="outline" 
                   onClick={() => setFilters({})}
                   className="mt-4"
                 >
-                  Clear Filters
+                  {t('search.clearFilters')}
                 </Button>
               </div>
             )}
