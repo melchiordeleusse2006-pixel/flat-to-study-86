@@ -9,9 +9,11 @@ import { Logo } from '@/components/ui/logo';
 import { useAuth } from '@/hooks/useAuth';
 import { useUnreadMessagesCount } from '@/hooks/useUnreadMessagesCount';
 const Index = () => {
-  const { user, profile } = useAuth();
+  const {
+    user,
+    profile
+  } = useAuth();
   const unreadCount = useUnreadMessagesCount();
-  
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
       style: 'currency',
@@ -19,11 +21,9 @@ const Index = () => {
       maximumFractionDigits: 0
     }).format(price);
   };
-
   const isStudent = profile?.user_type === 'student' || profile?.user_type === 'private';
   const isRealtor = profile?.user_type === 'agency';
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Header />
       
       {/* Hero Section - Full viewport height */}
@@ -33,12 +33,7 @@ const Index = () => {
             {user && profile ? `Welcome back, ${profile.full_name || 'User'}!` : 'Find Your Perfect Student Home in Milan'}
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-white/90 max-w-3xl mx-auto">
-            {user && profile 
-              ? (isStudent 
-                  ? 'Ready to find your perfect student accommodation?' 
-                  : 'Manage your listings and connect with potential tenants.')
-              : 'Connecting students with verified housing near Bocconi University and other top Milan universities. Trusted by agencies, loved by students.'
-            }
+            {user && profile ? isStudent ? 'Ready to find your perfect student accommodation?' : 'Manage your listings and connect with potential tenants.' : 'Connecting students with verified housing near Bocconi University and other top Milan universities. Trusted by agencies, loved by students.'}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
@@ -62,10 +57,8 @@ const Index = () => {
       </section>
 
       {/* Conditional Content Based on User Type */}
-      {user && profile ? (
-        <>
-          {isStudent ? (
-            <>
+      {user && profile ? <>
+          {isStudent ? <>
               {/* Universities Section for Students */}
               <section className="py-16 px-4 bg-muted/30">
                 <div className="container mx-auto">
@@ -100,8 +93,7 @@ const Index = () => {
                   
                   <div className="relative mb-8">
                     <div className="flex gap-8 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
-                      {mockListings.slice(0, 6).map(listing => (
-                        <Card key={listing.id} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden hover:shadow-lg transition-shadow snap-start">
+                      {mockListings.slice(0, 6).map(listing => <Card key={listing.id} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden hover:shadow-lg transition-shadow snap-start">
                           <div className="relative h-48">
                             <img src={listing.images[0] || '/placeholder.svg'} alt={listing.title} className="w-full h-full object-cover" />
                             <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
@@ -124,8 +116,7 @@ const Index = () => {
                               </Link>
                             </div>
                           </CardContent>
-                        </Card>
-                      ))}
+                        </Card>)}
                     </div>
                   </div>
                   
@@ -156,11 +147,9 @@ const Index = () => {
                           <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
                             <MessageCircle className="h-8 w-8 text-primary" />
                           </div>
-                          {unreadCount > 0 && (
-                            <Badge className="absolute top-4 right-4 bg-destructive text-destructive-foreground">
+                          {unreadCount > 0 && <Badge className="absolute top-4 right-4 bg-destructive text-destructive-foreground">
                               {unreadCount}
-                            </Badge>
-                          )}
+                            </Badge>}
                           <h3 className="text-xl font-semibold mb-3">Messages</h3>
                           <p className="text-muted-foreground">
                             Chat with landlords and agencies
@@ -211,9 +200,7 @@ const Index = () => {
                   </div>
                 </div>
               </section>
-            </>
-          ) : isRealtor ? (
-            <>
+            </> : isRealtor ? <>
               {/* Realtor Dashboard Content */}
               <section className="py-16 px-4 bg-muted/30">
                 <div className="container mx-auto">
@@ -259,11 +246,9 @@ const Index = () => {
                           <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
                             <MessageCircle className="h-8 w-8 text-primary" />
                           </div>
-                          {unreadCount > 0 && (
-                            <Badge className="absolute top-4 right-4 bg-destructive text-destructive-foreground">
+                          {unreadCount > 0 && <Badge className="absolute top-4 right-4 bg-destructive text-destructive-foreground">
                               {unreadCount}
-                            </Badge>
-                          )}
+                            </Badge>}
                           <h3 className="text-xl font-semibold mb-3">Messages</h3>
                           <p className="text-muted-foreground">
                             Chat with potential tenants
@@ -334,11 +319,8 @@ const Index = () => {
                   </div>
                 </div>
               </section>
-            </>
-          ) : null}
-        </>
-      ) : (
-        <>
+            </> : null}
+        </> : <>
           {/* Default content for non-authenticated users */}
           {/* Universities Section */}
           <section className="py-16 px-4 bg-muted/30">
@@ -374,8 +356,7 @@ const Index = () => {
               
               <div className="relative mb-8">
                 <div className="flex gap-8 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
-                  {mockListings.slice(0, 6).map(listing => (
-                    <Card key={listing.id} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden hover:shadow-lg transition-shadow snap-start">
+                  {mockListings.slice(0, 6).map(listing => <Card key={listing.id} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden hover:shadow-lg transition-shadow snap-start">
                       <div className="relative h-48">
                         <img src={listing.images[0] || '/placeholder.svg'} alt={listing.title} className="w-full h-full object-cover" />
                         <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
@@ -398,8 +379,7 @@ const Index = () => {
                           </Link>
                         </div>
                       </CardContent>
-                    </Card>
-                  ))}
+                    </Card>)}
                 </div>
               </div>
               
@@ -429,9 +409,7 @@ const Index = () => {
                     <Shield className="h-8 w-8 text-primary" />
                   </div>
                   <h3 className="text-xl font-semibold mb-3">Verified Listings</h3>
-                  <p className="text-muted-foreground">
-                    All properties are verified by our team. Only work with trusted agencies and landlords.
-                  </p>
+                  <p className="text-muted-foreground">All properties are verified by our team. We only work with trusted agencies and landlords.</p>
                 </div>
                 
                 <div className="text-center">
@@ -449,26 +427,20 @@ const Index = () => {
                     <Heart className="h-8 w-8 text-primary" />
                   </div>
                   <h3 className="text-xl font-semibold mb-3">Easy Process</h3>
-                  <p className="text-muted-foreground">
-                    Simple search, save favorites, request visits, and connect directly with agencies.
-                  </p>
+                  <p className="text-muted-foreground">We believe that simplicity is your greatest tool your housing search. Less buttons, more efficiency.</p>
                 </div>
               </div>
             </div>
           </section>
-        </>
-      )}
+        </>}
 
       {/* CTA Section - Only for non-authenticated users or students */}
-      {(!user || !profile || isStudent) && (
-        <section className="py-20 px-4 hero-gradient text-white">
+      {(!user || !profile || isStudent) && <section className="py-20 px-4 hero-gradient text-white">
           <div className="container mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
               Ready to Find Your Student Home?
             </h2>
-            <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
-              Join thousands of students who have found their perfect accommodation through flat2study
-            </p>
+            <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">Join the thousands of students who have found their perfect accommodation through flat2study.</p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
               <Link to="/search" className="flex-1">
@@ -480,8 +452,7 @@ const Index = () => {
               
             </div>
           </div>
-        </section>
-      )}
+        </section>}
 
       {/* Footer */}
       <footer className="py-8 px-4 border-t">
@@ -507,8 +478,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
