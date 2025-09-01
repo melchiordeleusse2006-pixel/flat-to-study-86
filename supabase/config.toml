@@ -1,1 +1,10 @@
 project_id = "txuptwgqziperdffnuqq"
+
+[functions.get-google-maps-key]
+verify_jwt = false
+
+[functions.get-mapbox-token]
+verify_jwt = false
+
+[functions.send-message-notification]
+verify_jwt = false
