@@ -54,8 +54,8 @@ All colors MUST be HSL.
     --pending: 35 85% 55%;       /* Pending status */
     --expired: 0 0% 50%;         /* Expired status */
     
-    /* Premium Gradients - Deep blue to darker blue bottom right */
-    --gradient-hero: linear-gradient(135deg, hsl(231 87% 45%), hsl(250 75% 30%));
+    /* Premium Gradients - Deep marine blue like ocean depths */
+    --gradient-hero: linear-gradient(135deg, hsl(231 87% 45%), hsl(220 95% 15%));
     --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 15% 98%));
     --gradient-overlay: linear-gradient(180deg, transparent, hsl(0 0% 0% / 0.6));
     
