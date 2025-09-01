@@ -159,7 +159,7 @@ export const mockListings: Listing[] = [
     id: '4',
     agency: agencies[1],
     title: 'Student Flat near Politecnico',
-    type: 'flat',
+    type: 'apartment',
     description: 'Spacious 2-bedroom flat perfect for sharing with another student. Close to Politecnico di Milano campus with excellent transport links. Includes parking space.',
     addressLine: 'Via Bonardi 9',
     city: 'Milan',

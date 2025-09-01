@@ -1,6 +1,6 @@
 export type UserRole = 'STUDENT' | 'AGENCY' | 'ADMIN';
 
-export type ListingType = 'room' | 'studio' | 'apartment' | 'flat';
+export type ListingType = 'room' | 'studio' | 'apartment';
 
 export type ListingStatus = 'DRAFT' | 'PUBLISHED' | 'EXPIRED' | 'ARCHIVED';
 

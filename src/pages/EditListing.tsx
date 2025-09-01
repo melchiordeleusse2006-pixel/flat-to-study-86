@@ -333,7 +333,6 @@ export default function EditListing() {
                       <SelectItem value="room">Room</SelectItem>
                       <SelectItem value="studio">Studio</SelectItem>
                       <SelectItem value="apartment">Apartment</SelectItem>
-                      <SelectItem value="flat">Flat</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

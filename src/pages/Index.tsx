@@ -326,17 +326,11 @@ const Index = () => {
               <section className="py-16 px-4 bg-muted/30">
                 <div className="container mx-auto text-center">
                   <h2 className="text-3xl font-bold mb-4">Need Help?</h2>
-                  <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
-                    Our team is here to help you succeed. Get in touch with any questions about listing your properties.
-                  </p>
-                  
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-                    <Button size="lg" className="flex-1">
-                      Contact Support
-                    </Button>
-                    <Button size="lg" variant="outline" className="flex-1">
-                      Schedule Call
-                    </Button>
+                  <div className="max-w-2xl mx-auto text-lg space-y-4">
+                    <p className="font-medium">Contact us at teodor.cosmovici@studbocconi.it</p>
+                    <p className="text-muted-foreground">
+                      We are here to help you with anything you need. We answer in 24 hours or less.
+                    </p>
                   </div>
                 </div>
               </section>

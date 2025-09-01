@@ -24,8 +24,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
   const listingTypes: { value: ListingType; label: string }[] = [
     { value: 'room', label: 'Room' },
     { value: 'studio', label: 'Studio' },
-    { value: 'apartment', label: 'Apartment' },
-    { value: 'flat', label: 'Flat' }
+    { value: 'apartment', label: 'Apartment' }
   ];
 
   const handleTypeChange = (type: ListingType, checked: boolean) => {
