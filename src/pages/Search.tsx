@@ -5,11 +5,13 @@ import SearchFilters from '@/components/search/SearchFilters';
 import SimpleMapView from '@/components/map/SimpleMapView';
 import { Listing, SearchFilters as SearchFiltersType } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
+import { geocodeAllListings } from '@/utils/geocoding';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search as SearchIcon, Grid, Map } from 'lucide-react';
+import { Search as SearchIcon, Grid, Map, MapPin } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { toast } from '@/hooks/use-toast';
 
 type ViewMode = 'grid' | 'map';
 
@@ -170,6 +172,36 @@ export default function Search() {
     window.open(`/listing/${listingId}`, '_blank');
   };
 
+  const handleGeocodeAll = async () => {
+    try {
+      toast({
+        title: "Geocoding Started",
+        description: "Updating coordinates for all listings..."
+      });
+      
+      const result = await geocodeAllListings();
+      console.log('Geocoding results:', result);
+      
+      toast({
+        title: "Geocoding Complete",
+        description: `Updated coordinates for ${result.results.filter((r: any) => r.success).length} listings`
+      });
+      
+      // Refresh listings after geocoding
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Geocoding error:', error);
+      toast({
+        title: "Geocoding Failed",
+        description: "Failed to update coordinates",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -228,6 +260,15 @@ export default function Search() {
             <p className="text-sm text-muted-foreground">
               {listings.length} properties found
             </p>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleGeocodeAll}
+              className="flex items-center gap-2"
+            >
+              <MapPin className="h-4 w-4" />
+              Fix Map Coordinates
+            </Button>
           </div>
         </div>
       </div>
