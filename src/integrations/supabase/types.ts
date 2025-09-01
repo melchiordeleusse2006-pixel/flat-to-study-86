@@ -247,6 +247,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      agency_has_published_listings: {
+        Args: { agency_profile_id: string }
+        Returns: boolean
+      }
       get_agency_business_info: {
         Args: { agency_id_param: string }
         Returns: {
