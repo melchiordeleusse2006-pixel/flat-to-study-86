@@ -9,16 +9,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search as SearchIcon, Grid, Map } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type ViewMode = 'grid' | 'map';
 
 export default function Search() {
+  const isMobile = useIsMobile();
   const [listings, setListings] = useState<Listing[]>([]);
   const [allListings, setAllListings] = useState<Listing[]>([]);
   const [filters, setFilters] = useState<SearchFiltersType>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('relevance');
-  const [viewMode, setViewMode] = useState<ViewMode>('map');
+  const [viewMode, setViewMode] = useState<ViewMode>(isMobile ? 'grid' : 'map');
   const [loading, setLoading] = useState(true);
 
   // Fetch listings from database
@@ -282,44 +284,54 @@ export default function Search() {
                 <span className="ml-2 text-muted-foreground">Loading listings...</span>
               </div>
             ) : viewMode === 'map' ? (
-              /* Map View - 50/50 split */
-              <div className="flex gap-4 h-[calc(100vh-200px)]">
-                {/* Listings Panel - Left Side */}
-                <div className="w-1/2 overflow-y-auto">
-                  <div className="grid gap-4 pr-2">
-                    {listings.map((listing) => (
-                      <ListingCard
-                        key={listing.id}
-                        listing={listing}
-                        onClick={() => handleListingClick(listing.id)}
-                        className="cursor-pointer"
-                      />
-                    ))}
-                    
-                    {listings.length === 0 && (
-                      <div className="text-center py-12">
-                        <p className="text-muted-foreground">No properties match your search criteria.</p>
-                        <Button 
-                          variant="outline" 
-                          onClick={() => setFilters({})}
-                          className="mt-4"
-                        >
-                          Clear Filters
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                {/* Map - Right Side */}
-                <div className="w-1/2">
+              /* Map View - Mobile shows only map, Desktop shows 50/50 split */
+              isMobile ? (
+                <div className="h-[calc(100vh-200px)]">
                   <MapboxMap 
                     listings={listings}
                     onListingClick={handleListingClick}
                     className="h-full"
                   />
                 </div>
-              </div>
+              ) : (
+                <div className="flex gap-4 h-[calc(100vh-200px)]">
+                  {/* Listings Panel - Left Side */}
+                  <div className="w-1/2 overflow-y-auto">
+                    <div className="grid gap-4 pr-2">
+                      {listings.map((listing) => (
+                        <ListingCard
+                          key={listing.id}
+                          listing={listing}
+                          onClick={() => handleListingClick(listing.id)}
+                          className="cursor-pointer"
+                        />
+                      ))}
+                      
+                      {listings.length === 0 && (
+                        <div className="text-center py-12">
+                          <p className="text-muted-foreground">No properties match your search criteria.</p>
+                          <Button 
+                            variant="outline" 
+                            onClick={() => setFilters({})}
+                            className="mt-4"
+                          >
+                            Clear Filters
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Map - Right Side */}
+                  <div className="w-1/2">
+                    <MapboxMap 
+                      listings={listings}
+                      onListingClick={handleListingClick}
+                      className="h-full"
+                    />
+                  </div>
+                </div>
+              )
             ) : (
               /* Grid View */
               <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
