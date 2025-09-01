@@ -10,7 +10,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export default function Auth() {
   const navigate = useNavigate();
-  const { signIn, resetPassword, user, loading: authLoading } = useAuth();
+  const { signIn, resetPassword, user, profile, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -21,16 +21,19 @@ export default function Auth() {
   const [signInEmail, setSignInEmail] = useState('');
   const [signInPassword, setSignInPassword] = useState('');
 
-  // Redirect authenticated users to home (only after auth is fully loaded)
+  // Redirect authenticated users to their appropriate home page
   useEffect(() => {
-    console.log('Auth page - authLoading:', authLoading, 'user:', !!user);
-    if (!authLoading && user) {
-      console.log('Redirecting authenticated user to home');
-      navigate('/', { replace: true });
+    console.log('Auth page - authLoading:', authLoading, 'user:', !!user, 'profile:', profile?.user_type);
+    if (!authLoading && user && profile) {
+      console.log('Redirecting authenticated user to appropriate home');
+      // Redirect to appropriate home based on user type
+      const redirectPath = profile.user_type === 'student' ? '/student-home' : 
+                          profile.user_type === 'agency' ? '/sell-side-home' : '/';
+      navigate(redirectPath, { replace: true });
     }
-  }, [user, authLoading, navigate]);
+  }, [user, profile, authLoading, navigate]);
 
-  // Show loading while auth is initializing, but with a timeout
+  // Show loading while auth is initializing
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
