@@ -17,7 +17,10 @@ const SellSideHome = () => {
 
   useEffect(() => {
     const fetchListingsCount = async () => {
-      if (!profile?.user_id) return;
+      if (!profile?.user_id) {
+        setLoading(false);
+        return;
+      }
       
       try {
         const { data, error } = await supabase
