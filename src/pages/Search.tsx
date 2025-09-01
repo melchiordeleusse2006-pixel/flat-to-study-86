@@ -359,7 +359,7 @@ export default function Search() {
       ) : viewMode === 'map' ? (
         /* Map View - Use absolute positioning to fill remaining space */
         isMobile ? (
-          <div className="absolute top-[var(--header-height)] left-0 right-0 bottom-0" style={{"--header-height": "160px"} as any}>
+          <div className="absolute top-[var(--header-height)] left-0 right-0 bottom-0" style={{"--header-height": "180px"} as any}>
             <SimpleMapView 
               listings={listings}
               onListingClick={handleListingClick}
