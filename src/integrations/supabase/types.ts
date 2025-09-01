@@ -205,6 +205,7 @@ export type Database = {
           agency_name: string | null
           company_size: string | null
           created_at: string
+          description: string | null
           email: string | null
           full_name: string | null
           id: string
@@ -218,6 +219,7 @@ export type Database = {
           agency_name?: string | null
           company_size?: string | null
           created_at?: string
+          description?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
@@ -231,6 +233,7 @@ export type Database = {
           agency_name?: string | null
           company_size?: string | null
           created_at?: string
+          description?: string | null
           email?: string | null
           full_name?: string | null
           id?: string

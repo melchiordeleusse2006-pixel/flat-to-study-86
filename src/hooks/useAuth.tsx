@@ -12,6 +12,7 @@ interface Profile {
   university: string | null;
   agency_name: string | null;
   company_size: string | null;
+  description: string | null;
 }
 
 interface AuthContextType {
