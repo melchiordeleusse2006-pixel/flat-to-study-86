@@ -2,23 +2,11 @@ import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Search, Users, Shield, MapPin, Heart } from 'lucide-react';
 import { universities, mockListings } from '@/data/mockData';
-import { useAuth } from '@/hooks/useAuth';
 import { Logo } from '@/components/ui/logo';
 const Index = () => {
-  const { user, profile, loading } = useAuth();
-
-  // Redirect authenticated users to appropriate homepage
-  if (!loading && user && profile) {
-    if (profile.user_type === 'student') {
-      return <Navigate to="/student-home" replace />;
-    } else if (profile.user_type === 'agency' || profile.user_type === 'admin') {
-      return <Navigate to="/sell-side-home" replace />;
-    }
-  }
-
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
       style: 'currency',
