@@ -34,6 +34,11 @@ const Index = () => {
                 Find a Place
               </Button>
             </Link>
+            <Link to="/get-started" className="flex-1">
+              <Button size="lg" variant="outline" className="w-full bg-white/10 text-white border-white hover:bg-white hover:text-primary font-semibold">
+                Get Started
+              </Button>
+            </Link>
             
           </div>
         </div>
@@ -174,6 +179,11 @@ const Index = () => {
               <Button size="lg" className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
                 <Search className="mr-2 h-5 w-5" />
                 Start Searching
+              </Button>
+            </Link>
+            <Link to="/get-started" className="flex-1">
+              <Button size="lg" variant="outline" className="w-full bg-white/10 text-white border-white hover:bg-white hover:text-primary font-semibold">
+                Get Started
               </Button>
             </Link>
           </div>

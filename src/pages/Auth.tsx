@@ -143,7 +143,7 @@ export default function Auth() {
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="signin">Sign In</TabsTrigger>
+                <TabsTrigger value="signin">Log In</TabsTrigger>
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>
               </TabsList>
 
@@ -188,7 +188,7 @@ export default function Auth() {
 
                     <Button type="submit" className="w-full" disabled={loading}>
                       {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Sign In
+                      Log In
                     </Button>
 
                     <div className="text-center">
@@ -238,7 +238,7 @@ export default function Auth() {
                           }}
                           className="text-sm text-muted-foreground hover:underline"
                         >
-                          Back to sign in
+                          Back to log in
                         </button>
                       </div>
                     </form>
