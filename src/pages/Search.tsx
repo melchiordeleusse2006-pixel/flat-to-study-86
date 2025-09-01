@@ -354,21 +354,21 @@ export default function Search() {
             ) : viewMode === 'map' ? (
               /* Map View - Mobile shows only map, Desktop shows 50/50 split */
               isMobile ? (
-                <div className="h-[calc(100vh-200px)]">
+                <div className="fixed top-[248px] left-0 right-0 bottom-0 z-10">
                   <SimpleMapView 
                     listings={listings}
                     onListingClick={handleListingClick}
                     hoveredListingId={hoveredListingId}
                     onListingHover={setHoveredListingId}
                     onBoundsChange={handleMapBoundsChange}
-                    className="h-full"
+                    className="h-full w-full"
                   />
                 </div>
               ) : (
-                <div className="flex gap-4 h-[calc(100vh-200px)]">
+                <div className="flex gap-4 fixed top-[248px] left-0 right-0 bottom-0 z-10">
                   {/* Listings Panel - Left Side */}
-                  <div className="w-1/2 overflow-y-auto">
-                      <div className="grid gap-4 pr-2">
+                  <div className="w-1/2 overflow-y-auto bg-background border-r px-4">
+                      <div className="grid gap-4 pr-2 py-4">
                         {visibleListings.map((listing) => (
                           <div
                             key={listing.id}
@@ -400,7 +400,7 @@ export default function Search() {
                       hoveredListingId={hoveredListingId}
                       onListingHover={setHoveredListingId}
                       onBoundsChange={handleMapBoundsChange}
-                      className="h-full"
+                      className="h-full w-full"
                     />
                   </div>
                 </div>
