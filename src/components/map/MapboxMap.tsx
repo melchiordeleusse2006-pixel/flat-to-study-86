@@ -203,101 +203,135 @@ const MapboxMap = ({ listings, className, onListingClick }: MapboxMapProps) => {
   useEffect(() => {
     if (!map.current || mapError) return;
 
-    // Clear existing markers
-    markers.current.forEach(marker => marker.remove());
-    markers.current = [];
+    console.log('🗺️ Adding markers for listings:', listings.length);
 
-    if (listings.length === 0) return;
+    // Wait for map to be loaded
+    const addMarkers = () => {
+      // Clear existing markers
+      markers.current.forEach(marker => marker.remove());
+      markers.current = [];
 
-    // Add new markers
-    const bounds = new mapboxgl.LngLatBounds();
+      if (listings.length === 0) {
+        console.log('❌ No listings to display');
+        return;
+      }
 
-    listings.forEach((listing) => {
-      if (!listing.lat || !listing.lng || !map.current) return;
+      // Add new markers
+      const bounds = new mapboxgl.LngLatBounds();
 
-      // Create custom marker element
-      const markerElement = document.createElement('div');
-      markerElement.className = 'mapbox-marker';
-      markerElement.style.cssText = `
-        width: 32px;
-        height: 32px;
-        background: hsl(var(--primary));
-        border: 2px solid white;
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: bold;
-        color: white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        transition: transform 0.2s ease;
-      `;
-      
-      // Add price to marker
-      const price = new Intl.NumberFormat('en-EU', {
-        style: 'currency',
-        currency: 'EUR',
-        maximumFractionDigits: 0
-      }).format(listing.rentMonthlyEUR);
-      
-      markerElement.innerHTML = `€${Math.round(listing.rentMonthlyEUR / 100)}k`;
-
-      // Add hover effect
-      markerElement.addEventListener('mouseenter', () => {
-        markerElement.style.transform = 'scale(1.1)';
-      });
-      markerElement.addEventListener('mouseleave', () => {
-        markerElement.style.transform = 'scale(1)';
-      });
-
-      // Create marker
-      const marker = new mapboxgl.Marker(markerElement)
-        .setLngLat([listing.lng, listing.lat])
-        .addTo(map.current);
-
-      // Create popup with improved preview
-      const popup = new mapboxgl.Popup({
-        offset: 25,
-        closeButton: false,
-        className: 'listing-popup'
-      }).setHTML(`
-        <div class="p-4 min-w-[250px] cursor-pointer" onclick="window.open('/listing/${listing.id}', '_blank')">
-          ${listing.images[0] ? `<img src="${listing.images[0]}" alt="${listing.title}" class="w-full h-24 object-cover rounded-lg mb-2">` : ''}
-          <h3 class="font-semibold text-sm mb-1 line-clamp-2">${listing.title}</h3>
-          <p class="text-xs text-gray-600 mb-2">${listing.addressLine}</p>
-          <div class="flex justify-between items-center mb-2">
-            <span class="font-bold text-blue-600">${price}/month</span>
-            <span class="text-xs text-gray-500">${listing.bedrooms} bed • ${listing.bathrooms} bath</span>
-          </div>
-          <div class="text-xs text-gray-500">
-            ${listing.furnished ? '• Furnished' : '• Unfurnished'} • ${listing.sizeSqm ? listing.sizeSqm + ' m²' : 'Size N/A'}
-          </div>
-          <div class="text-xs text-blue-600 mt-2 font-medium">Click to view details →</div>
-        </div>
-      `);
-
-      marker.setPopup(popup);
-
-      // Add click handler
-      markerElement.addEventListener('click', () => {
-        if (onListingClick) {
-          onListingClick(listing.id);
+      listings.forEach((listing) => {
+        console.log(`📍 Adding marker for listing: ${listing.title} at [${listing.lng}, ${listing.lat}]`);
+        
+        if (!listing.lat || !listing.lng || !map.current) {
+          console.log('❌ Invalid coordinates for listing:', listing.title);
+          return;
         }
+
+        // Create custom marker element with bright color
+        const markerElement = document.createElement('div');
+        markerElement.className = 'mapbox-marker';
+        markerElement.style.cssText = `
+          width: 40px;
+          height: 40px;
+          background: #3B82F6;
+          border: 3px solid white;
+          border-radius: 50%;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          font-weight: bold;
+          color: white;
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+          transition: transform 0.2s ease;
+          z-index: 1000;
+        `;
+        
+        // Add price to marker - simplified display
+        const priceK = Math.round(listing.rentMonthlyEUR / 100);
+        markerElement.innerHTML = `€${priceK}k`;
+
+        // Add hover effect
+        markerElement.addEventListener('mouseenter', () => {
+          markerElement.style.transform = 'scale(1.2)';
+          markerElement.style.zIndex = '1001';
+        });
+        markerElement.addEventListener('mouseleave', () => {
+          markerElement.style.transform = 'scale(1)';
+          markerElement.style.zIndex = '1000';
+        });
+
+        // Create marker
+        const marker = new mapboxgl.Marker(markerElement)
+          .setLngLat([listing.lng, listing.lat])
+          .addTo(map.current);
+
+        console.log(`✅ Marker added for ${listing.title}`);
+
+        // Create popup with improved preview
+        const price = new Intl.NumberFormat('en-EU', {
+          style: 'currency',
+          currency: 'EUR',
+          maximumFractionDigits: 0
+        }).format(listing.rentMonthlyEUR);
+
+        const popup = new mapboxgl.Popup({
+          offset: 25,
+          closeButton: false,
+          className: 'listing-popup'
+        }).setHTML(`
+          <div class="p-4 min-w-[250px] cursor-pointer" onclick="window.open('/listing/${listing.id}', '_blank')">
+            ${listing.images[0] ? `<img src="${listing.images[0]}" alt="${listing.title}" class="w-full h-24 object-cover rounded-lg mb-2">` : ''}
+            <h3 class="font-semibold text-sm mb-1 line-clamp-2">${listing.title}</h3>
+            <p class="text-xs text-gray-600 mb-2">${listing.addressLine}</p>
+            <div class="flex justify-between items-center mb-2">
+              <span class="font-bold text-blue-600">${price}/month</span>
+              <span class="text-xs text-gray-500">${listing.bedrooms} bed • ${listing.bathrooms} bath</span>
+            </div>
+            <div class="text-xs text-gray-500">
+              ${listing.furnished ? '• Furnished' : '• Unfurnished'} • ${listing.sizeSqm ? listing.sizeSqm + ' m²' : 'Size N/A'}
+            </div>
+            <div class="text-xs text-blue-600 mt-2 font-medium">Click to view details →</div>
+          </div>
+        `);
+
+        marker.setPopup(popup);
+
+        // Add click handler
+        markerElement.addEventListener('click', () => {
+          if (onListingClick) {
+            onListingClick(listing.id);
+          }
+        });
+
+        markers.current.push(marker);
+        bounds.extend([listing.lng, listing.lat]);
       });
 
-      markers.current.push(marker);
-      bounds.extend([listing.lng, listing.lat]);
-    });
+      // Fit map to show all markers
+      if (listings.length > 0) {
+        console.log('🔍 Fitting map bounds to show all markers');
+        map.current!.fitBounds(bounds, {
+          padding: 50,
+          maxZoom: 15
+        });
+      }
+    };
 
-    // Fit map to show all markers
-    if (listings.length > 0) {
-      map.current.fitBounds(bounds, {
-        padding: 50,
-        maxZoom: 15
-      });
+    // Wait for map to be loaded before adding markers
+    if (map.current.loaded()) {
+      addMarkers();
+    } else {
+      map.current.on('load', addMarkers);
     }
+
+    // Cleanup
+    return () => {
+      if (map.current) {
+        map.current.off('load', addMarkers);
+      }
+    };
   }, [listings, onListingClick, mapError]);
 
   // Show loading state
