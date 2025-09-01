@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import ListingCard from '@/components/listings/ListingCard';
 import SearchFilters from '@/components/search/SearchFilters';
-import MapboxMap from '@/components/map/MapboxMap';
+import GoogleMap from '@/components/map/GoogleMap';
 import { Listing, SearchFilters as SearchFiltersType } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -258,7 +258,7 @@ export default function Search() {
               /* Map View - Mobile shows only map, Desktop shows 50/50 split */
               isMobile ? (
                 <div className="h-[calc(100vh-200px)]">
-                  <MapboxMap 
+                  <GoogleMap 
                     listings={listings}
                     onListingClick={handleListingClick}
                     className="h-full"
@@ -295,7 +295,7 @@ export default function Search() {
                   
                   {/* Map - Right Side */}
                   <div className="w-1/2">
-                    <MapboxMap 
+                    <GoogleMap 
                       listings={listings}
                       onListingClick={handleListingClick}
                       className="h-full"
