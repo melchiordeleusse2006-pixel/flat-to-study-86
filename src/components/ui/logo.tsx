@@ -5,23 +5,13 @@ interface LogoProps {
 
 export function Logo({ className = "", size = 32 }: LogoProps) {
   return (
-    <svg
+    <img
+      src="/lovable-uploads/513cd51e-b6ee-4675-93fe-5190be980a2e.png"
+      alt="flat2study logo"
       width={size}
       height={size}
-      viewBox="0 0 32 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      {/* Upside down V shape representing a roof with 135 degree angle */}
-      <path
-        d="M6 24L16 6L26 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+      className={`${className} object-contain`}
+      style={{ filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346%) brightness(104%) contrast(97%)' }}
+    />
   );
 }
