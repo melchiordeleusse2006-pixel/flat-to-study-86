@@ -1,9 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Listing } from '@/types';
-import { Button } from '@/components/ui/button';
-import { Eye, Heart, MapPin } from 'lucide-react';
 
 // Fix for default markers in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -127,25 +125,16 @@ export default function MapView({
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm text-foreground line-clamp-2">
+                    <h3 className="font-semibold text-sm line-clamp-2">
                       {listing.title}
                     </h3>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      <MapPin className="h-3 w-3 inline mr-1" />
-                      {listing.addressLine}
+                    <p className="text-xs text-gray-500 mt-1">
+                      📍 {listing.addressLine}
                     </p>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="font-bold text-sm text-price">
+                    <div className="mt-2">
+                      <span className="font-bold text-sm text-green-600">
                         {formatPrice(listing.rentMonthlyEUR)}/month
                       </span>
-                      <div className="flex space-x-1">
-                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                          <Heart className="h-3 w-3" />
-                        </Button>
-                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                          <Eye className="h-3 w-3" />
-                        </Button>
-                      </div>
                     </div>
                   </div>
                 </div>
