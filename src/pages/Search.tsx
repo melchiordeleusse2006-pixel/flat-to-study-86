@@ -268,21 +268,39 @@ export default function Search() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Search Bar - Sticky below header */}
-      <div className="sticky top-16 z-40 border-b bg-background/95 backdrop-blur">
-        <div className="container py-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search by location, university, or amenities..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-11"
-              />
-            </div>
-            
-            <div className="flex items-center space-x-2">
+      {/* Unified Search Section - No visual separation */}
+      <div className="sticky top-16 z-40 bg-background/95 backdrop-blur">
+        {/* Search Bar */}
+        <div className="border-b">
+          <div className="container py-4">
+            <div className="flex flex-col md:flex-row gap-4 items-center">
+              <div className="flex-1 relative">
+                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  placeholder="Search by location, university, or amenities..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 h-11"
+                />
+              </div>
+              
+              {/* Sort Controls */}
+              <div className="flex items-center gap-3 min-w-0 flex-shrink-0">
+                <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by:</span>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-44">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="z-50 bg-popover border shadow-lg">
+                    <SelectItem value="relevance">Relevance</SelectItem>
+                    <SelectItem value="price-low">Price: Low to High</SelectItem>
+                    <SelectItem value="price-high">Price: High to Low</SelectItem>
+                    <SelectItem value="newest">Newest First</SelectItem>
+                    <SelectItem value="distance">Distance</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
               {/* View Mode Toggle */}
               <div className="flex rounded-lg border">
                 <Button
@@ -305,105 +323,90 @@ export default function Search() {
             </div>
           </div>
         </div>
+        
+        {/* Filters - Seamlessly connected */}
+        <div className="border-b">
+          <SearchFilters 
+            filters={filters}
+            onFiltersChange={setFilters}
+            className="max-w-none"
+          />
+        </div>
       </div>
 
-      {/* Search Filters - Sticky directly below search bar */}
-      <div className="sticky top-[120px] z-30 border-b bg-background/95 backdrop-blur">
-        <SearchFilters 
-          filters={filters}
-          onFiltersChange={setFilters}
-          className="max-w-none"
-        />
-      </div>
-
-      {/* Main Content */}
-      <div className="container py-4">
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            <span className="ml-2 text-muted-foreground">Loading listings...</span>
+      {/* Main Content - Full width layout */}
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <span className="ml-2 text-muted-foreground">Loading listings...</span>
+        </div>
+      ) : viewMode === 'map' ? (
+        /* Map View - Full width seamless layout */
+        isMobile ? (
+          <div className="h-[calc(100vh-200px)]">
+            <SimpleMapView 
+              listings={listings}
+              onListingClick={handleListingClick}
+              hoveredListingId={hoveredListingId}
+              onListingHover={setHoveredListingId}
+              onBoundsChange={handleMapBoundsChange}
+              className="h-full w-full"
+            />
           </div>
-        ) : viewMode === 'map' ? (
-          /* Map View - Mobile shows only map, Desktop shows 50/50 split */
-          isMobile ? (
-            <div className="h-[calc(100vh-180px)]">
+        ) : (
+          <div className="flex h-[calc(100vh-200px)] gap-4">
+            {/* Listings Panel - Left Side */}
+            <div className="w-1/2 flex flex-col bg-background rounded-lg border shadow-sm">
+              {/* Results count header */}
+              <div className="flex items-center justify-between p-4 border-b bg-background/50 rounded-t-lg">
+                <p className="text-sm text-muted-foreground">
+                  {visibleListings.length} properties in current view
+                </p>
+              </div>
+              
+              {/* Scrollable listings */}
+              <div className="flex-1 overflow-y-auto p-4">
+                <div className="grid gap-4">
+                  {visibleListings.map((listing) => (
+                    <div
+                      key={listing.id}
+                      onMouseEnter={() => setHoveredListingId(listing.id)}
+                      onMouseLeave={() => setHoveredListingId(null)}
+                    >
+                      <ListingCard
+                        listing={listing}
+                        onClick={() => handleListingClick(listing.id)}
+                        className="cursor-pointer"
+                      />
+                    </div>
+                  ))}
+                  
+                  {visibleListings.length === 0 && (
+                    <div className="text-center py-12">
+                      <p className="text-muted-foreground">No properties in current view.</p>
+                      <p className="text-sm text-muted-foreground mt-2">Move the map to see listings in different areas</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            {/* Map - Right Side */}
+            <div className="w-1/2">
               <SimpleMapView 
                 listings={listings}
                 onListingClick={handleListingClick}
                 hoveredListingId={hoveredListingId}
                 onListingHover={setHoveredListingId}
                 onBoundsChange={handleMapBoundsChange}
-                className="h-full w-full rounded-lg"
+                className="h-full w-full rounded-lg border shadow-sm"
               />
             </div>
-          ) : (
-            <div className="flex gap-6 h-[calc(100vh-180px)]">
-              {/* Listings Panel - Left Side */}
-              <div className="w-1/2 flex flex-col bg-background rounded-lg border">
-                {/* Sort Section - Fixed at top with extra z-index */}
-                <div className="flex items-center justify-between p-4 border-b bg-background rounded-t-lg relative z-40">
-                  <p className="text-sm text-muted-foreground">
-                    {visibleListings.length} properties in current view
-                  </p>
-                  
-                  <div className="min-w-0 flex-shrink-0 relative">
-                    <Select value={sortBy} onValueChange={setSortBy}>
-                      <SelectTrigger className="w-48">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="z-50 bg-popover border shadow-lg">
-                        <SelectItem value="relevance">Relevance</SelectItem>
-                        <SelectItem value="price-low">Price: Low to High</SelectItem>
-                        <SelectItem value="price-high">Price: High to Low</SelectItem>
-                        <SelectItem value="newest">Newest First</SelectItem>
-                        <SelectItem value="distance">Distance</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
-                {/* Scrollable listings */}
-                <div className="flex-1 overflow-y-auto p-4">
-                  <div className="grid gap-4">
-                    {visibleListings.map((listing) => (
-                      <div
-                        key={listing.id}
-                        onMouseEnter={() => setHoveredListingId(listing.id)}
-                        onMouseLeave={() => setHoveredListingId(null)}
-                      >
-                        <ListingCard
-                          listing={listing}
-                          onClick={() => handleListingClick(listing.id)}
-                          className="cursor-pointer"
-                        />
-                      </div>
-                    ))}
-                    
-                    {visibleListings.length === 0 && (
-                      <div className="text-center py-12">
-                        <p className="text-muted-foreground">No properties in current view.</p>
-                        <p className="text-sm text-muted-foreground mt-2">Move the map to see listings in different areas</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-              
-              {/* Map - Right Side */}
-              <div className="w-1/2 z-10">
-                <SimpleMapView 
-                  listings={listings}
-                  onListingClick={handleListingClick}
-                  hoveredListingId={hoveredListingId}
-                  onListingHover={setHoveredListingId}
-                  onBoundsChange={handleMapBoundsChange}
-                  className="h-full w-full rounded-lg border"
-                />
-              </div>
-            </div>
-          )
-        ) : (
-          /* Grid View */
+          </div>
+        )
+      ) : (
+        /* Grid View - Full width container */
+        <div className="container py-6">
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
             {listings.map((listing) => (
               <ListingCard
@@ -427,8 +430,8 @@ export default function Search() {
               </div>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
