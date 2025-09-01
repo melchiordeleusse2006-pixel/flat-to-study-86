@@ -269,7 +269,7 @@ export default function Search() {
       <Header />
       
       {/* Search Bar - Sticky below header */}
-      <div className="sticky top-16 z-40 border-b bg-background/95 backdrop-blur mt-4">
+      <div className="sticky top-16 z-40 border-b bg-background/95 backdrop-blur">
         <div className="container py-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
@@ -307,8 +307,8 @@ export default function Search() {
         </div>
       </div>
 
-      {/* Search Filters - Sticky below search bar */}
-      <div className="sticky top-[152px] z-30 border-b bg-background/95 backdrop-blur">
+      {/* Search Filters - Sticky directly below search bar */}
+      <div className="sticky top-[120px] z-30 border-b bg-background/95 backdrop-blur">
         <SearchFilters 
           filters={filters}
           onFiltersChange={setFilters}
@@ -326,7 +326,7 @@ export default function Search() {
         ) : viewMode === 'map' ? (
           /* Map View - Mobile shows only map, Desktop shows 50/50 split */
           isMobile ? (
-            <div className="h-[calc(100vh-220px)]">
+            <div className="h-[calc(100vh-180px)]">
               <SimpleMapView 
                 listings={listings}
                 onListingClick={handleListingClick}
@@ -337,21 +337,21 @@ export default function Search() {
               />
             </div>
           ) : (
-            <div className="flex gap-6 h-[calc(100vh-220px)]">
+            <div className="flex gap-6 h-[calc(100vh-180px)]">
               {/* Listings Panel - Left Side */}
               <div className="w-1/2 flex flex-col bg-background rounded-lg border">
-                {/* Sort Section - Fixed at top with proper spacing */}
-                <div className="flex items-center justify-between p-4 border-b bg-background rounded-t-lg">
+                {/* Sort Section - Fixed at top with extra z-index */}
+                <div className="flex items-center justify-between p-4 border-b bg-background rounded-t-lg relative z-40">
                   <p className="text-sm text-muted-foreground">
                     {visibleListings.length} properties in current view
                   </p>
                   
-                  <div className="min-w-0 flex-shrink-0">
+                  <div className="min-w-0 flex-shrink-0 relative">
                     <Select value={sortBy} onValueChange={setSortBy}>
-                      <SelectTrigger className="w-48 z-50">
+                      <SelectTrigger className="w-48">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="z-50 bg-popover border">
+                      <SelectContent className="z-50 bg-popover border shadow-lg">
                         <SelectItem value="relevance">Relevance</SelectItem>
                         <SelectItem value="price-low">Price: Low to High</SelectItem>
                         <SelectItem value="price-high">Price: High to Low</SelectItem>
