@@ -341,9 +341,9 @@ export default function Search() {
           <span className="ml-2 text-muted-foreground">Loading listings...</span>
         </div>
       ) : viewMode === 'map' ? (
-        /* Map View - Full width seamless layout */
+        /* Map View - Full height seamless layout */
         isMobile ? (
-          <div className="h-[calc(100vh-200px)]">
+          <div className="h-[calc(100vh-220px)]">
             <SimpleMapView 
               listings={listings}
               onListingClick={handleListingClick}
@@ -354,7 +354,7 @@ export default function Search() {
             />
           </div>
         ) : (
-          <div className="flex h-[calc(100vh-200px)] gap-4">
+          <div className="flex h-[calc(100vh-220px)] p-4 gap-4">
             {/* Listings Panel - Left Side */}
             <div className="w-1/2 flex flex-col bg-background rounded-lg border shadow-sm">
               {/* Results count header */}
