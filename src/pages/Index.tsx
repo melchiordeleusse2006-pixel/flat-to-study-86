@@ -5,18 +5,15 @@ import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { Search, Users, Shield, MapPin, Heart, Clock } from 'lucide-react';
 import { universities, mockListings } from '@/data/mockData';
-
 const Index = () => {
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
       style: 'currency',
       currency: 'EUR',
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(price);
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Header />
       
       {/* Hero Section */}
@@ -37,11 +34,7 @@ const Index = () => {
                 Find a Place
               </Button>
             </Link>
-            <Link to="/agency" className="flex-1">
-              <Button size="lg" variant="outline" className="w-full border-white text-white hover:bg-white/10">
-                Post Listing
-              </Button>
-            </Link>
+            
           </div>
         </div>
         
@@ -64,15 +57,13 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {universities.map((university) => (
-              <Card key={university.id} className="text-center hover:shadow-lg transition-shadow">
+            {universities.map(university => <Card key={university.id} className="text-center hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <MapPin className="h-8 w-8 text-primary mx-auto mb-3" />
                   <h3 className="font-semibold mb-2">{university.name}</h3>
                   <p className="text-sm text-muted-foreground">{university.city}, {university.country}</p>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -88,14 +79,9 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            {mockListings.slice(0, 3).map((listing) => (
-              <Card key={listing.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+            {mockListings.slice(0, 3).map(listing => <Card key={listing.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="relative h-48">
-                  <img 
-                    src={listing.images[0] || '/placeholder.svg'} 
-                    alt={listing.title}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={listing.images[0] || '/placeholder.svg'} alt={listing.title} className="w-full h-full object-cover" />
                   <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
                     Featured
                   </Badge>
@@ -116,8 +102,7 @@ const Index = () => {
                     </Link>
                   </div>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
           
           <div className="text-center">
@@ -219,8 +204,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
