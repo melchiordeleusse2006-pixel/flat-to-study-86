@@ -1,95 +1,107 @@
-import Header from '@/components/layout/Header';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { MessageSquare, Heart, Search, Bell } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { MessageSquare, Heart, Search } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUnreadMessagesCount } from '@/hooks/useUnreadMessagesCount';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Logo } from '@/components/ui/logo';
 
 const StudentHome = () => {
   const { profile } = useAuth();
   const unreadCount = useUnreadMessagesCount();
+  const navigate = useNavigate();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 100);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">
-            Welcome back, {profile?.full_name}!
-          </h1>
-          <p className="text-muted-foreground">
-            Find your perfect student accommodation in Milan
-          </p>
+    <div className="min-h-screen bg-white">
+      {/* Header - invisible initially, appears on scroll */}
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-white border-b border-border shadow-sm' 
+          : 'bg-transparent'
+      }`}>
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center space-x-2">
+            <Logo size={32} className="text-primary" />
+            <span className="text-xl font-bold text-primary">flat2study</span>
+          </Link>
+          
+          <div className="flex items-center space-x-4">
+            <Link to="/messages" className="relative p-2 rounded-full hover:bg-gray-100 transition-colors">
+              <MessageSquare className="h-6 w-6 text-gray-700" />
+              {unreadCount > 0 && (
+                <Badge variant="destructive" className="absolute -top-1 -right-1 min-w-[1.2rem] h-5 flex items-center justify-center text-xs px-1">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </Badge>
+              )}
+            </Link>
+            
+            <Link to="/favorites" className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+              <Heart className="h-6 w-6 text-gray-700" />
+            </Link>
+            
+            <Link to="/search" className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+              <Search className="h-6 w-6 text-gray-700" />
+            </Link>
+          </div>
         </div>
+      </header>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="hover:shadow-md transition-shadow cursor-pointer">
-            <Link to="/messages">
-              <CardContent className="p-6 text-center">
-                <div className="relative inline-block mb-4">
-                  <MessageSquare className="h-12 w-12 text-primary mx-auto" />
-                  {unreadCount > 0 && (
-                    <Badge variant="destructive" className="absolute -top-2 -right-2 min-w-[1.2rem] h-5 flex items-center justify-center text-xs px-1">
-                      {unreadCount > 99 ? '99+' : unreadCount}
-                    </Badge>
-                  )}
+      {/* Main Content */}
+      <div className="pt-20 pb-16">
+        <div className="container mx-auto px-4">
+          {/* Welcome Message */}
+          <div className="text-center mb-16">
+            <h1 className="text-5xl font-bold text-black mb-4">
+              Welcome back, {profile?.full_name}!
+            </h1>
+          </div>
+
+          {/* Search Section */}
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-3xl font-semibold text-center text-black mb-8">
+              Where next?
+            </h2>
+            
+            <form onSubmit={handleSearchSubmit} className="relative">
+              <div className="bg-black rounded-full p-2 shadow-lg">
+                <div className="flex items-center">
+                  <Input
+                    type="text"
+                    placeholder="Search for student accommodation..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="flex-1 border-0 bg-transparent text-white placeholder:text-gray-400 focus:ring-0 text-lg px-6 py-4"
+                  />
+                  <button
+                    type="submit"
+                    className="bg-white text-black rounded-full p-3 hover:bg-gray-100 transition-colors ml-2"
+                  >
+                    <Search className="h-6 w-6" />
+                  </button>
                 </div>
-                <h3 className="font-semibold mb-2">My Messages</h3>
-                <p className="text-sm text-muted-foreground">
-                  Chat with landlords and agencies
-                </p>
-              </CardContent>
-            </Link>
-          </Card>
-
-          <Card className="hover:shadow-md transition-shadow cursor-pointer">
-            <Link to="/favorites">
-              <CardContent className="p-6 text-center">
-                <Heart className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h3 className="font-semibold mb-2">Saved Listings</h3>
-                <p className="text-sm text-muted-foreground">
-                  Your favorite properties
-                </p>
-              </CardContent>
-            </Link>
-          </Card>
-
-          <Card className="hover:shadow-md transition-shadow cursor-pointer">
-            <Link to="/search">
-              <CardContent className="p-6 text-center">
-                <Search className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h3 className="font-semibold mb-2">Explore</h3>
-                <p className="text-sm text-muted-foreground">
-                  Discover new properties
-                </p>
-              </CardContent>
-            </Link>
-          </Card>
+              </div>
+            </form>
+          </div>
         </div>
-
-        {/* Recent Activity */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Bell className="h-5 w-5 mr-2" />
-              Recent Activity
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground text-center py-8">
-              No recent activity yet. Start exploring properties to see updates here!
-            </p>
-            <div className="text-center">
-              <Link to="/search">
-                <Button>Start Exploring</Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
