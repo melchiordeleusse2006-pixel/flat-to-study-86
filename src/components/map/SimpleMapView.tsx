@@ -13,12 +13,16 @@ L.Icon.Default.mergeOptions({
 interface SimpleMapViewProps {
   listings: Listing[];
   onListingClick?: (listingId: string) => void;
+  onListingHover?: (listingId: string | null) => void;
+  hoveredListingId?: string | null;
   className?: string;
 }
 
 export default function SimpleMapView({ 
   listings, 
-  onListingClick, 
+  onListingClick,
+  onListingHover,
+  hoveredListingId,
   className 
 }: SimpleMapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -66,7 +70,28 @@ export default function SimpleMapView({
       const markers: L.Marker[] = [];
       
       listings.forEach((listing) => {
-        const marker = L.marker([listing.lat, listing.lng])
+        const isHovered = hoveredListingId === listing.id;
+        
+        // Create custom marker with hover effect
+        const markerIcon = L.divIcon({
+          html: `
+            <div style="
+              background-color: ${isHovered ? 'white' : '#059669'};
+              border: 2px solid ${isHovered ? '#3b82f6' : 'white'};
+              border-radius: 50%;
+              width: 16px;
+              height: 16px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+              transform: ${isHovered ? 'scale(1.3)' : 'scale(1)'};
+              transition: all 0.2s ease;
+            "></div>
+          `,
+          className: 'custom-marker',
+          iconSize: [16, 16],
+          iconAnchor: [8, 8],
+        });
+
+        const marker = L.marker([listing.lat, listing.lng], { icon: markerIcon })
           .addTo(map)
           .bindPopup(`
             <div style="width: 250px; padding: 8px;">
@@ -87,6 +112,11 @@ export default function SimpleMapView({
         if (onListingClick) {
           marker.on('click', () => onListingClick(listing.id));
         }
+
+        if (onListingHover) {
+          marker.on('mouseover', () => onListingHover(listing.id));
+          marker.on('mouseout', () => onListingHover(null));
+        }
         
         markers.push(marker);
       });
@@ -100,9 +130,9 @@ export default function SimpleMapView({
 
     // Cleanup function
     return () => {
-      // Don't remove the map instance, just clear markers
+      // Markers will be cleared by the forEach loop above
     };
-  }, [listings, onListingClick]);
+  }, [listings, onListingClick, onListingHover, hoveredListingId]);
 
   // Cleanup map on unmount
   useEffect(() => {

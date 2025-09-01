@@ -24,6 +24,8 @@ export default function Search() {
   const [sortBy, setSortBy] = useState('relevance');
   const [viewMode, setViewMode] = useState<ViewMode>(isMobile ? 'grid' : 'map');
   const [loading, setLoading] = useState(true);
+  const [hoveredListingId, setHoveredListingId] = useState<string | null>(null);
+  const [geocodingComplete, setGeocodingComplete] = useState(false);
 
   // Fetch listings from database
   useEffect(() => {
@@ -77,6 +79,11 @@ export default function Search() {
         }));
 
         setAllListings(transformedListings);
+        
+        // Auto-geocode listings if not done yet
+        if (!geocodingComplete && transformedListings.length > 0) {
+          handleGeocodeAll();
+        }
       } catch (error) {
         console.error('Error fetching listings:', error);
       } finally {
@@ -174,31 +181,71 @@ export default function Search() {
 
   const handleGeocodeAll = async () => {
     try {
-      toast({
-        title: "Geocoding Started",
-        description: "Updating coordinates for all listings..."
-      });
-      
+      console.log('Auto-geocoding listings...');
       const result = await geocodeAllListings();
       console.log('Geocoding results:', result);
-      
-      toast({
-        title: "Geocoding Complete",
-        description: `Updated coordinates for ${result.results.filter((r: any) => r.success).length} listings`
-      });
+      setGeocodingComplete(true);
       
       // Refresh listings after geocoding
       setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+        fetchListings();
+      }, 1000);
       
     } catch (error) {
       console.error('Geocoding error:', error);
-      toast({
-        title: "Geocoding Failed",
-        description: "Failed to update coordinates",
-        variant: "destructive"
+    }
+  };
+
+  const fetchListings = async () => {
+    try {
+      const { data, error } = await supabase.rpc('get_listings_with_agency', {
+        p_limit: 100,
+        p_offset: 0
       });
+
+      if (error) {
+        console.error('Error fetching listings:', error);
+        return;
+      }
+
+      const transformedListings: Listing[] = (data || []).map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        type: item.type,
+        description: item.description,
+        addressLine: item.address_line,
+        city: item.city,
+        country: item.country,
+        lat: item.lat,
+        lng: item.lng,
+        rentMonthlyEUR: item.rent_monthly_eur,
+        depositEUR: item.deposit_eur,
+        billsIncluded: item.bills_included,
+        furnished: item.furnished,
+        bedrooms: item.bedrooms,
+        bathrooms: item.bathrooms,
+        floor: item.floor,
+        sizeSqm: item.size_sqm,
+        amenities: item.amenities || [],
+        availabilityDate: item.availability_date,
+        images: item.images || [],
+        videoUrl: item.video_url,
+        createdAt: item.created_at,
+        publishedAt: item.published_at,
+        status: item.status,
+        agency: {
+          id: item.id,
+          ownerUserId: '',
+          name: item.agency_name || 'Unknown Agency',
+          phone: '',
+          billingEmail: '',
+          createdAt: item.created_at
+        }
+      }));
+
+      setAllListings(transformedListings);
+    } catch (error) {
+      console.error('Error fetching listings:', error);
     }
   };
 
@@ -260,15 +307,6 @@ export default function Search() {
             <p className="text-sm text-muted-foreground">
               {listings.length} properties found
             </p>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={handleGeocodeAll}
-              className="flex items-center gap-2"
-            >
-              <MapPin className="h-4 w-4" />
-              Fix Map Coordinates
-            </Button>
           </div>
         </div>
       </div>
@@ -302,6 +340,8 @@ export default function Search() {
                   <SimpleMapView 
                     listings={listings}
                     onListingClick={handleListingClick}
+                    hoveredListingId={hoveredListingId}
+                    onListingHover={setHoveredListingId}
                     className="h-full"
                   />
                 </div>
@@ -309,15 +349,20 @@ export default function Search() {
                 <div className="flex gap-4 h-[calc(100vh-200px)]">
                   {/* Listings Panel - Left Side */}
                   <div className="w-1/2 overflow-y-auto">
-                    <div className="grid gap-4 pr-2">
-                      {listings.map((listing) => (
-                        <ListingCard
-                          key={listing.id}
-                          listing={listing}
-                          onClick={() => handleListingClick(listing.id)}
-                          className="cursor-pointer"
-                        />
-                      ))}
+                      <div className="grid gap-4 pr-2">
+                        {listings.map((listing) => (
+                          <div
+                            key={listing.id}
+                            onMouseEnter={() => setHoveredListingId(listing.id)}
+                            onMouseLeave={() => setHoveredListingId(null)}
+                          >
+                            <ListingCard
+                              listing={listing}
+                              onClick={() => handleListingClick(listing.id)}
+                              className="cursor-pointer"
+                            />
+                          </div>
+                        ))}
                       
                       {listings.length === 0 && (
                         <div className="text-center py-12">
@@ -339,6 +384,8 @@ export default function Search() {
                     <SimpleMapView 
                       listings={listings}
                       onListingClick={handleListingClick}
+                      hoveredListingId={hoveredListingId}
+                      onListingHover={setHoveredListingId}
                       className="h-full"
                     />
                   </div>
@@ -347,14 +394,14 @@ export default function Search() {
             ) : (
               /* Grid View */
               <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-              {listings.map((listing) => (
-                <ListingCard
-                  key={listing.id}
-                  listing={listing}
-                  onClick={() => handleListingClick(listing.id)}
-                  className="cursor-pointer"
-                />
-              ))}
+                {listings.map((listing) => (
+                  <ListingCard
+                    key={listing.id}
+                    listing={listing}
+                    onClick={() => handleListingClick(listing.id)}
+                    className="cursor-pointer"
+                  />
+                ))}
               
               {listings.length === 0 && (
                 <div className="col-span-full text-center py-12">
