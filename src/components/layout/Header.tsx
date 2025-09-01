@@ -9,10 +9,13 @@ import { LanguageSelector } from '@/components/ui/language-selector';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Logo } from '@/components/ui/logo';
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+
 export default function Header() {
   const { user, profile, signOut, loading: authLoading } = useAuth();
   const unreadCount = useUnreadMessagesCount();
   const { t } = useLanguage();
+  const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   
   useEffect(() => {
@@ -24,9 +27,13 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Force header visibility on search page
+  const isSearchPage = location.pathname === '/search';
+  const shouldShowBackground = isScrolled || isSearchPage;
+
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
-      isScrolled 
+      shouldShowBackground 
         ? 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b' 
         : 'bg-transparent'
     }`}>
@@ -35,12 +42,12 @@ export default function Header() {
         <div className="flex items-center space-x-4 min-w-0 flex-shrink-0">
           <Link to="/" className="flex items-center space-x-2">
             <div className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300 ${
-              isScrolled ? 'hero-gradient' : 'bg-white/20'
+              shouldShowBackground ? 'hero-gradient' : 'bg-white/20'
             } text-white`}>
               <Logo size={20} />
             </div>
             <span className={`text-xl font-bold transition-colors duration-300 ${
-              isScrolled ? 'text-foreground' : 'text-white'
+              shouldShowBackground ? 'text-foreground' : 'text-white'
             }`}>flat2study</span>
           </Link>
         </div>
@@ -48,13 +55,13 @@ export default function Header() {
         {/* Right side actions */}
         <div className="flex items-center space-x-4">
           <div className="hidden md:block">
-            <div className={`transition-colors duration-300 ${isScrolled ? '' : 'text-white'}`}>
+            <div className={`transition-colors duration-300 ${shouldShowBackground ? '' : 'text-white'}`}>
               <LanguageSelector variant="compact" />
             </div>
           </div>
           
           <Link to="/about" className={`text-sm font-medium transition-colors duration-300 ${
-            isScrolled 
+            shouldShowBackground 
               ? 'text-foreground hover:text-foreground/80' 
               : 'text-white hover:text-white/80'
           }`}>
@@ -73,7 +80,7 @@ export default function Header() {
               {profile?.user_type === 'agency' && unreadCount > 0 && (
                 <Link to="/messages" className="relative">
                   <Button variant="ghost" size="sm" className={`transition-colors duration-300 ${
-                    isScrolled 
+                    shouldShowBackground 
                       ? 'text-foreground hover:text-foreground/80' 
                       : 'text-white hover:text-white/80 hover:bg-white/10'
                   }`}>
@@ -88,7 +95,7 @@ export default function Header() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className={`transition-colors duration-300 ${
-                    isScrolled 
+                    shouldShowBackground 
                       ? 'text-foreground hover:text-foreground/80' 
                       : 'text-white hover:text-white/80 hover:bg-white/10'
                   }`}>
@@ -156,7 +163,7 @@ export default function Header() {
                   variant="ghost" 
                   size="sm" 
                   className={`transition-colors duration-300 ${
-                    isScrolled 
+                    shouldShowBackground 
                       ? 'text-foreground hover:text-foreground/80' 
                       : 'text-white hover:text-white/80 hover:bg-white/10'
                   }`}
@@ -168,7 +175,7 @@ export default function Header() {
 
               <Link to="/get-started">
                 <Button size="sm" className={`transition-all duration-300 ${
-                  isScrolled 
+                  shouldShowBackground 
                     ? 'hero-gradient text-white border-0' 
                     : 'bg-white text-primary hover:bg-white/90 border-0'
                 }`}>
