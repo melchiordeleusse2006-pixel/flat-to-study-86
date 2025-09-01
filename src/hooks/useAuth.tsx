@@ -76,11 +76,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       if (error) {
         console.error('Error fetching profile:', error);
+        // Set profile to null so we know the fetch failed
+        setProfile(null);
       } else {
         setProfile(data as Profile);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
+      setProfile(null);
     }
   };
 
@@ -116,11 +119,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       if (error) throw error;
       
-      if (data.user) {
-        // Force page reload for clean state
-        window.location.href = '/';
-      }
-      
+      // Don't force page reload - let React Router handle navigation
+      // The onAuthStateChange callback will update the session state
       return { error: null };
     } catch (error) {
       return { error };
@@ -133,7 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       setSession(null);
       setProfile(null);
-      window.location.href = '/';
+      // Don't force page reload - let the auth state change handle cleanup
     } catch (error) {
       console.error('Error signing out:', error);
     }

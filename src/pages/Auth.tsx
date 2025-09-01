@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export default function Auth() {
   const navigate = useNavigate();
-  const { signIn, resetPassword } = useAuth();
+  const { signIn, resetPassword, user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -20,6 +20,13 @@ export default function Auth() {
   // Sign In Form State
   const [signInEmail, setSignInEmail] = useState('');
   const [signInPassword, setSignInPassword] = useState('');
+
+  // Redirect authenticated users to home
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate('/', { replace: true });
+    }
+  }, [user, authLoading, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,8 +38,10 @@ export default function Auth() {
     if (error) {
       setError(error.message || 'Failed to log in');
       setLoading(false);
+    } else {
+      // Success! The useEffect above will handle navigation once user is set
+      setLoading(false);
     }
-    // Note: successful sign in will redirect automatically via useAuth
   };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
