@@ -175,7 +175,7 @@ export default function Search() {
       <Header />
       
       {/* Search Bar */}
-      <div className="border-b bg-background/95 backdrop-blur">
+      <div className="border-b bg-background/95 backdrop-blur mt-4">
         <div className="container py-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
