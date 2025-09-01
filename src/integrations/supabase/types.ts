@@ -247,6 +247,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_agency_business_info: {
+        Args: { agency_id_param: string }
+        Returns: {
+          agency_email: string
+          agency_name: string
+          agency_phone: string
+        }[]
+      }
       get_listings_with_agency: {
         Args: {
           p_city?: string
