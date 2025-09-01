@@ -270,15 +270,17 @@ export default function Search() {
       </div>
 
       {/* Main Content */}
-      <div className="container py-6">
+      <div className="container-fluid py-6">
         <div className="flex gap-6">
-          {/* Filters Sidebar */}
-          <div className="hidden lg:block w-80 flex-shrink-0">
-            <SearchFilters 
-              filters={filters}
-              onFiltersChange={setFilters}
-            />
-          </div>
+          {/* Filters Sidebar - Hide in map view */}
+          {viewMode !== 'map' && (
+            <div className="hidden lg:block w-80 flex-shrink-0">
+              <SearchFilters 
+                filters={filters}
+                onFiltersChange={setFilters}
+              />
+            </div>
+          )}
 
           {/* Results */}
           <div className="flex-1">
@@ -288,10 +290,11 @@ export default function Search() {
                 <span className="ml-2 text-muted-foreground">Loading listings...</span>
               </div>
             ) : viewMode === 'map' ? (
-              /* Map View */
-              <div className="flex gap-6 h-[calc(100vh-200px)]">
-                <div className="flex-1 overflow-y-auto">
-                  <div className="grid gap-4">
+              /* Map View - 50/50 split */
+              <div className="flex gap-4 h-[calc(100vh-200px)]">
+                {/* Listings Panel - Left Side */}
+                <div className="w-1/2 overflow-y-auto">
+                  <div className="grid gap-4 pr-2">
                     {listings.map((listing) => (
                       <ListingCard
                         key={listing.id}
@@ -316,7 +319,8 @@ export default function Search() {
                   </div>
                 </div>
                 
-                <div className="flex-1">
+                {/* Map - Right Side */}
+                <div className="w-1/2">
                   <MapboxMap 
                     listings={listings}
                     onListingClick={handleListingClick}
