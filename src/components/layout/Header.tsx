@@ -39,28 +39,28 @@ export default function Header() {
     }`}>
       <div className="container flex h-16 items-center justify-between">
         {/* Left section with Logo and Language - Fixed positioning */}
-        <div className="flex items-center space-x-4 min-w-0 flex-shrink-0">
-          <Link to="/" className="flex items-center space-x-2">
-            <div className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300 ${
+        <div className="flex items-center space-x-2 md:space-x-4 min-w-0 flex-shrink-0">
+          <Link to="/" className="flex items-center space-x-1 md:space-x-2">
+            <div className={`flex h-6 w-6 md:h-8 md:w-8 items-center justify-center rounded-lg transition-all duration-300 ${
               shouldShowBackground ? 'hero-gradient' : 'bg-white/20'
             } text-white`}>
-              <Logo size={20} />
+              <Logo size={16} className="md:w-5 md:h-5" />
             </div>
-            <span className={`text-xl font-bold transition-colors duration-300 ${
+            <span className={`text-lg md:text-xl font-bold transition-colors duration-300 ${
               shouldShowBackground ? 'text-foreground' : 'text-white'
             }`}>flat2study</span>
           </Link>
         </div>
 
         {/* Right side actions */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 md:space-x-4">
           <div className="hidden md:block">
             <div className={`transition-colors duration-300 ${shouldShowBackground ? '' : 'text-white'}`}>
               <LanguageSelector variant="compact" />
             </div>
           </div>
           
-          <Link to="/about" className={`text-sm font-medium transition-colors duration-300 ${
+          <Link to="/about" className={`text-xs md:text-sm font-medium transition-colors duration-300 ${
             shouldShowBackground 
               ? 'text-foreground hover:text-foreground/80' 
               : 'text-white hover:text-white/80'
@@ -70,13 +70,13 @@ export default function Header() {
           
           {/* Show different content based on auth state */}
           {authLoading ? (
-            <div className="flex items-center space-x-2">
-              <div className="w-16 h-8 bg-white/20 rounded animate-pulse"></div>
-              <div className="w-20 h-8 bg-white/20 rounded animate-pulse"></div>
+            <div className="flex items-center space-x-1 md:space-x-2">
+              <div className="w-12 h-6 md:w-16 md:h-8 bg-white/20 rounded animate-pulse"></div>
+              <div className="w-16 h-6 md:w-20 md:h-8 bg-white/20 rounded animate-pulse"></div>
             </div>
           ) : user ? (
             /* Authenticated user menu */
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-1 md:space-x-4">
               {profile?.user_type === 'agency' && unreadCount > 0 && (
                 <Link to="/messages" className="relative">
                   <Button variant="ghost" size="sm" className={`transition-colors duration-300 ${
@@ -108,7 +108,7 @@ export default function Header() {
                     ) : (
                       <User className="h-4 w-4 mr-2" />
                     )}
-                    {profile?.full_name || user.email?.split('@')[0] || 'Account'}
+                    <span className="hidden md:inline">{profile?.full_name || user.email?.split('@')[0] || 'Account'}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -168,18 +168,19 @@ export default function Header() {
                       : 'text-white hover:text-white/80 hover:bg-white/10'
                   }`}
                 >
-                  <User className="h-4 w-4 mr-2" />
-                  Log In
+                  <User className="h-4 w-4 mr-1 md:mr-2" />
+                  <span className="hidden md:inline">Log In</span>
                 </Button>
               </Link>
 
               <Link to="/get-started">
-                <Button size="sm" className={`transition-all duration-300 ${
+                <Button size="sm" className={`transition-all duration-300 text-xs md:text-sm ${
                   shouldShowBackground 
                     ? 'hero-gradient text-white border-0' 
                     : 'bg-white text-primary hover:bg-white/90 border-0'
                 }`}>
-                  Get started
+                  <span className="hidden md:inline">Get started</span>
+                  <span className="md:hidden">Start</span>
                 </Button>
               </Link>
             </>
