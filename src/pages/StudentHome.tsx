@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { MessageSquare, Heart, Search } from 'lucide-react';
+import { MessageSquare, Heart, Search, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUnreadMessagesCount } from '@/hooks/useUnreadMessagesCount';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Logo } from '@/components/ui/logo';
+import { Card, CardContent } from '@/components/ui/card';
+import { mockListings } from '@/data/mockData';
 
 const StudentHome = () => {
   const { profile } = useAuth();
@@ -30,8 +32,11 @@ const StudentHome = () => {
     }
   };
 
+  // Get featured listings (first 5)
+  const featuredListings = mockListings.slice(0, 5);
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header - invisible initially, appears on scroll */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
@@ -65,35 +70,48 @@ const StudentHome = () => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="pt-20 pb-16">
-        <div className="container mx-auto px-4">
-          {/* Welcome Message */}
-          <div className="text-center mb-16">
+      {/* Welcome Section */}
+      <div className="min-h-screen flex flex-col items-center justify-center px-4">
+        <Card className="max-w-2xl w-full bg-white shadow-lg">
+          <CardContent className="p-12 text-center">
             <h1 className="text-5xl font-bold text-black mb-4">
               Welcome back, {profile?.full_name}!
             </h1>
-          </div>
+            <p className="text-gray-600 text-lg">
+              Find your perfect student accommodation in Milan
+            </p>
+          </CardContent>
+        </Card>
+        
+        {/* Scroll Indicator */}
+        <div className="mt-12 flex flex-col items-center animate-bounce">
+          <p className="text-gray-500 mb-2">scroll down</p>
+          <ChevronDown className="h-6 w-6 text-gray-400" />
+        </div>
+      </div>
 
+      {/* Content Sections */}
+      <div className="bg-white">
+        <div className="container mx-auto px-4 py-16">
           {/* Search Section */}
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl font-semibold text-center text-black mb-8">
               Where next?
             </h2>
             
             <form onSubmit={handleSearchSubmit} className="relative">
-              <div className="bg-black rounded-full p-2 shadow-lg">
+              <div className="bg-white border-2 border-gray-200 rounded-full p-2 shadow-lg">
                 <div className="flex items-center">
                   <Input
                     type="text"
                     placeholder="Search for student accommodation..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="flex-1 border-0 bg-transparent text-white placeholder:text-gray-400 focus:ring-0 text-lg px-6 py-4"
+                    className="flex-1 border-0 bg-transparent text-black placeholder:text-gray-500 focus:ring-0 text-lg px-6 py-4"
                   />
                   <button
                     type="submit"
-                    className="bg-white text-black rounded-full p-3 hover:bg-gray-100 transition-colors ml-2"
+                    className="bg-black text-white rounded-full p-3 hover:bg-gray-800 transition-colors ml-2"
                   >
                     <Search className="h-6 w-6" />
                   </button>
@@ -102,8 +120,40 @@ const StudentHome = () => {
             </form>
           </div>
 
+          {/* Featured Listings */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-semibold text-black mb-6">Featured Listings</h3>
+            <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+              {featuredListings.map((listing) => (
+                <Link
+                  key={listing.id}
+                  to={`/listing/${listing.id}`}
+                  className="flex-shrink-0 w-80 group"
+                >
+                  <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <div className="aspect-video overflow-hidden">
+                      <img
+                        src={listing.images[0]}
+                        alt={listing.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <CardContent className="p-4">
+                      <h4 className="font-semibold text-lg mb-2 line-clamp-1">{listing.title}</h4>
+                      <p className="text-gray-600 mb-2 line-clamp-1">{listing.addressLine}</p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-2xl font-bold text-primary">€{listing.rentMonthlyEUR}</span>
+                        <span className="text-sm text-gray-500">per month</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </div>
+
           {/* Quick Actions - Three Icons */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mt-24 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-16">
             <Link to="/messages" className="group text-center">
               <div className="relative inline-block mb-4">
                 <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-colors">
