@@ -343,7 +343,7 @@ export default function Search() {
       ) : viewMode === 'map' ? (
         /* Map View - Full height seamless layout */
         isMobile ? (
-          <div className="h-[calc(100vh-260px)]">
+          <div className="h-[calc(100vh-300px)]">
             <SimpleMapView 
               listings={listings}
               onListingClick={handleListingClick}
@@ -354,19 +354,19 @@ export default function Search() {
             />
           </div>
         ) : (
-          <div className="flex h-[calc(100vh-260px)]">
+          <div className="flex h-[calc(100vh-300px)]">
             {/* Listings Panel - Left Side */}
             <div className="w-1/2 flex flex-col bg-background border-r">
               {/* Results count header */}
-              <div className="flex items-center justify-between px-4 py-3 border-b bg-background/50">
+              <div className="flex items-center justify-between px-4 py-2 border-b bg-background/50">
                 <p className="text-sm text-muted-foreground">
                   {visibleListings.length} properties in current view
                 </p>
               </div>
               
-              {/* Scrollable listings - Full height with no bottom padding */}
+              {/* Scrollable listings - Maximum height usage */}
               <div className="flex-1 overflow-y-auto">
-                <div className="grid gap-4 p-4 pb-0">
+                <div className="grid gap-3 p-3">
                   {visibleListings.map((listing) => (
                     <div
                       key={listing.id}
@@ -382,9 +382,9 @@ export default function Search() {
                   ))}
                   
                   {visibleListings.length === 0 && (
-                    <div className="text-center py-12">
+                    <div className="text-center py-8">
                       <p className="text-muted-foreground">No properties in current view.</p>
-                      <p className="text-sm text-muted-foreground mt-2">Move the map to see listings in different areas</p>
+                      <p className="text-sm text-muted-foreground mt-1">Move the map to see listings in different areas</p>
                     </div>
                   )}
                 </div>
