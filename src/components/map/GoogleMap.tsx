@@ -3,6 +3,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { Listing } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { GOOGLE_MAPS_CONFIG } from '@/config/maps';
 
 interface GoogleMapProps {
   listings: Listing[];
@@ -19,7 +20,7 @@ const GoogleMap: React.FC<GoogleMapProps> = ({ listings, className = '', onListi
   const [apiKey, setApiKey] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Fetch Google Maps API key
+  // Fetch Google Maps API key with fallback
   useEffect(() => {
     const fetchApiKey = async () => {
       try {
@@ -37,12 +38,25 @@ const GoogleMap: React.FC<GoogleMapProps> = ({ listings, className = '', onListi
           throw new Error('No API key received');
         }
         
-        console.log('Successfully received API key');
+        console.log('Successfully received API key from Supabase');
         setApiKey(data.apiKey);
       } catch (err) {
-        console.error('Failed to fetch Google Maps API key:', err);
-        setError('Failed to load map');
-        setIsLoading(false);
+        console.error('Failed to fetch Google Maps API key from Supabase:', err);
+        
+        // Fallback: Try using a direct API key from configuration
+        // Since Google Maps JavaScript API keys are public and meant for client-side use,
+        // we can store them directly in the code as a fallback
+        const fallbackApiKey = GOOGLE_MAPS_CONFIG.fallbackApiKey;
+        
+        if (fallbackApiKey && fallbackApiKey.startsWith('AIza')) {
+          console.log('Using fallback API key for Google Maps');
+          console.log('Fallback API key starts with:', fallbackApiKey.substring(0, 10) + '...');
+          setApiKey(fallbackApiKey);
+        } else {
+          console.error('No valid fallback API key available');
+          setError('Google Maps API key not configured. Please add your API key to the fallback or contact support.');
+          setIsLoading(false);
+        }
       }
     };
 
@@ -63,27 +77,11 @@ const GoogleMap: React.FC<GoogleMapProps> = ({ listings, className = '', onListi
 
         await loader.load();
 
-        // Center map on Milan, Italy
+        // Use configuration for map options
         const mapOptions: google.maps.MapOptions = {
-          center: { lat: 45.4642, lng: 9.1900 },
-          zoom: 12,
-          styles: [
-            {
-              featureType: 'all',
-              elementType: 'geometry.fill',
-              stylers: [{ color: '#f5f5f5' }]
-            },
-            {
-              featureType: 'water',
-              elementType: 'geometry',
-              stylers: [{ color: '#c9e2f6' }]
-            },
-            {
-              featureType: 'road',
-              elementType: 'geometry',
-              stylers: [{ color: '#ffffff' }]
-            }
-          ],
+          center: GOOGLE_MAPS_CONFIG.defaultCenter,
+          zoom: GOOGLE_MAPS_CONFIG.defaultZoom,
+          styles: GOOGLE_MAPS_CONFIG.mapStyles,
           mapTypeControl: false,
           streetViewControl: true,
           fullscreenControl: true,
@@ -209,9 +207,13 @@ const GoogleMap: React.FC<GoogleMapProps> = ({ listings, className = '', onListi
   if (error) {
     return (
       <div className={`flex items-center justify-center bg-muted rounded-lg ${className}`}>
-        <div className="text-center">
-          <p className="text-destructive mb-2">Failed to load map</p>
-          <p className="text-muted-foreground text-sm">{error}</p>
+        <div className="text-center p-6">
+          <p className="text-destructive mb-2 font-medium">Map Unavailable</p>
+          <p className="text-muted-foreground text-sm mb-4">{error}</p>
+          <div className="text-xs text-muted-foreground">
+            <p>The map requires a valid Google Maps API key.</p>
+            <p>You can view listings in grid format instead.</p>
+          </div>
         </div>
       </div>
     );
