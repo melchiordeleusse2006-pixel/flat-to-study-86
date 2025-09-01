@@ -397,7 +397,7 @@ const Index = () => {
           <section className="py-16 px-4 bg-muted/30">
             <div className="container mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold mb-4">Why Choose flat2study?</h2>
+                <h2 className="text-3xl font-bold mb-4">Properties selected by hand specifically for students by looking at campus proximity and student-friendly amenities.</h2>
                 <p className="text-muted-foreground text-lg">
                   Your trusted partner in finding the perfect student accommodation
                 </p>
