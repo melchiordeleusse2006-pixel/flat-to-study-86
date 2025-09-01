@@ -27,20 +27,20 @@ export default function UserTypeSelection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Realtor */}
-          <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 group">
-            <Link to="/signup/realtor">
-              <CardHeader className="text-center pb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-auto md:h-96">
+          {/* For Realtors */}
+          <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 group flex flex-col">
+            <Link to="/signup/realtor" className="flex flex-col h-full">
+              <CardHeader className="text-center pb-4 flex-1">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
                   <Building className="h-8 w-8 text-primary" />
                 </div>
-                <CardTitle className="text-xl">Realtor</CardTitle>
+                <CardTitle className="text-xl">For Realtors</CardTitle>
                 <CardDescription>
-                  Real estate professional managing multiple properties
+                  Real estate professionals managing multiple properties
                 </CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
+              <CardContent className="text-center pt-0">
                 <p className="text-sm text-muted-foreground mb-4">
                   List and manage properties, connect with potential tenants, track inquiries
                 </p>
@@ -49,19 +49,19 @@ export default function UserTypeSelection() {
             </Link>
           </Card>
 
-          {/* Private Individual */}
-          <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 group">
-            <Link to="/signup/private">
-              <CardHeader className="text-center pb-4">
+          {/* For Private Individuals */}
+          <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 group flex flex-col">
+            <Link to="/signup/private" className="flex flex-col h-full">
+              <CardHeader className="text-center pb-4 flex-1">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
                   <Home className="h-8 w-8 text-primary" />
                 </div>
-                <CardTitle className="text-xl">Private Individual</CardTitle>
+                <CardTitle className="text-xl">For Private Individuals</CardTitle>
                 <CardDescription>
-                  Property owner renting directly to students
+                  Property owners renting directly to students
                 </CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
+              <CardContent className="text-center pt-0">
                 <p className="text-sm text-muted-foreground mb-4">
                   List your property, manage tenant communications, simple rental management
                 </p>
@@ -70,19 +70,19 @@ export default function UserTypeSelection() {
             </Link>
           </Card>
 
-          {/* Apartment Seeker */}
-          <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 group">
-            <Link to="/signup/student">
-              <CardHeader className="text-center pb-4">
+          {/* For Apartment Seekers */}
+          <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 group flex flex-col">
+            <Link to="/signup/student" className="flex flex-col h-full">
+              <CardHeader className="text-center pb-4 flex-1">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
                   <GraduationCap className="h-8 w-8 text-primary" />
                 </div>
-                <CardTitle className="text-xl">Apartment Seeker</CardTitle>
+                <CardTitle className="text-xl">For Apartment Seekers</CardTitle>
                 <CardDescription>
-                  Student looking for accommodation
+                  Students looking for accommodation
                 </CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
+              <CardContent className="text-center pt-0">
                 <p className="text-sm text-muted-foreground mb-4">
                   Search properties, save favorites, request viewings, connect with landlords
                 </p>

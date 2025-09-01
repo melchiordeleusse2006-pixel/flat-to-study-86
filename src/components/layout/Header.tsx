@@ -93,7 +93,7 @@ export default function Header() {
             </div> : <Link to="/auth">
               <Button variant="ghost" size="sm">
                 <User className="h-4 w-4 mr-2" />
-                {t('header.signIn')}
+                Log In
               </Button>
             </Link>}
 
@@ -103,7 +103,7 @@ export default function Header() {
               </Button>
             </Link>}
 
-          {!user && <Link to="/auth">
+          {!user && <Link to="/get-started">
               <Button size="sm" className="hero-gradient text-white border-0">
                 {t('header.getStarted')}
               </Button>
