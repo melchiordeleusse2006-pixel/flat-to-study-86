@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import ListingCard from '@/components/listings/ListingCard';
 import SearchFilters from '@/components/search/SearchFilters';
+import MapboxMap from '@/components/map/MapboxMap';
 import { Listing, SearchFilters as SearchFiltersType } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search as SearchIcon, List, Grid } from 'lucide-react';
+import { Search as SearchIcon, List, Grid, Map } from 'lucide-react';
 
-type ViewMode = 'list' | 'grid';
+type ViewMode = 'list' | 'grid' | 'map';
 
 export default function Search() {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -244,9 +245,17 @@ export default function Search() {
                   variant={viewMode === 'grid' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('grid')}
-                  className="rounded-l-none"
+                  className="rounded-none border-r"
                 >
                   <Grid className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'map' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('map')}
+                  className="rounded-l-none"
+                >
+                  <Map className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -277,6 +286,43 @@ export default function Search() {
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 <span className="ml-2 text-muted-foreground">Loading listings...</span>
+              </div>
+            ) : viewMode === 'map' ? (
+              /* Map View */
+              <div className="flex gap-6 h-[calc(100vh-200px)]">
+                <div className="flex-1 overflow-y-auto">
+                  <div className="grid gap-4">
+                    {listings.map((listing) => (
+                      <ListingCard
+                        key={listing.id}
+                        listing={listing}
+                        onClick={() => handleListingClick(listing.id)}
+                        className="cursor-pointer"
+                      />
+                    ))}
+                    
+                    {listings.length === 0 && (
+                      <div className="text-center py-12">
+                        <p className="text-muted-foreground">No properties match your search criteria.</p>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setFilters({})}
+                          className="mt-4"
+                        >
+                          Clear Filters
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="flex-1">
+                  <MapboxMap 
+                    listings={listings}
+                    onListingClick={handleListingClick}
+                    className="h-full"
+                  />
+                </div>
               </div>
             ) : (
               /* List/Grid View */
