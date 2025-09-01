@@ -21,16 +21,13 @@ export default function Auth() {
   const [signInEmail, setSignInEmail] = useState('');
   const [signInPassword, setSignInPassword] = useState('');
 
-  // Redirect authenticated users to their appropriate home page
+  // Redirect authenticated users to homepage
   useEffect(() => {
     console.log('Auth page - authLoading:', authLoading, 'user:', !!user, 'profile:', profile?.user_type);
     if (!authLoading && user && profile) {
-      console.log('Redirecting authenticated user to appropriate home');
-      // Redirect to appropriate home based on user type
-      // Both students and private users (apartment seekers) go to student home
-      const redirectPath = (profile.user_type === 'student' || profile.user_type === 'private') ? '/student-home' : 
-                          profile.user_type === 'agency' ? '/sell-side-home' : '/';
-      navigate(redirectPath, { replace: true });
+      console.log('Redirecting authenticated user to homepage');
+      // All authenticated users go to the main homepage
+      navigate('/', { replace: true });
     }
   }, [user, profile, authLoading, navigate]);
 

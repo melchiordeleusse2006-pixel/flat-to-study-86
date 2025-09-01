@@ -3,10 +3,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
-import { Search, Users, Shield, MapPin, Heart } from 'lucide-react';
+import { Search, Users, Shield, MapPin, Heart, MessageCircle, BarChart3, Plus, Eye } from 'lucide-react';
 import { universities, mockListings } from '@/data/mockData';
 import { Logo } from '@/components/ui/logo';
+import { useAuth } from '@/hooks/useAuth';
+import { useUnreadMessagesCount } from '@/hooks/useUnreadMessagesCount';
 const Index = () => {
+  const { user, profile } = useAuth();
+  const unreadCount = useUnreadMessagesCount();
+  
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
       style: 'currency',
@@ -14,6 +19,9 @@ const Index = () => {
       maximumFractionDigits: 0
     }).format(price);
   };
+
+  const isStudent = profile?.user_type === 'student' || profile?.user_type === 'private';
+  const isRealtor = profile?.user_type === 'agency';
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -22,11 +30,15 @@ const Index = () => {
       <section className="relative h-screen flex items-center justify-center hero-gradient text-white overflow-hidden">
         <div className="container mx-auto text-center relative z-10 px-4">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Find Your Perfect Student Home in Milan
+            {user && profile ? `Welcome back, ${profile.full_name || 'User'}!` : 'Find Your Perfect Student Home in Milan'}
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-white/90 max-w-3xl mx-auto">
-            Connecting students with verified housing near Bocconi University and other top Milan universities. 
-            Trusted by agencies, loved by students.
+            {user && profile 
+              ? (isStudent 
+                  ? 'Ready to find your perfect student accommodation?' 
+                  : 'Manage your listings and connect with potential tenants.')
+              : 'Connecting students with verified housing near Bocconi University and other top Milan universities. Trusted by agencies, loved by students.'
+            }
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
@@ -49,123 +61,409 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Universities Section */}
-      <section className="py-16 px-4 bg-muted/30">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Perfect for Students Near Top Universities</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Find housing within walking distance or easy commute to Milan's best universities
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {universities.map(university => <Card key={university.id} className="text-center hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <MapPin className="h-8 w-8 text-primary mx-auto mb-3" />
-                  <h3 className="font-semibold mb-2">{university.name}</h3>
-                  <p className="text-sm text-muted-foreground">{university.city}, {university.country}</p>
-                </CardContent>
-              </Card>)}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Listings */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Featured Properties</h2>
-            <p className="text-muted-foreground text-lg">
-              Hand-picked accommodations from trusted agencies
-            </p>
-          </div>
-          
-          {/* Horizontal scrollable container for featured properties */}
-          <div className="relative mb-8">
-            <div className="flex gap-8 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
-              {mockListings.slice(0, 6).map(listing => (
-                <Card key={listing.id} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden hover:shadow-lg transition-shadow snap-start">
-                  <div className="relative h-48">
-                    <img src={listing.images[0] || '/placeholder.svg'} alt={listing.title} className="w-full h-full object-cover" />
-                    <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-                      Featured
-                    </Badge>
-                  </div>
-                  <CardContent className="p-6">
-                    <h3 className="font-semibold mb-2 line-clamp-2">{listing.title}</h3>
-                    <p className="text-muted-foreground text-sm mb-3 flex items-center">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {listing.addressLine}, {listing.city}
+      {/* Conditional Content Based on User Type */}
+      {user && profile ? (
+        <>
+          {isStudent ? (
+            <>
+              {/* Universities Section for Students */}
+              <section className="py-16 px-4 bg-muted/30">
+                <div className="container mx-auto">
+                  <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold mb-4">Perfect for Students Near Top Universities</h2>
+                    <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                      Find housing within walking distance or easy commute to Milan's best universities
                     </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold text-price">
-                        {formatPrice(listing.rentMonthlyEUR)}
-                        <span className="text-sm text-muted-foreground font-normal">/month</span>
-                      </span>
-                      <Link to={`/listing/${listing.id}`}>
-                        <Button size="sm">View Details</Button>
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-          
-          <div className="text-center">
-            <Link to="/search">
-              <Button size="lg" variant="outline">
-                View All Properties
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {universities.map(university => <Card key={university.id} className="text-center hover:shadow-lg transition-shadow">
+                        <CardContent className="p-6">
+                          <MapPin className="h-8 w-8 text-primary mx-auto mb-3" />
+                          <h3 className="font-semibold mb-2">{university.name}</h3>
+                          <p className="text-sm text-muted-foreground">{university.city}, {university.country}</p>
+                        </CardContent>
+                      </Card>)}
+                  </div>
+                </div>
+              </section>
 
-      {/* Features Section */}
-      <section className="py-16 px-4 bg-muted/30">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Choose flat2study?</h2>
-            <p className="text-muted-foreground text-lg">
-              Your trusted partner in finding the perfect student accommodation
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="h-8 w-8 text-primary" />
+              {/* Featured Listings for Students */}
+              <section className="py-16 px-4">
+                <div className="container mx-auto">
+                  <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold mb-4">Featured Properties</h2>
+                    <p className="text-muted-foreground text-lg">
+                      Hand-picked accommodations from trusted agencies
+                    </p>
+                  </div>
+                  
+                  <div className="relative mb-8">
+                    <div className="flex gap-8 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+                      {mockListings.slice(0, 6).map(listing => (
+                        <Card key={listing.id} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden hover:shadow-lg transition-shadow snap-start">
+                          <div className="relative h-48">
+                            <img src={listing.images[0] || '/placeholder.svg'} alt={listing.title} className="w-full h-full object-cover" />
+                            <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
+                              Featured
+                            </Badge>
+                          </div>
+                          <CardContent className="p-6">
+                            <h3 className="font-semibold mb-2 line-clamp-2">{listing.title}</h3>
+                            <p className="text-muted-foreground text-sm mb-3 flex items-center">
+                              <MapPin className="h-4 w-4 mr-1" />
+                              {listing.addressLine}, {listing.city}
+                            </p>
+                            <div className="flex items-center justify-between">
+                              <span className="text-2xl font-bold text-price">
+                                {formatPrice(listing.rentMonthlyEUR)}
+                                <span className="text-sm text-muted-foreground font-normal">/month</span>
+                              </span>
+                              <Link to={`/listing/${listing.id}`}>
+                                <Button size="sm">View Details</Button>
+                              </Link>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="text-center">
+                    <Link to="/search">
+                      <Button size="lg" variant="outline">
+                        View All Properties
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </section>
+
+              {/* Quick Actions for Students */}
+              <section className="py-16 px-4 bg-muted/30">
+                <div className="container mx-auto">
+                  <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold mb-4">Quick Actions</h2>
+                    <p className="text-muted-foreground text-lg">
+                      Access your most important features
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <Link to="/messages">
+                      <Card className="h-full hover:shadow-lg transition-all duration-200 cursor-pointer group">
+                        <CardContent className="p-6 text-center relative">
+                          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                            <MessageCircle className="h-8 w-8 text-primary" />
+                          </div>
+                          {unreadCount > 0 && (
+                            <Badge className="absolute top-4 right-4 bg-destructive text-destructive-foreground">
+                              {unreadCount}
+                            </Badge>
+                          )}
+                          <h3 className="text-xl font-semibold mb-3">Messages</h3>
+                          <p className="text-muted-foreground">
+                            Chat with landlords and agencies
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+
+                    <Link to="/favorites">
+                      <Card className="h-full hover:shadow-lg transition-all duration-200 cursor-pointer group">
+                        <CardContent className="p-6 text-center">
+                          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                            <Heart className="h-8 w-8 text-primary" />
+                          </div>
+                          <h3 className="text-xl font-semibold mb-3">Saved Listings</h3>
+                          <p className="text-muted-foreground">
+                            View your favorite properties
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+
+                    <Link to="/search">
+                      <Card className="h-full hover:shadow-lg transition-all duration-200 cursor-pointer group">
+                        <CardContent className="p-6 text-center">
+                          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                            <Search className="h-8 w-8 text-primary" />
+                          </div>
+                          <h3 className="text-xl font-semibold mb-3">Explore</h3>
+                          <p className="text-muted-foreground">
+                            Discover new properties
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+
+                    <Card className="h-full">
+                      <CardContent className="p-6 text-center">
+                        <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <BarChart3 className="h-8 w-8 text-muted-foreground" />
+                        </div>
+                        <h3 className="text-xl font-semibold mb-3">Recent Activity</h3>
+                        <p className="text-muted-foreground text-sm">
+                          No recent activity yet. Start exploring to see your activity here!
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </section>
+            </>
+          ) : isRealtor ? (
+            <>
+              {/* Realtor Dashboard Content */}
+              <section className="py-16 px-4 bg-muted/30">
+                <div className="container mx-auto">
+                  <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold mb-4">Quick Actions</h2>
+                    <p className="text-muted-foreground text-lg">
+                      Manage your property listings and business
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <Link to="/create-listing">
+                      <Card className="h-full hover:shadow-lg transition-all duration-200 cursor-pointer group">
+                        <CardContent className="p-6 text-center">
+                          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                            <Plus className="h-8 w-8 text-primary" />
+                          </div>
+                          <h3 className="text-xl font-semibold mb-3">Add Listing</h3>
+                          <p className="text-muted-foreground">
+                            Create a new property listing
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+
+                    <Link to="/my-listings">
+                      <Card className="h-full hover:shadow-lg transition-all duration-200 cursor-pointer group">
+                        <CardContent className="p-6 text-center">
+                          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                            <Eye className="h-8 w-8 text-primary" />
+                          </div>
+                          <h3 className="text-xl font-semibold mb-3">My Listings</h3>
+                          <p className="text-muted-foreground">
+                            View and manage your properties
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+
+                    <Link to="/messages">
+                      <Card className="h-full hover:shadow-lg transition-all duration-200 cursor-pointer group">
+                        <CardContent className="p-6 text-center relative">
+                          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                            <MessageCircle className="h-8 w-8 text-primary" />
+                          </div>
+                          {unreadCount > 0 && (
+                            <Badge className="absolute top-4 right-4 bg-destructive text-destructive-foreground">
+                              {unreadCount}
+                            </Badge>
+                          )}
+                          <h3 className="text-xl font-semibold mb-3">Messages</h3>
+                          <p className="text-muted-foreground">
+                            Chat with potential tenants
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+
+                    <Card className="h-full">
+                      <CardContent className="p-6 text-center">
+                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <BarChart3 className="h-8 w-8 text-primary" />
+                        </div>
+                        <h3 className="text-xl font-semibold mb-3">Analytics</h3>
+                        <p className="text-muted-foreground">
+                          View listing performance
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </section>
+
+              {/* Dashboard Stats */}
+              <section className="py-16 px-4">
+                <div className="container mx-auto">
+                  <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold mb-4">Dashboard Stats</h2>
+                    <p className="text-muted-foreground text-lg">
+                      Overview of your listing performance
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card>
+                      <CardContent className="p-6 text-center">
+                        <div className="text-3xl font-bold text-primary mb-2">0</div>
+                        <p className="text-muted-foreground">Active Listings</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardContent className="p-6 text-center">
+                        <div className="text-3xl font-bold text-primary mb-2">0</div>
+                        <p className="text-muted-foreground">Total Views</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardContent className="p-6 text-center">
+                        <div className="text-3xl font-bold text-primary mb-2">0</div>
+                        <p className="text-muted-foreground">Inquiries</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </section>
+
+              {/* Contact Us */}
+              <section className="py-16 px-4 bg-muted/30">
+                <div className="container mx-auto text-center">
+                  <h2 className="text-3xl font-bold mb-4">Need Help?</h2>
+                  <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
+                    Our team is here to help you succeed. Get in touch with any questions about listing your properties.
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+                    <Button size="lg" className="flex-1">
+                      Contact Support
+                    </Button>
+                    <Button size="lg" variant="outline" className="flex-1">
+                      Schedule Call
+                    </Button>
+                  </div>
+                </div>
+              </section>
+            </>
+          ) : null}
+        </>
+      ) : (
+        <>
+          {/* Default content for non-authenticated users */}
+          {/* Universities Section */}
+          <section className="py-16 px-4 bg-muted/30">
+            <div className="container mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold mb-4">Perfect for Students Near Top Universities</h2>
+                <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                  Find housing within walking distance or easy commute to Milan's best universities
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-3">Verified Listings</h3>
-              <p className="text-muted-foreground">
-                All properties are verified by our team. Only work with trusted agencies and landlords.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-primary" />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {universities.map(university => <Card key={university.id} className="text-center hover:shadow-lg transition-shadow">
+                    <CardContent className="p-6">
+                      <MapPin className="h-8 w-8 text-primary mx-auto mb-3" />
+                      <h3 className="font-semibold mb-2">{university.name}</h3>
+                      <p className="text-sm text-muted-foreground">{university.city}, {university.country}</p>
+                    </CardContent>
+                  </Card>)}
               </div>
-              <h3 className="text-xl font-semibold mb-3">Student-Focused</h3>
-              <p className="text-muted-foreground">
-                Designed specifically for students with features like university proximity and student-friendly amenities.
-              </p>
             </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="h-8 w-8 text-primary" />
+          </section>
+
+          {/* Featured Listings */}
+          <section className="py-16 px-4">
+            <div className="container mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold mb-4">Featured Properties</h2>
+                <p className="text-muted-foreground text-lg">
+                  Hand-picked accommodations from trusted agencies
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-3">Easy Process</h3>
-              <p className="text-muted-foreground">
-                Simple search, save favorites, request visits, and connect directly with agencies.
-              </p>
+              
+              <div className="relative mb-8">
+                <div className="flex gap-8 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+                  {mockListings.slice(0, 6).map(listing => (
+                    <Card key={listing.id} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden hover:shadow-lg transition-shadow snap-start">
+                      <div className="relative h-48">
+                        <img src={listing.images[0] || '/placeholder.svg'} alt={listing.title} className="w-full h-full object-cover" />
+                        <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
+                          Featured
+                        </Badge>
+                      </div>
+                      <CardContent className="p-6">
+                        <h3 className="font-semibold mb-2 line-clamp-2">{listing.title}</h3>
+                        <p className="text-muted-foreground text-sm mb-3 flex items-center">
+                          <MapPin className="h-4 w-4 mr-1" />
+                          {listing.addressLine}, {listing.city}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-2xl font-bold text-price">
+                            {formatPrice(listing.rentMonthlyEUR)}
+                            <span className="text-sm text-muted-foreground font-normal">/month</span>
+                          </span>
+                          <Link to={`/listing/${listing.id}`}>
+                            <Button size="sm">View Details</Button>
+                          </Link>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <Link to="/search">
+                  <Button size="lg" variant="outline">
+                    View All Properties
+                  </Button>
+                </Link>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
+
+          {/* Features Section */}
+          <section className="py-16 px-4 bg-muted/30">
+            <div className="container mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold mb-4">Why Choose flat2study?</h2>
+                <p className="text-muted-foreground text-lg">
+                  Your trusted partner in finding the perfect student accommodation
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Shield className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Verified Listings</h3>
+                  <p className="text-muted-foreground">
+                    All properties are verified by our team. Only work with trusted agencies and landlords.
+                  </p>
+                </div>
+                
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Users className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Student-Focused</h3>
+                  <p className="text-muted-foreground">
+                    Designed specifically for students with features like university proximity and student-friendly amenities.
+                  </p>
+                </div>
+                
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Heart className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Easy Process</h3>
+                  <p className="text-muted-foreground">
+                    Simple search, save favorites, request visits, and connect directly with agencies.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </>
+      )}
 
       {/* CTA Section */}
       <section className="py-20 px-4 hero-gradient text-white">
