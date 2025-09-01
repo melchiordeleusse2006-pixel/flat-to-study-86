@@ -13,20 +13,14 @@ export function Logo({ className = "", size = 32 }: LogoProps) {
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      {/* Upside down V shape representing a roof */}
+      {/* V shape representing a roof */}
       <path
-        d="M4 28L16 8L28 28H4Z"
-        fill="currentColor"
+        d="M6 8L16 26L26 8"
+        fill="none"
         stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      {/* Optional house base line */}
-      <path
-        d="M6 26H26"
-        stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="3"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
