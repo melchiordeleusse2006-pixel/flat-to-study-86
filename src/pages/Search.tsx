@@ -317,7 +317,7 @@ export default function Search() {
       </div>
 
       {/* Main Content */}
-      <div className="container py-6">
+      <div className="container py-4">
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -326,7 +326,7 @@ export default function Search() {
         ) : viewMode === 'map' ? (
           /* Map View - Mobile shows only map, Desktop shows 50/50 split */
           isMobile ? (
-            <div className="h-[calc(100vh-280px)]">
+            <div className="h-[calc(100vh-220px)]">
               <SimpleMapView 
                 listings={listings}
                 onListingClick={handleListingClick}
@@ -337,32 +337,34 @@ export default function Search() {
               />
             </div>
           ) : (
-            <div className="flex gap-6 h-[calc(100vh-280px)]">
+            <div className="flex gap-6 h-[calc(100vh-220px)]">
               {/* Listings Panel - Left Side */}
-              <div className="w-1/2 flex flex-col">
-                {/* Sort Section - Above listings, not sticky */}
-                <div className="flex items-center justify-between mb-4 pb-3 border-b bg-background px-2 py-2">
+              <div className="w-1/2 flex flex-col bg-background rounded-lg border">
+                {/* Sort Section - Fixed at top with proper spacing */}
+                <div className="flex items-center justify-between p-4 border-b bg-background rounded-t-lg">
                   <p className="text-sm text-muted-foreground">
                     {visibleListings.length} properties in current view
                   </p>
                   
-                  <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger className="w-48 z-20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="z-20">
-                      <SelectItem value="relevance">Relevance</SelectItem>
-                      <SelectItem value="price-low">Price: Low to High</SelectItem>
-                      <SelectItem value="price-high">Price: High to Low</SelectItem>
-                      <SelectItem value="newest">Newest First</SelectItem>
-                      <SelectItem value="distance">Distance</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="min-w-0 flex-shrink-0">
+                    <Select value={sortBy} onValueChange={setSortBy}>
+                      <SelectTrigger className="w-48 z-50">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="z-50 bg-popover border">
+                        <SelectItem value="relevance">Relevance</SelectItem>
+                        <SelectItem value="price-low">Price: Low to High</SelectItem>
+                        <SelectItem value="price-high">Price: High to Low</SelectItem>
+                        <SelectItem value="newest">Newest First</SelectItem>
+                        <SelectItem value="distance">Distance</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 
                 {/* Scrollable listings */}
-                <div className="flex-1 overflow-y-auto">
-                  <div className="grid gap-4 pr-2">
+                <div className="flex-1 overflow-y-auto p-4">
+                  <div className="grid gap-4">
                     {visibleListings.map((listing) => (
                       <div
                         key={listing.id}
@@ -388,14 +390,14 @@ export default function Search() {
               </div>
               
               {/* Map - Right Side */}
-              <div className="w-1/2">
+              <div className="w-1/2 z-10">
                 <SimpleMapView 
                   listings={listings}
                   onListingClick={handleListingClick}
                   hoveredListingId={hoveredListingId}
                   onListingHover={setHoveredListingId}
                   onBoundsChange={handleMapBoundsChange}
-                  className="h-full w-full rounded-lg"
+                  className="h-full w-full rounded-lg border"
                 />
               </div>
             </div>
