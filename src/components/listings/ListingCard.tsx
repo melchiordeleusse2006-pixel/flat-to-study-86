@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Heart, MapPin, Bed, Bath, Calendar, Wifi, Car, Users, Map } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ListingMap from '@/components/map/ListingMap';
+import { useFavorites } from '@/hooks/useFavorites';
 
 interface ListingCardProps {
   listing: Listing;
@@ -21,7 +22,7 @@ export default function ListingCard({
   isHovered, 
   className 
 }: ListingCardProps) {
-  const [isFavorited, setIsFavorited] = useState(false);
+  const { isFavorited, toggleFavorite } = useFavorites();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showMap, setShowMap] = useState(false);
 
@@ -105,12 +106,12 @@ export default function ListingCard({
           className="absolute top-2 right-2 h-8 w-8 p-0 bg-white/90 hover:bg-white"
           onClick={(e) => {
             e.stopPropagation();
-            setIsFavorited(!isFavorited);
+            toggleFavorite(listing.id);
           }}
         >
           <Heart 
             className={`h-4 w-4 ${
-              isFavorited ? 'fill-favorite text-favorite' : 'text-muted-foreground'
+              isFavorited(listing.id) ? 'fill-favorite text-favorite' : 'text-muted-foreground'
             }`} 
           />
         </Button>

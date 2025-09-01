@@ -43,10 +43,12 @@ export default function Header() {
 
         {/* User Actions */}
         <div className="flex items-center space-x-2">
-          {user && <Button variant="ghost" size="sm" className="hidden md:flex">
-              <Heart className="h-4 w-4 mr-2" />
-              Favorites
-            </Button>}
+          {user && <Link to="/favorites">
+              <Button variant="ghost" size="sm" className="hidden md:flex">
+                <Heart className="h-4 w-4 mr-2" />
+                Favorites
+              </Button>
+            </Link>}
           
           {user ? <div className="flex items-center space-x-2">
               <span className="text-sm hidden md:block">
