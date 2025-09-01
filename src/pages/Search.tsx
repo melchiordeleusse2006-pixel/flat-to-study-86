@@ -343,7 +343,7 @@ export default function Search() {
       ) : viewMode === 'map' ? (
         /* Map View - Full height seamless layout */
         isMobile ? (
-          <div className="h-[calc(100vh-220px)]">
+          <div className="h-[calc(100vh-240px)]">
             <SimpleMapView 
               listings={listings}
               onListingClick={handleListingClick}
@@ -354,11 +354,11 @@ export default function Search() {
             />
           </div>
         ) : (
-          <div className="flex h-[calc(100vh-220px)] p-4 gap-4">
+          <div className="flex h-[calc(100vh-240px)]">
             {/* Listings Panel - Left Side */}
-            <div className="w-1/2 flex flex-col bg-background rounded-lg border shadow-sm">
+            <div className="w-1/2 flex flex-col bg-background border-r">
               {/* Results count header */}
-              <div className="flex items-center justify-between p-4 border-b bg-background/50 rounded-t-lg">
+              <div className="flex items-center justify-between p-4 border-b bg-background/50">
                 <p className="text-sm text-muted-foreground">
                   {visibleListings.length} properties in current view
                 </p>
@@ -399,7 +399,7 @@ export default function Search() {
                 hoveredListingId={hoveredListingId}
                 onListingHover={setHoveredListingId}
                 onBoundsChange={handleMapBoundsChange}
-                className="h-full w-full rounded-lg border shadow-sm"
+                className="h-full w-full"
               />
             </div>
           </div>
