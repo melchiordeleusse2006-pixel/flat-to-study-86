@@ -21,12 +21,24 @@ export default function Auth() {
   const [signInEmail, setSignInEmail] = useState('');
   const [signInPassword, setSignInPassword] = useState('');
 
-  // Redirect authenticated users to home
+  // Redirect authenticated users to home (only after auth is fully loaded)
   useEffect(() => {
     if (!authLoading && user) {
       navigate('/', { replace: true });
     }
   }, [user, authLoading, navigate]);
+
+  // Show loading while auth is initializing
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex items-center space-x-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
