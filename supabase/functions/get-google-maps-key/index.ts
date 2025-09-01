@@ -12,9 +12,13 @@ serve(async (req) => {
   }
 
   try {
+    console.log('get-google-maps-key function called');
+    
     const googleMapsKey = Deno.env.get('GOOGLE_MAPS_API_KEY')
+    console.log('API key exists:', !!googleMapsKey);
     
     if (!googleMapsKey) {
+      console.error('Google Maps API key not found in environment');
       return new Response(
         JSON.stringify({ error: 'Google Maps API key not configured' }),
         { 
@@ -24,16 +28,18 @@ serve(async (req) => {
       )
     }
 
+    console.log('Returning API key successfully');
     return new Response(
       JSON.stringify({ apiKey: googleMapsKey }),
       { 
+        status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
     )
   } catch (error) {
     console.error('Error in get-google-maps-key function:', error);
     return new Response(
-      JSON.stringify({ error: 'Failed to get Google Maps API key' }),
+      JSON.stringify({ error: 'Failed to get Google Maps API key', details: error.message }),
       { 
         status: 500, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
