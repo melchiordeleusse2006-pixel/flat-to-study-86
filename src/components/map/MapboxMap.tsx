@@ -24,7 +24,7 @@ export default function MapboxMap({ listings, className, onListingClick }: Mapbo
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
+      style: 'mapbox://styles/teodorcosmovici/cmf0nwup1000z01s1ddvq8t5u',
       center: [9.1900, 45.4642], // Milan coordinates
       zoom: 12,
     });

@@ -8,9 +8,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search as SearchIcon, List, Grid, Map } from 'lucide-react';
+import { Search as SearchIcon, Grid, Map } from 'lucide-react';
 
-type ViewMode = 'list' | 'grid' | 'map';
+type ViewMode = 'grid' | 'map';
 
 export default function Search() {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -18,7 +18,7 @@ export default function Search() {
   const [filters, setFilters] = useState<SearchFiltersType>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('relevance');
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [viewMode, setViewMode] = useState<ViewMode>('map');
   const [loading, setLoading] = useState(true);
 
   // Fetch listings from database
@@ -234,18 +234,10 @@ export default function Search() {
               {/* View Mode Toggle */}
               <div className="flex rounded-lg border">
                 <Button
-                  variant={viewMode === 'list' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('list')}
-                  className="rounded-r-none border-r"
-                >
-                  <List className="h-4 w-4" />
-                </Button>
-                <Button
                   variant={viewMode === 'grid' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('grid')}
-                  className="rounded-none border-r"
+                  className="rounded-r-none border-r"
                 >
                   <Grid className="h-4 w-4" />
                 </Button>
@@ -329,12 +321,8 @@ export default function Search() {
                 </div>
               </div>
             ) : (
-              /* List/Grid View */
-              <div className={`grid gap-6 ${
-                viewMode === 'grid' 
-                  ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
-                  : 'grid-cols-1'
-              }`}>
+              /* Grid View */
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
               {listings.map((listing) => (
                 <ListingCard
                   key={listing.id}
