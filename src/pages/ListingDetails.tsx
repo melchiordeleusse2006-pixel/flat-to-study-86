@@ -24,7 +24,7 @@ import {
   Send
 } from 'lucide-react';
 import Header from '@/components/layout/Header';
-import MapView from '@/components/map/MapView';
+import SimpleMapView from '@/components/map/SimpleMapView';
 
 export default function ListingDetails() {
   const { id } = useParams<{ id: string }>();
@@ -421,14 +421,10 @@ export default function ListingDetails() {
                   <CardTitle>Location</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-80">
-                    <MapView 
-                      listings={[{
-                        ...listing,
-                        agency: listing.agency
-                      }]}
-                    />
-                  </div>
+                  <SimpleMapView 
+                    listings={[listing]}
+                    className="h-80"
+                  />
                 </CardContent>
               </Card>
             </div>
