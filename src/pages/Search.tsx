@@ -341,9 +341,9 @@ export default function Search() {
           <span className="ml-2 text-muted-foreground">Loading listings...</span>
         </div>
       ) : viewMode === 'map' ? (
-        /* Map View - Full height seamless layout */
+        /* Map View - Use absolute positioning to fill remaining space */
         isMobile ? (
-          <div className="h-[calc(100vh-300px)]">
+          <div className="absolute top-[var(--header-height)] left-0 right-0 bottom-0" style={{"--header-height": "200px"} as any}>
             <SimpleMapView 
               listings={listings}
               onListingClick={handleListingClick}
@@ -354,19 +354,19 @@ export default function Search() {
             />
           </div>
         ) : (
-          <div className="flex h-[calc(100vh-300px)]">
+          <div className="absolute top-[200px] left-0 right-0 bottom-0 flex">
             {/* Listings Panel - Left Side */}
             <div className="w-1/2 flex flex-col bg-background border-r">
               {/* Results count header */}
-              <div className="flex items-center justify-between px-4 py-2 border-b bg-background/50">
+              <div className="flex items-center justify-between px-4 py-2 border-b bg-background/50 flex-shrink-0">
                 <p className="text-sm text-muted-foreground">
                   {visibleListings.length} properties in current view
                 </p>
               </div>
               
-              {/* Scrollable listings - Maximum height usage */}
-              <div className="flex-1 overflow-y-auto">
-                <div className="grid gap-3 p-3">
+              {/* Scrollable listings - Use all available space */}
+              <div className="flex-1 overflow-y-auto min-h-0">
+                <div className="p-3 space-y-3">
                   {visibleListings.map((listing) => (
                     <div
                       key={listing.id}
