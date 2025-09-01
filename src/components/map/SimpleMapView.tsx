@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import { Listing } from '@/types';
+import './map-styles.css';
 
 // Fix for default markers in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -71,43 +72,59 @@ export default function SimpleMapView({
       
       listings.forEach((listing) => {
         const isHovered = hoveredListingId === listing.id;
+        const price = formatPrice(listing.rentMonthlyEUR);
         
-        // Create custom marker with hover effect
+        // Create custom marker with price and hover effect
         const markerIcon = L.divIcon({
           html: `
             <div style="
               background-color: ${isHovered ? 'white' : '#059669'};
               border: 2px solid ${isHovered ? '#3b82f6' : 'white'};
-              border-radius: 50%;
-              width: 16px;
-              height: 16px;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-              transform: ${isHovered ? 'scale(1.3)' : 'scale(1)'};
+              border-radius: 8px;
+              padding: 4px 8px;
+              font-size: 12px;
+              font-weight: 600;
+              color: ${isHovered ? '#3b82f6' : 'white'};
+              box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+              transform: ${isHovered ? 'scale(1.1)' : 'scale(1)'};
               transition: all 0.2s ease;
-            "></div>
+              white-space: nowrap;
+              text-align: center;
+            ">${price}</div>
           `,
-          className: 'custom-marker',
-          iconSize: [16, 16],
-          iconAnchor: [8, 8],
+          className: 'custom-price-marker',
+          iconSize: [60, 20],
+          iconAnchor: [30, 10],
         });
 
         const marker = L.marker([listing.lat, listing.lng], { icon: markerIcon })
           .addTo(map)
-          .bindPopup(`
-            <div style="width: 250px; padding: 8px;">
-              <div style="display: flex; align-items: start; gap: 12px;">
+          .bindTooltip(`
+            <div style="min-width: 200px; padding: 8px;">
+              <div style="display: flex; align-items: start; gap: 8px;">
                 ${listing.images && listing.images[0] ? 
-                  `<img src="${listing.images[0]}" alt="${listing.title}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; flex-shrink: 0;" />` 
-                  : ''
+                  `<img src="${listing.images[0]}" alt="${listing.title}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; flex-shrink: 0;" />` 
+                  : '<div style="width: 60px; height: 60px; background: #f3f4f6; border-radius: 6px; flex-shrink: 0;"></div>'
                 }
                 <div style="flex: 1; min-width: 0;">
-                  <h3 style="font-weight: 600; font-size: 14px; margin: 0 0 4px 0; line-height: 1.3;">${listing.title}</h3>
-                  <p style="font-size: 12px; color: #666; margin: 0 0 8px 0;">📍 ${listing.addressLine}</p>
-                  <span style="font-weight: bold; font-size: 14px; color: #059669;">${formatPrice(listing.rentMonthlyEUR)}/month</span>
+                  <h4 style="font-weight: 600; font-size: 13px; margin: 0 0 4px 0; line-height: 1.3; color: #111827;">${listing.title}</h4>
+                  <p style="font-size: 12px; color: #6b7280; margin: 0 0 6px 0;">📍 ${listing.addressLine}</p>
+                  <div style="font-weight: bold; font-size: 14px; color: #059669; margin-bottom: 6px;">${price}/month</div>
+                  <div style="display: flex; gap: 8px; font-size: 11px; color: #6b7280;">
+                    ${listing.bedrooms > 0 ? `<span>🛏️ ${listing.bedrooms}</span>` : ''}
+                    ${listing.bathrooms > 0 ? `<span>🚿 ${listing.bathrooms}</span>` : ''}
+                    ${listing.sizeSqm ? `<span>📐 ${listing.sizeSqm}m²</span>` : ''}
+                    ${listing.furnished ? '<span>🪑 Furnished</span>' : ''}
+                  </div>
                 </div>
               </div>
             </div>
-          `);
+          `, {
+            permanent: false,
+            direction: 'top',
+            offset: [0, -15],
+            className: 'custom-tooltip'
+          });
 
         if (onListingClick) {
           marker.on('click', () => onListingClick(listing.id));
