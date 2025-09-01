@@ -80,31 +80,36 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            {mockListings.slice(0, 3).map(listing => <Card key={listing.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative h-48">
-                  <img src={listing.images[0] || '/placeholder.svg'} alt={listing.title} className="w-full h-full object-cover" />
-                  <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-                    Featured
-                  </Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold mb-2 line-clamp-2">{listing.title}</h3>
-                  <p className="text-muted-foreground text-sm mb-3 flex items-center">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    {listing.addressLine}, {listing.city}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-price">
-                      {formatPrice(listing.rentMonthlyEUR)}
-                      <span className="text-sm text-muted-foreground font-normal">/month</span>
-                    </span>
-                    <Link to={`/listing/${listing.id}`}>
-                      <Button size="sm">View Details</Button>
-                    </Link>
+          {/* Horizontal scrollable container for featured properties */}
+          <div className="relative mb-8">
+            <div className="flex gap-8 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+              {mockListings.slice(0, 6).map(listing => (
+                <Card key={listing.id} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden hover:shadow-lg transition-shadow snap-start">
+                  <div className="relative h-48">
+                    <img src={listing.images[0] || '/placeholder.svg'} alt={listing.title} className="w-full h-full object-cover" />
+                    <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
+                      Featured
+                    </Badge>
                   </div>
-                </CardContent>
-              </Card>)}
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold mb-2 line-clamp-2">{listing.title}</h3>
+                    <p className="text-muted-foreground text-sm mb-3 flex items-center">
+                      <MapPin className="h-4 w-4 mr-1" />
+                      {listing.addressLine}, {listing.city}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-bold text-price">
+                        {formatPrice(listing.rentMonthlyEUR)}
+                        <span className="text-sm text-muted-foreground font-normal">/month</span>
+                      </span>
+                      <Link to={`/listing/${listing.id}`}>
+                        <Button size="sm">View Details</Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
           
           <div className="text-center">

@@ -13,9 +13,9 @@ export function Logo({ className = "", size = 32 }: LogoProps) {
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      {/* V shape representing a roof */}
+      {/* Upside down V shape representing a roof with 135 degree angle */}
       <path
-        d="M6 8L16 26L26 8"
+        d="M6 24L16 6L26 24"
         fill="none"
         stroke="currentColor"
         strokeWidth="3"
