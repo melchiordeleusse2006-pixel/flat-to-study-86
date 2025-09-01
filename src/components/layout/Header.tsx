@@ -34,6 +34,9 @@ export default function Header() {
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </Badge>}
             </Link>}
+          {!user && <Link to="/auth" className="px-3 py-1.5 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 rounded-md transition-colors">
+              Publish Listings
+            </Link>}
           <Link to="/about" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">About Us
         </Link>
         </nav>
