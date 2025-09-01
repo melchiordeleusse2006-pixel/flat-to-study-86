@@ -27,7 +27,8 @@ export default function Auth() {
     if (!authLoading && user && profile) {
       console.log('Redirecting authenticated user to appropriate home');
       // Redirect to appropriate home based on user type
-      const redirectPath = profile.user_type === 'student' ? '/student-home' : 
+      // Both students and private users (apartment seekers) go to student home
+      const redirectPath = (profile.user_type === 'student' || profile.user_type === 'private') ? '/student-home' : 
                           profile.user_type === 'agency' ? '/sell-side-home' : '/';
       navigate(redirectPath, { replace: true });
     }
