@@ -42,7 +42,13 @@ export default function SimpleMapView({
 
     // Initialize map
     if (!mapInstanceRef.current) {
-      mapInstanceRef.current = L.map(mapRef.current).setView([45.4642, 9.1900], 13);
+      mapInstanceRef.current = L.map(mapRef.current, {
+        zoomControl: true,
+        scrollWheelZoom: true,
+        doubleClickZoom: false, // Disable double click zoom
+        boxZoom: false, // Disable box zoom
+        keyboard: false // Disable keyboard navigation
+      }).setView([45.4642, 9.1900], 13);
       
       // Add tile layer
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -131,8 +137,16 @@ export default function SimpleMapView({
         }
 
         if (onListingHover) {
-          marker.on('mouseover', () => onListingHover(listing.id));
-          marker.on('mouseout', () => onListingHover(null));
+          marker.on('mouseover', (e) => {
+            onListingHover(listing.id);
+            // Prevent any default zoom behavior
+            e.originalEvent?.stopPropagation();
+          });
+          marker.on('mouseout', (e) => {
+            onListingHover(null);
+            // Prevent any default zoom behavior
+            e.originalEvent?.stopPropagation();
+          });
         }
         
         markers.push(marker);
