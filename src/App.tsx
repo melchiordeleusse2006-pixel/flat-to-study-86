@@ -18,8 +18,6 @@ import UserTypeSelection from "./pages/UserTypeSelection";
 import SignupRealtor from "./pages/SignupRealtor";
 import SignupPrivate from "./pages/SignupPrivate";
 import SignupStudent from "./pages/SignupStudent";
-import StudentHome from "./pages/StudentHome";
-import SellSideHome from "./pages/SellSideHome";
 import EditListing from "./pages/EditListing";
 
 const queryClient = new QueryClient();
@@ -32,8 +30,6 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/student-home" element={<StudentHome />} />
-          <Route path="/sell-side-home" element={<SellSideHome />} />
           <Route path="/search" element={<Search />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/get-started" element={<UserTypeSelection />} />

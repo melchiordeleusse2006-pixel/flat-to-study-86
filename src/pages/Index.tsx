@@ -465,27 +465,29 @@ const Index = () => {
         </>
       )}
 
-      {/* CTA Section */}
-      <section className="py-20 px-4 hero-gradient text-white">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Find Your Student Home?
-          </h2>
-          <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
-            Join thousands of students who have found their perfect accommodation through flat2study
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-            <Link to="/search" className="flex-1">
-              <Button size="lg" className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
-                <Search className="mr-2 h-5 w-5" />
-                Start Searching
-              </Button>
-            </Link>
+      {/* CTA Section - Only for non-authenticated users or students */}
+      {(!user || !profile || isStudent) && (
+        <section className="py-20 px-4 hero-gradient text-white">
+          <div className="container mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              Ready to Find Your Student Home?
+            </h2>
+            <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
+              Join thousands of students who have found their perfect accommodation through flat2study
+            </p>
             
+            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+              <Link to="/search" className="flex-1">
+                <Button size="lg" className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
+                  <Search className="mr-2 h-5 w-5" />
+                  Start Searching
+                </Button>
+              </Link>
+              
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Footer */}
       <footer className="py-8 px-4 border-t">
