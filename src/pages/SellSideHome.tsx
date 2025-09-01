@@ -59,7 +59,7 @@ const SellSideHome = () => {
       <Header />
       
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
+        <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold mb-2">
             Welcome back, {profile?.full_name}!
           </h1>
@@ -68,7 +68,7 @@ const SellSideHome = () => {
           </p>
         </div>
 
-        {!hasListings ? (
+        {!hasListings && (
           /* First Time User - Big Create Listing Button */
           <Card className="mb-8 border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
             <CardContent className="p-12 text-center">
@@ -84,98 +84,96 @@ const SellSideHome = () => {
               </Link>
             </CardContent>
           </Card>
-        ) : (
-          <>
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <Card className="hover:shadow-md transition-shadow">
-                <Link to="/create-listing">
-                  <CardContent className="p-6 text-center">
-                    <Plus className="h-12 w-12 text-primary mx-auto mb-4" />
-                    <h3 className="font-semibold mb-2">Add Listing</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Post a new property
-                    </p>
-                  </CardContent>
-                </Link>
-              </Card>
-
-              <Card className="hover:shadow-md transition-shadow">
-                <Link to="/my-listings">
-                  <CardContent className="p-6 text-center">
-                    <Home className="h-12 w-12 text-primary mx-auto mb-4" />
-                    <h3 className="font-semibold mb-2">My Listings</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Manage your properties
-                    </p>
-                  </CardContent>
-                </Link>
-              </Card>
-
-              <Card className="hover:shadow-md transition-shadow">
-                <Link to="/messages">
-                  <CardContent className="p-6 text-center">
-                    <div className="relative inline-block mb-4">
-                      <MessageSquare className="h-12 w-12 text-primary mx-auto" />
-                      {unreadCount > 0 && (
-                        <Badge variant="destructive" className="absolute -top-2 -right-2 min-w-[1.2rem] h-5 flex items-center justify-center text-xs px-1">
-                          {unreadCount > 99 ? '99+' : unreadCount}
-                        </Badge>
-                      )}
-                    </div>
-                    <h3 className="font-semibold mb-2">Messages</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Chat with potential tenants
-                    </p>
-                  </CardContent>
-                </Link>
-              </Card>
-
-              <Card className="hover:shadow-md transition-shadow">
-                <CardContent className="p-6 text-center">
-                  <TrendingUp className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Analytics</h3>
-                  <p className="text-sm text-muted-foreground">
-                    View performance metrics
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Dashboard Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Active Listings</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">0</div>
-                  <p className="text-xs text-muted-foreground">Properties currently listed</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Total Views</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">0</div>
-                  <p className="text-xs text-muted-foreground">Views across all listings</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Inquiries</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{unreadCount}</div>
-                  <p className="text-xs text-muted-foreground">New messages received</p>
-                </CardContent>
-              </Card>
-            </div>
-          </>
         )}
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="hover:shadow-md transition-shadow">
+            <Link to="/create-listing">
+              <CardContent className="p-6 text-center">
+                <Plus className="h-12 w-12 text-primary mx-auto mb-4" />
+                <h3 className="font-semibold mb-2">Add Listing</h3>
+                <p className="text-sm text-muted-foreground">
+                  Post a new property
+                </p>
+              </CardContent>
+            </Link>
+          </Card>
+
+          <Card className="hover:shadow-md transition-shadow">
+            <Link to="/my-listings">
+              <CardContent className="p-6 text-center">
+                <Home className="h-12 w-12 text-primary mx-auto mb-4" />
+                <h3 className="font-semibold mb-2">My Listings</h3>
+                <p className="text-sm text-muted-foreground">
+                  Manage your properties
+                </p>
+              </CardContent>
+            </Link>
+          </Card>
+
+          <Card className="hover:shadow-md transition-shadow">
+            <Link to="/messages">
+              <CardContent className="p-6 text-center">
+                <div className="relative inline-block mb-4">
+                  <MessageSquare className="h-12 w-12 text-primary mx-auto" />
+                  {unreadCount > 0 && (
+                    <Badge variant="destructive" className="absolute -top-2 -right-2 min-w-[1.2rem] h-5 flex items-center justify-center text-xs px-1">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </Badge>
+                  )}
+                </div>
+                <h3 className="font-semibold mb-2">Messages</h3>
+                <p className="text-sm text-muted-foreground">
+                  Chat with potential tenants
+                </p>
+              </CardContent>
+            </Link>
+          </Card>
+
+          <Card className="hover:shadow-md transition-shadow">
+            <CardContent className="p-6 text-center">
+              <TrendingUp className="h-12 w-12 text-primary mx-auto mb-4" />
+              <h3 className="font-semibold mb-2">Analytics</h3>
+              <p className="text-sm text-muted-foreground">
+                View performance metrics
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Dashboard Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Active Listings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">0</div>
+              <p className="text-xs text-muted-foreground">Properties currently listed</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Total Views</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">0</div>
+              <p className="text-xs text-muted-foreground">Views across all listings</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Inquiries</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{unreadCount}</div>
+              <p className="text-xs text-muted-foreground">New messages received</p>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Contact Us Section */}
         <Card className="bg-muted/30">
