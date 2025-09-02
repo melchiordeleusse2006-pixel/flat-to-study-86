@@ -59,12 +59,14 @@ export default function Header() {
 
         {/* Right side actions */}
         <div className="flex items-center space-x-2 md:space-x-4">
-          {/* Mobile language selector - show only on mobile */}
-          <div className="md:hidden">
-            <div className={`transition-colors duration-300 ${shouldShowBackground ? '' : 'text-white'}`}>
-              <LanguageSelector variant="mobile-icon" />
+          {/* Mobile language selector - show only on homepage */}
+          {location.pathname === '/' && (
+            <div className="md:hidden">
+              <div className={`transition-colors duration-300 ${shouldShowBackground ? '' : 'text-white'}`}>
+                <LanguageSelector variant="mobile-icon" />
+              </div>
             </div>
-          </div>
+          )}
           
           {/* Desktop language selector - show only on desktop */}
           <div className="hidden md:block">
