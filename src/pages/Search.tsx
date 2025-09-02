@@ -75,7 +75,7 @@ export default function Search() {
           agency: {
             id: item.id, // Using listing id as agency id for now
             ownerUserId: '',
-            name: item.agency_name || 'Unknown Agency',
+            name: (item.agency_name && item.agency_name.trim()) ? item.agency_name : 'Real Estate Agency',
             phone: '', // Contact info no longer exposed for security
             billingEmail: '', // Contact info no longer exposed for security
             createdAt: item.created_at
@@ -244,7 +244,7 @@ export default function Search() {
         agency: {
           id: item.id,
           ownerUserId: '',
-          name: item.agency_name || 'Unknown Agency',
+          name: (item.agency_name && item.agency_name.trim()) ? item.agency_name : 'Real Estate Agency',
           phone: '',
           billingEmail: '',
           createdAt: item.created_at
