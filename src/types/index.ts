@@ -55,6 +55,7 @@ export interface Listing {
   lng: number;
   rentMonthlyEUR: number;
   depositEUR: number;
+  agencyFee?: string;
   billsIncluded: boolean;
   furnished: boolean;
   bedrooms: number;

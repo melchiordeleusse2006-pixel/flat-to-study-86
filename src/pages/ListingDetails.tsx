@@ -88,6 +88,7 @@ export default function ListingDetails() {
         lng: listingData.lng,
         rentMonthlyEUR: listingData.rent_monthly_eur,
         depositEUR: listingData.deposit_eur,
+        agencyFee: listingData.agency_fee,
         billsIncluded: listingData.bills_included,
         furnished: listingData.furnished,
         bedrooms: listingData.bedrooms,
@@ -372,6 +373,14 @@ export default function ListingDetails() {
                       <span>€{listing.depositEUR} deposit</span>
                     </div>
                   </div>
+
+                  {/* Financial Information */}
+                  {listing.agencyFee && (
+                    <div className="flex items-center space-x-2">
+                      <Euro className="h-5 w-5 text-muted-foreground" />
+                      <span>Agency Fee: {listing.agencyFee}</span>
+                    </div>
+                  )}
 
                   {/* Availability */}
                   <div className="flex items-center space-x-2">
