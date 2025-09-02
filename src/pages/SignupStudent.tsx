@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, ArrowLeft, Upload, User } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -20,10 +20,9 @@ export default function SignupStudent() {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [phone, setPhone] = useState('');
-  const [schoolEmail, setSchoolEmail] = useState('');
-  const [personalEmail, setPersonalEmail] = useState('');
+  const [email, setEmail] = useState('');
+  const [university, setUniversity] = useState('');
   const [proofOfEnrollment, setProofOfEnrollment] = useState<File | null>(null);
-  const [usePersonalEmail, setUsePersonalEmail] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -57,20 +56,17 @@ export default function SignupStudent() {
       return;
     }
 
-    if (usePersonalEmail && !proofOfEnrollment) {
-      setError('Please upload proof of enrollment when using personal email');
+    if (!university) {
+      setError('Please select your university');
       setLoading(false);
       return;
     }
 
-    const email = usePersonalEmail ? personalEmail : schoolEmail;
     const fullName = `${name} ${surname}`;
     const additionalData = {
       user_type: 'student',
       phone,
-      school_email: usePersonalEmail ? null : schoolEmail,
-      personal_email: usePersonalEmail ? personalEmail : null,
-      needs_verification: usePersonalEmail,
+      university,
       profile_picture: profilePicture ? profilePicture.name : null,
       proof_of_enrollment: proofOfEnrollment ? proofOfEnrollment.name : null
     };
@@ -85,11 +81,7 @@ export default function SignupStudent() {
       }
       setLoading(false);
     } else {
-      if (usePersonalEmail) {
-        setSuccess('Account created successfully! Our staff will review your enrollment proof and verify your account shortly. You will receive an email when verification is complete.');
-      } else {
-        setSuccess('Account created successfully! Please check your school email to verify your account.');
-      }
+      setSuccess('Account created successfully! Please check your email to verify your account.');
       setLoading(false);
     }
   };
@@ -202,60 +194,33 @@ export default function SignupStudent() {
                 />
               </div>
 
-              {/* Email Section */}
-              {!usePersonalEmail ? (
-                <div className="space-y-2">
-                  <Label htmlFor="school-email">School Email</Label>
-                  <Input
-                    id="school-email"
-                    type="email"
-                    placeholder="student@university.edu"
-                    value={schoolEmail}
-                    onChange={(e) => setSchoolEmail(e.target.value)}
-                    required={!usePersonalEmail}
-                  />
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Label htmlFor="personal-email">Personal Email</Label>
-                  <Input
-                    id="personal-email"
-                    type="email"
-                    placeholder="your.email@example.com"
-                    value={personalEmail}
-                    onChange={(e) => setPersonalEmail(e.target.value)}
-                    required={usePersonalEmail}
-                  />
-                </div>
-              )}
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="use-personal-email"
-                  checked={usePersonalEmail}
-                  onCheckedChange={(checked) => setUsePersonalEmail(checked as boolean)}
-                />
-                <Label htmlFor="use-personal-email" className="text-sm">
-                  Don't have your school email? Use personal email and upload proof of enrollment
-                </Label>
+              <div className="space-y-2">
+                <Label htmlFor="university">University</Label>
+                <Select value={university} onValueChange={setUniversity} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your university" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="bocconi">Bocconi University</SelectItem>
+                    <SelectItem value="politecnico">Politecnico di Milano</SelectItem>
+                    <SelectItem value="cattolica">Università Cattolica del Sacro Cuore</SelectItem>
+                    <SelectItem value="statale">Università Statale</SelectItem>
+                    <SelectItem value="other">Another University</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              {usePersonalEmail && (
-                <div className="space-y-2">
-                  <Label>Proof of Enrollment</Label>
-                  <div className="space-y-2">
-                    <Input
-                      type="file"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={handleProofOfEnrollmentChange}
-                      id="proof-enrollment"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Upload your enrollment certificate, student ID, or any official document proving your student status. Our staff will review this information.
-                    </p>
-                  </div>
-                </div>
-              )}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="your.email@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
