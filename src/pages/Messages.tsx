@@ -54,22 +54,29 @@ export default function Messages() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Desktop: Show full header, Mobile: No header */}
-      {!isMobile && <Header />}
+      <Header />
       
-      <main className={`${isMobile ? 'px-0' : 'container max-w-6xl mx-auto'} ${isMobile ? 'pt-0' : 'py-8'}`}>
+      <main className={`${isMobile ? 'px-0' : 'container max-w-6xl mx-auto'} ${isMobile ? 'pt-16' : 'py-8'}`}>
         {/* Mobile: Show either conversation list or detail */}
         {isMobile ? (
           <>
             {!showConversationDetail ? (
               /* Mobile Conversation List */
-              <div className="h-screen overflow-hidden">
-                {/* Mobile Header with Logo */}
-                <div className="flex items-center gap-3 p-4 border-b bg-background">
+              <div className="h-[calc(100vh-64px)] overflow-hidden">
+                {/* Header */}
+                <div className="flex items-center gap-4 p-4 border-b bg-background">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg hero-gradient">
                     <MessageCircle className="h-5 w-5 text-white" />
                   </div>
-                  <span className="text-lg font-bold text-primary">flat2study</span>
+                  <div>
+                    <h1 className="text-xl font-bold">Messages</h1>
+                    <p className="text-xs text-muted-foreground">
+                      {profile?.user_type === 'agency' 
+                        ? 'Manage inquiries from potential tenants' 
+                        : 'Your conversations with property agencies'
+                      }
+                    </p>
+                  </div>
                 </div>
                 
                 <div className="h-[calc(100vh-120px)] overflow-hidden">
@@ -85,8 +92,8 @@ export default function Messages() {
               </div>
             ) : (
               /* Mobile Conversation Detail */
-              <div className="h-screen overflow-hidden">
-                {/* Mobile Header with Back Button and Logo */}
+              <div className="h-[calc(100vh-64px)] overflow-hidden">
+                {/* Mobile Header with Back Button */}
                 <div className="flex items-center gap-3 p-4 border-b bg-background">
                   <Button 
                     variant="ghost" 
@@ -96,10 +103,14 @@ export default function Messages() {
                   >
                     <ArrowLeft className="h-5 w-5" />
                   </Button>
-                  <div className="flex h-6 w-6 items-center justify-center rounded-lg hero-gradient">
-                    <MessageCircle className="h-4 w-4 text-white" />
+                  <div className="flex-1">
+                    <h2 className="text-lg font-semibold truncate">
+                      {selectedConversation?.listing.title}
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
+                      {selectedConversation?.listing.address_line}, {selectedConversation?.listing.city}
+                    </p>
                   </div>
-                  <span className="text-lg font-bold text-primary">flat2study</span>
                 </div>
                 
                 <div className="h-[calc(100vh-120px)]">
