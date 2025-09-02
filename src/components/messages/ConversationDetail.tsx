@@ -293,9 +293,6 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
 
       {/* Messages */}
       <Card className="flex-1 flex flex-col min-h-0">
-        <CardHeader className="pb-3 flex-shrink-0">
-          <CardTitle className="text-base">Conversation</CardTitle>
-        </CardHeader>
         <CardContent className="flex-1 flex flex-col min-h-0 p-0">
           <ScrollArea className="flex-1 px-6" ref={scrollAreaRef}>
             <div className="space-y-4 py-4">
