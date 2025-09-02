@@ -339,7 +339,7 @@ const Index = () => {
                 <div className="container mx-auto text-center">
                   <h2 className="text-3xl font-bold mb-4">{t('home.needHelp')}</h2>
                   <div className="max-w-2xl mx-auto text-lg space-y-4">
-                    <p className="font-medium">melchior.deleusse@studbocconi.it</p>
+                    <p className="font-medium">Contact us at melchior.deleusse@studbocconi.it</p>
                     <p className="text-muted-foreground">
                       {t('home.helpDesc')}
                     </p>
