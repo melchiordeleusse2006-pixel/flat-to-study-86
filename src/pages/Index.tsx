@@ -9,11 +9,13 @@ import { Logo } from '@/components/ui/logo';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUnreadMessagesCount } from '@/hooks/useUnreadMessagesCount';
+import { useDashboardStats } from '@/hooks/useDashboardStats';
 
 const Index = () => {
   const { user, profile } = useAuth();
   const { t } = useLanguage();
   const unreadCount = useUnreadMessagesCount();
+  const { activeListingsCount, uniqueInquiriesCount, loading: statsLoading } = useDashboardStats();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
@@ -324,14 +326,18 @@ const Index = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Card>
                       <CardContent className="p-6 text-center">
-                        <div className="text-3xl font-bold text-primary mb-2">0</div>
+                        <div className="text-3xl font-bold text-primary mb-2">
+                          {statsLoading ? '...' : activeListingsCount}
+                        </div>
                         <p className="text-muted-foreground">{t('home.activeListings')}</p>
                       </CardContent>
                     </Card>
                     
                     <Card>
                       <CardContent className="p-6 text-center">
-                        <div className="text-3xl font-bold text-primary mb-2">0</div>
+                        <div className="text-3xl font-bold text-primary mb-2">
+                          {statsLoading ? '...' : uniqueInquiriesCount}
+                        </div>
                         <p className="text-muted-foreground">{t('home.inquiries')}</p>
                       </CardContent>
                     </Card>
