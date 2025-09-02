@@ -3,11 +3,25 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Globe } from 'lucide-react';
 
 interface LanguageSelectorProps {
-  variant?: 'default' | 'compact';
+  variant?: 'default' | 'compact' | 'mobile-icon';
 }
 
 export function LanguageSelector({ variant = 'default' }: LanguageSelectorProps) {
   const { language, setLanguage, t } = useLanguage();
+
+  if (variant === 'mobile-icon') {
+    return (
+      <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'it')}>
+        <SelectTrigger className="w-auto border-0 bg-transparent p-1 h-auto">
+          <Globe className="h-5 w-5 text-current" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="en">{t('language.english')}</SelectItem>
+          <SelectItem value="it">{t('language.italian')}</SelectItem>
+        </SelectContent>
+      </Select>
+    );
+  }
 
   if (variant === 'compact') {
     return (
