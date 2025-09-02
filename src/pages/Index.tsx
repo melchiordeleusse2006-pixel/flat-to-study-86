@@ -250,7 +250,7 @@ const Index = () => {
                     </p>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <Link to="/create-listing">
                       <Card className="h-full hover:shadow-lg transition-all duration-200 cursor-pointer group">
                         <CardContent className="p-6 text-center">
@@ -298,17 +298,6 @@ const Index = () => {
                       </Card>
                     </Link>
 
-                    <Card className="h-full">
-                      <CardContent className="p-6 text-center">
-                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <BarChart3 className="h-8 w-8 text-primary" />
-                        </div>
-                        <h3 className="text-xl font-semibold mb-3">{t('home.analytics')}</h3>
-                        <p className="text-muted-foreground">
-                          {t('home.analyticsDesc')}
-                        </p>
-                      </CardContent>
-                    </Card>
                   </div>
                 </div>
               </section>
