@@ -48,7 +48,7 @@ export default function MobileCompactControls({
             )}
           </Button>
         </SheetTrigger>
-        <SheetContent side="bottom" className="h-[80vh]">
+        <SheetContent side="bottom" className="h-[80vh] z-[60]">
           <SheetHeader>
             <SheetTitle>Search Filters</SheetTitle>
           </SheetHeader>
@@ -70,7 +70,7 @@ export default function MobileCompactControls({
             Sort
           </Button>
         </SheetTrigger>
-        <SheetContent side="bottom" className="h-auto">
+        <SheetContent side="bottom" className="h-auto z-[60]">
           <SheetHeader>
             <SheetTitle>Sort By</SheetTitle>
           </SheetHeader>

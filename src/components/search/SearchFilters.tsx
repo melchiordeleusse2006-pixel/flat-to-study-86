@@ -126,7 +126,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
               <ChevronDown className="h-4 w-4 ml-1" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-80 z-[9999] bg-background border shadow-lg">
+          <PopoverContent className="w-80 z-[60] bg-background border shadow-lg">
             <div className="space-y-4">
               <Label className="text-sm font-medium">Price Range (Monthly)</Label>
               <div className="px-2">
@@ -160,7 +160,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
               <ChevronDown className="h-4 w-4 ml-1" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-64 z-[9999] bg-background border shadow-lg">
+          <PopoverContent className="w-64 z-[60] bg-background border shadow-lg">
             <div className="space-y-3">
               <Label className="text-sm font-medium">Property Type</Label>
               <div className="space-y-2">
@@ -193,7 +193,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
               <ChevronDown className="h-4 w-4 ml-1" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-64 z-[9999] bg-background border shadow-lg">
+          <PopoverContent className="w-64 z-[60] bg-background border shadow-lg">
             <div className="space-y-3">
               <Label className="text-sm font-medium">Available From</Label>
               <Input 
@@ -221,7 +221,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
               <ChevronDown className="h-4 w-4 ml-1" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-64 z-[9999] bg-background border shadow-lg">
+          <PopoverContent className="w-64 z-[60] bg-background border shadow-lg">
             <div className="space-y-3">
               <Label className="text-sm font-medium">Near University</Label>
               <Select 
@@ -231,7 +231,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
                 <SelectTrigger>
                   <SelectValue placeholder="Select university" />
                 </SelectTrigger>
-                <SelectContent className="z-[9999]">
+                <SelectContent className="z-[60]">
                   <SelectItem value="any">Any university</SelectItem>
                   {universities.map((uni) => (
                     <SelectItem key={uni.id} value={uni.id}>
@@ -257,7 +257,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
               <ChevronDown className="h-4 w-4 ml-1" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-64 z-[9999] bg-background border shadow-lg">
+          <PopoverContent className="w-64 z-[60] bg-background border shadow-lg">
             <div className="space-y-3">
               <Label className="text-sm font-medium">Bedrooms</Label>
               <Select 
@@ -270,7 +270,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
                 <SelectTrigger>
                   <SelectValue placeholder="Any" />
                 </SelectTrigger>
-                <SelectContent className="z-[9999]">
+                <SelectContent className="z-[60]">
                   <SelectItem value="any">Any</SelectItem>
                   <SelectItem value="1">1 bedroom</SelectItem>
                   <SelectItem value="2">2 bedrooms</SelectItem>
@@ -308,7 +308,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
               <ChevronDown className="h-4 w-4 ml-1" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-64 z-[9999] bg-background border shadow-lg">
+          <PopoverContent className="w-64 z-[60] bg-background border shadow-lg">
             <div className="space-y-3">
               <Label className="text-sm font-medium">Amenities</Label>
               <div className="space-y-2 max-h-48 overflow-y-auto">

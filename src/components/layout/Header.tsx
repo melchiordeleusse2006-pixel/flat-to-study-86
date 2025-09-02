@@ -81,20 +81,21 @@ export default function Header() {
           ) : user ? (
             /* Authenticated user menu */
             <div className="flex items-center space-x-1 md:space-x-4">
-              {profile?.user_type === 'agency' && unreadCount > 0 && (
-                <Link to="/messages" className="relative">
-                  <Button variant="ghost" size="sm" className={`transition-colors duration-300 ${
-                    shouldShowBackground 
-                      ? 'text-foreground hover:text-foreground/80' 
-                      : 'text-white hover:text-white/80 hover:bg-white/10'
-                  }`}>
-                    <MessageSquare className="h-4 w-4" />
+              {/* Messages Icon for all logged in users */}
+              <Link to="/messages" className="relative">
+                <Button variant="ghost" size="sm" className={`transition-colors duration-300 ${
+                  shouldShowBackground 
+                    ? 'text-foreground hover:text-foreground/80' 
+                    : 'text-white hover:text-white/80 hover:bg-white/10'
+                }`}>
+                  <MessageSquare className="h-4 w-4" />
+                  {profile?.user_type === 'agency' && unreadCount > 0 && (
                     <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
                       {unreadCount}
                     </Badge>
-                  </Button>
-                </Link>
-              )}
+                  )}
+                </Button>
+              </Link>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
