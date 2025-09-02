@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Send, Phone, Mail, MapPin, Users, Calendar, ArrowLeft } from 'lucide-react';
+import { Send, Phone, Mail, MapPin, Users, Calendar, ArrowLeft, GraduationCap } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -27,11 +27,17 @@ export function MobileConversationDetail({
   const [loading, setLoading] = useState(true);
   const [replyText, setReplyText] = useState('');
   const [sending, setSending] = useState(false);
+  const [studentProfile, setStudentProfile] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchMessages();
     markMessagesAsRead();
+    
+    // Fetch student profile details if agency is viewing
+    if (profile?.user_type === 'agency') {
+      fetchStudentProfile();
+    }
 
     // Set up real-time subscription for new messages
     const channelName = profile?.user_type === 'agency' 
@@ -108,6 +114,26 @@ export function MobileConversationDetail({
       console.error('Error fetching messages:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchStudentProfile = async () => {
+    try {
+      const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', studentId)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching student profile:', error);
+        return;
+      }
+      
+      setStudentProfile(data);
+    } catch (error) {
+      console.error('Error fetching student profile:', error);
     }
   };
 
@@ -229,6 +255,37 @@ export function MobileConversationDetail({
           €{conversation.listing.rent_monthly_eur}/mo
         </Badge>
       </div>
+
+      {/* Student Details Card for Agencies */}
+      {profile?.user_type === 'agency' && conversation.studentName && (
+        <div className="bg-muted/50 border-b p-4 flex-shrink-0">
+          <div className="text-xs font-medium text-muted-foreground mb-2">Student Details</div>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-sm">
+              <Users className="h-3 w-3" />
+              <span className="font-medium">{conversation.studentName}</span>
+            </div>
+            {(studentProfile?.university || conversation.lastMessage.sender_university) && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <GraduationCap className="h-3 w-3" />
+                <span>{studentProfile?.university || conversation.lastMessage.sender_university}</span>
+              </div>
+            )}
+            {(studentProfile?.phone || conversation.lastMessage.sender_phone) && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Phone className="h-3 w-3" />
+                <span>{studentProfile?.phone || conversation.lastMessage.sender_phone}</span>
+              </div>
+            )}
+            {studentProfile?.email && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Mail className="h-3 w-3" />
+                <span>{studentProfile.email}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Messages */}
       <div className="flex-1 flex flex-col min-h-0">

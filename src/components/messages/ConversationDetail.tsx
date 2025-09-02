@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Send, Phone, Mail, MapPin, Users, Calendar } from 'lucide-react';
+import { Send, Phone, Mail, MapPin, Users, Calendar, GraduationCap } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -23,12 +23,18 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
   const [loading, setLoading] = useState(true);
   const [replyText, setReplyText] = useState('');
   const [sending, setSending] = useState(false);
+  const [studentProfile, setStudentProfile] = useState<any>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchMessages();
     markMessagesAsRead();
+    
+    // Fetch student profile details if agency is viewing
+    if (profile?.user_type === 'agency') {
+      fetchStudentProfile();
+    }
 
     // Set up real-time subscription for new messages with proper filtering
     const channelName = profile?.user_type === 'agency' 
@@ -129,6 +135,26 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
       console.error('Error fetching messages:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchStudentProfile = async () => {
+    try {
+      const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', studentId)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching student profile:', error);
+        return;
+      }
+      
+      setStudentProfile(data);
+    } catch (error) {
+      console.error('Error fetching student profile:', error);
     }
   };
 
@@ -250,16 +276,22 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
                     <span className="font-medium">Student:</span>
                     <span>{conversation.studentName}</span>
                   </div>
-                  {conversation.lastMessage.sender_university && (
+                  {(studentProfile?.university || conversation.lastMessage.sender_university) && (
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Calendar className="h-3 w-3" />
-                      <span>{conversation.lastMessage.sender_university}</span>
+                      <GraduationCap className="h-3 w-3" />
+                      <span>{studentProfile?.university || conversation.lastMessage.sender_university}</span>
                     </div>
                   )}
-                  {conversation.lastMessage.sender_phone && (
+                  {(studentProfile?.phone || conversation.lastMessage.sender_phone) && (
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Phone className="h-3 w-3" />
-                      <span>{conversation.lastMessage.sender_phone}</span>
+                      <span>{studentProfile?.phone || conversation.lastMessage.sender_phone}</span>
+                    </div>
+                  )}
+                  {studentProfile?.email && (
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Mail className="h-3 w-3" />
+                      <span>{studentProfile.email}</span>
                     </div>
                   )}
                 </div>
