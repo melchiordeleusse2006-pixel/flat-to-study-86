@@ -148,7 +148,7 @@ export default function MyListings() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg hero-gradient">
+            <div className="hidden md:flex h-10 w-10 items-center justify-center rounded-lg hero-gradient">
               <Home className="h-6 w-6 text-white" />
             </div>
             <div>
