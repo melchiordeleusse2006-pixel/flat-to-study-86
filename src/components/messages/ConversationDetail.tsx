@@ -224,7 +224,7 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
       {/* Header - Compact */}
       <Card className="flex-shrink-0 mb-3">
         <CardHeader className="pb-3 py-3">
-          <div className="flex gap-3">
+          <div className="flex gap-3 cursor-pointer hover:bg-muted/50 -m-3 p-3 rounded-lg transition-colors" onClick={() => window.open(`/listing/${conversation.listing.id}`, '_blank')}>
             <img
               src={listingImage}
               alt={conversation.listing.title}
