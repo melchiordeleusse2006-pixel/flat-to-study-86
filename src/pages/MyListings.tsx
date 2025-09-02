@@ -148,15 +148,10 @@ export default function MyListings() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg hero-gradient">
-              <Home className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold">My Listings</h1>
-              <p className="text-muted-foreground">
-                Manage your property listings ({listings.length} total)
-              </p>
-            </div>
+            <h1 className="text-3xl font-bold">My Listings</h1>
+            <Badge variant="secondary" className="text-lg px-3 py-1">
+              {listings.length}
+            </Badge>
           </div>
           
           <Link to="/create-listing">
