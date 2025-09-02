@@ -57,7 +57,7 @@ const Index = () => {
                 <div className="text-center">
                   <Link to="/search">
                     <span className="text-white/90 hover:text-white underline cursor-pointer text-lg">
-                      Find a place
+                      {t('home.findPlace')}
                     </span>
                   </Link>
                 </div>

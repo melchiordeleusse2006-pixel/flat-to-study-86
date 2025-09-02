@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Listing } from '@/types';
 import ListingCard from '@/components/listings/ListingCard';
 import Header from '@/components/layout/Header';
@@ -10,6 +11,7 @@ import { Link } from 'react-router-dom';
 
 export default function Favorites() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [favoriteListings, setFavoriteListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -120,16 +122,16 @@ export default function Favorites() {
             <Link to="/search">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Search
+                {t('favorites.backToSearch')}
               </Button>
             </Link>
             <div>
               <h1 className="text-3xl font-bold flex items-center space-x-2">
                 <Heart className="h-8 w-8 text-favorite" />
-                <span>My Favorites</span>
+                <span>{t('favorites.title')}</span>
               </h1>
               <p className="text-muted-foreground mt-2">
-                Your saved listings
+                {t('favorites.savedListings')}
               </p>
             </div>
           </div>
@@ -140,19 +142,19 @@ export default function Favorites() {
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Loading your favorites...</p>
+              <p className="text-muted-foreground">{t('favorites.loadingFavorites')}</p>
             </div>
           </div>
         ) : favoriteListings.length === 0 ? (
           <div className="text-center py-20">
             <Heart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold mb-2">No favorites yet</h2>
+            <h2 className="text-2xl font-semibold mb-2">{t('favorites.noFavoritesYet')}</h2>
             <p className="text-muted-foreground mb-6">
-              Start browsing listings and save the ones you like by clicking the heart icon.
+              {t('favorites.noFavoritesDesc')}
             </p>
             <Link to="/search">
               <Button>
-                Browse Listings
+                {t('favorites.browseListings')}
               </Button>
             </Link>
           </div>
@@ -160,7 +162,7 @@ export default function Favorites() {
           <div>
             <div className="flex items-center justify-between mb-6">
               <p className="text-muted-foreground">
-                {favoriteListings.length} {favoriteListings.length === 1 ? 'listing' : 'listings'} saved
+                {favoriteListings.length} {favoriteListings.length === 1 ? t('favorites.listingSaved') : t('favorites.listingsSaved')} {t('favorites.saved')}
               </p>
             </div>
             

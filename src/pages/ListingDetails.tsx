@@ -25,16 +25,23 @@ import {
 } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import SimpleMapView from '@/components/map/SimpleMapView';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ListingDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, profile } = useAuth();
+  const { t } = useLanguage();
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [message, setMessage] = useState("Hello, I am interested in your listing. Could I have more information?");
+  const [message, setMessage] = useState('');
   const [sendingMessage, setSendingMessage] = useState(false);
+
+  // Set default message when language changes
+  useEffect(() => {
+    setMessage(t('listing.messageDefault'));
+  }, [t]);
 
   useEffect(() => {
     if (id) {
@@ -110,8 +117,8 @@ export default function ListingDetails() {
     } catch (error) {
       console.error('Error fetching listing:', error);
       toast({
-        title: "Error",
-        description: "Failed to load listing details",
+        title: t('listing.error'),
+        description: t('listing.loadingDetails'),
         variant: "destructive"
       });
     } finally {
@@ -122,8 +129,8 @@ export default function ListingDetails() {
   const sendMessage = async () => {
     if (!user || !listing || !profile) {
       toast({
-        title: "Authentication Required",
-        description: "Please log in to send a message",
+        title: t('listing.authRequired'),
+        description: t('listing.authRequiredDesc'),
         variant: "destructive"
       });
       return;
@@ -131,8 +138,8 @@ export default function ListingDetails() {
 
     if (!message.trim()) {
       toast({
-        title: "Message Required",
-        description: "Please enter a message",
+        title: t('listing.messageRequired'),
+        description: t('listing.messageRequiredDesc'),
         variant: "destructive"
       });
       return;
@@ -179,16 +186,16 @@ export default function ListingDetails() {
       }
 
       toast({
-        title: "Message Sent",
-        description: "Your message has been sent to the agency"
+        title: t('listing.messageSent'),
+        description: t('listing.messageSentDesc')
       });
 
-      setMessage("Hello, I am interested in your listing. Could I have more information?");
+      setMessage(t('listing.messageDefault'));
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
+        title: t('listing.error'),
+        description: t('listing.messageError'),
         variant: "destructive"
       });
     } finally {
@@ -215,10 +222,10 @@ export default function ListingDetails() {
 
   const getTypeDisplayName = (type: string) => {
     const types: Record<string, string> = {
-      room: 'Room',
-      studio: 'Studio',
-      apartment: 'Apartment',
-      flat: 'Flat'
+      room: t('propertyType.room'),
+      studio: t('propertyType.studio'),
+      apartment: t('propertyType.apartment'),
+      flat: t('propertyType.flat')
     };
     return types[type] || type;
   };
@@ -237,7 +244,7 @@ export default function ListingDetails() {
       <div className="min-h-screen">
         <Header />
         <div className="flex items-center justify-center pt-20">
-          <div className="animate-pulse text-lg">Loading listing details...</div>
+          <div className="animate-pulse text-lg">{t('listing.loadingDetails')}</div>
         </div>
       </div>
     );
@@ -248,10 +255,10 @@ export default function ListingDetails() {
       <div className="min-h-screen">
         <Header />
         <div className="flex flex-col items-center justify-center pt-20">
-          <div className="text-lg text-muted-foreground mb-4">Listing not found</div>
+          <div className="text-lg text-muted-foreground mb-4">{t('listing.notFound')}</div>
           <Button onClick={() => navigate('/search')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Search
+            {t('listing.backToSearch')}
           </Button>
         </div>
       </div>
@@ -272,7 +279,7 @@ export default function ListingDetails() {
               className="flex items-center"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Search
+              {t('listing.backToSearch')}
             </Button>
           </div>
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MessageCircle, ArrowLeft } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { ConversationList } from '@/components/messages/ConversationList';
 import { ConversationDetail } from '@/components/messages/ConversationDetail';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -11,6 +12,7 @@ import type { Conversation } from '@/types/messages';
 
 export default function Messages() {
   const { user, profile, loading } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
@@ -32,7 +34,7 @@ export default function Messages() {
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Loading messages...</p>
+              <p className="text-muted-foreground">{t('messages.loadingMessages')}</p>
             </div>
           </div>
         </main>
@@ -69,11 +71,11 @@ export default function Messages() {
                     <MessageCircle className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-xl font-bold">Messages</h1>
+                    <h1 className="text-xl font-bold">{t('messages.title')}</h1>
                     <p className="text-xs text-muted-foreground">
                       {profile?.user_type === 'agency' 
-                        ? 'Manage inquiries from potential tenants' 
-                        : 'Your conversations with property agencies'
+                        ? t('messages.manageTenantInquiries')
+                        : t('messages.conversationsWithAgencies')
                       }
                     </p>
                   </div>
@@ -133,11 +135,11 @@ export default function Messages() {
                 <MessageCircle className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Messages</h1>
+                <h1 className="text-3xl font-bold">{t('messages.title')}</h1>
                 <p className="text-muted-foreground">
                   {profile?.user_type === 'agency' 
-                    ? 'Manage inquiries from potential tenants' 
-                    : 'Your conversations with property agencies'
+                    ? t('messages.manageTenantInquiries')
+                    : t('messages.conversationsWithAgencies')
                   }
                 </p>
               </div>
@@ -169,10 +171,10 @@ export default function Messages() {
                     <div className="text-center p-8">
                       <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                       <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                        Select a conversation
+                        {t('messages.selectConversation')}
                       </h3>
                       <p className="text-sm text-muted-foreground">
-                        Choose a conversation from the list to view messages
+                        {t('messages.selectConversationDesc')}
                       </p>
                     </div>
                   </div>
