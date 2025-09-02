@@ -201,11 +201,11 @@ export default function SimpleMapView({
   }
 
   return (
-    <div className={className}>
+    <div className={`${className} relative z-0`}>
       <div 
         ref={mapRef} 
-        className="w-full h-full rounded-lg"
-        style={{ minHeight: '400px' }}
+        className="w-full h-full rounded-lg overflow-hidden"
+        style={{ minHeight: '320px', position: 'relative', zIndex: 1 }}
       />
     </div>
   );

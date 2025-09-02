@@ -420,11 +420,18 @@ export default function ListingDetails() {
                 <CardHeader>
                   <CardTitle>Location</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <SimpleMapView 
-                    listings={[listing]}
-                    className="h-80"
-                  />
+                <CardContent className="p-0">
+                  <div className="p-6 pb-0">
+                    <p className="text-muted-foreground text-sm mb-4">
+                      📍 {listing.addressLine}, {listing.city}
+                    </p>
+                  </div>
+                  <div className="p-6">
+                    <SimpleMapView 
+                      listings={[listing]}
+                      className="h-80 w-full overflow-hidden rounded-lg"
+                    />
+                  </div>
                 </CardContent>
               </Card>
             </div>
