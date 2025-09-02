@@ -43,23 +43,25 @@ const Index = () => {
             }
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+          <div className="flex flex-col gap-4 justify-center max-w-md mx-auto">
             {user && isRealtor ? (
               <>
-                <Link to="/create-listing" className="flex-1">
+                <Link to="/create-listing">
                   <Button size="lg" className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
                     <Plus className="mr-2 h-5 w-5" />
                     Add your listings
                   </Button>
                 </Link>
-                <Link to="/search" className="mt-2">
-                  <span className="text-white/90 hover:text-white underline cursor-pointer text-lg">
-                    Find a place
-                  </span>
-                </Link>
+                <div className="text-center">
+                  <Link to="/search">
+                    <span className="text-white/90 hover:text-white underline cursor-pointer text-lg">
+                      Find a place
+                    </span>
+                  </Link>
+                </div>
               </>
             ) : (
-              <Link to="/search" className="flex-1">
+              <Link to="/search">
                 <Button size="lg" className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
                   <Search className="mr-2 h-5 w-5" />
                   {t('home.findPlace')}
