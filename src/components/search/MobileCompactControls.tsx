@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Grid, Map, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 import SearchFilters from './SearchFilters';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { SearchFilters as SearchFiltersType } from '@/types';
 
 type ViewMode = 'grid' | 'map';
@@ -25,6 +26,7 @@ export default function MobileCompactControls({
   viewMode,
   onViewModeChange,
 }: MobileCompactControlsProps) {
+  const { t } = useLanguage();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
 
@@ -40,7 +42,7 @@ export default function MobileCompactControls({
         <SheetTrigger asChild>
           <Button variant="outline" size="sm" className="flex-1 relative">
             <SlidersHorizontal className="h-4 w-4 mr-2" />
-            Filters
+            {t('filters.filters')}
             {activeFiltersCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
                 {activeFiltersCount}
@@ -50,7 +52,7 @@ export default function MobileCompactControls({
         </SheetTrigger>
         <SheetContent side="bottom" className="h-[80vh] z-[60]">
           <SheetHeader>
-            <SheetTitle>Search Filters</SheetTitle>
+            <SheetTitle>{t('filters.searchFilters')}</SheetTitle>
           </SheetHeader>
           <div className="mt-4">
             <SearchFilters
@@ -67,20 +69,20 @@ export default function MobileCompactControls({
         <SheetTrigger asChild>
           <Button variant="outline" size="sm" className="flex-1">
             <ArrowUpDown className="h-4 w-4 mr-2" />
-            Sort
+            {t('filters.sort')}
           </Button>
         </SheetTrigger>
         <SheetContent side="bottom" className="h-auto z-[60]">
           <SheetHeader>
-            <SheetTitle>Sort By</SheetTitle>
+            <SheetTitle>{t('filters.sortBy')}</SheetTitle>
           </SheetHeader>
           <div className="mt-4 space-y-3">
             {[
-              { value: 'relevance', label: 'Relevance' },
-              { value: 'price-low', label: 'Price: Low to High' },
-              { value: 'price-high', label: 'Price: High to Low' },
-              { value: 'newest', label: 'Newest First' },
-              { value: 'distance', label: 'Distance' },
+              { value: 'relevance', label: t('search.relevance') },
+              { value: 'price-low', label: t('search.priceLowHigh') },
+              { value: 'price-high', label: t('search.priceHighLow') },
+              { value: 'newest', label: t('search.newest') },
+              { value: 'distance', label: t('search.distance') },
             ].map((option) => (
               <Button
                 key={option.value}

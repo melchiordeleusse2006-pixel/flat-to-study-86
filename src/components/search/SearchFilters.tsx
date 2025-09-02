@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Badge } from '@/components/ui/badge';
 import { SearchFilters, ListingType } from '@/types';
 import { universities, commonAmenities } from '@/data/mockData';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { ChevronDown, X, Euro, MapPin, Home, Bed, Sofa, Wifi } from 'lucide-react';
 
 interface SearchFiltersProps {
@@ -18,12 +19,13 @@ interface SearchFiltersProps {
 }
 
 export default function SearchFiltersComponent({ filters, onFiltersChange, className }: SearchFiltersProps) {
+  const { t } = useLanguage();
   const [priceRange, setPriceRange] = useState([filters.priceMin || 400, filters.priceMax || 1500]);
 
   const listingTypes: { value: ListingType; label: string }[] = [
-    { value: 'room', label: 'Room' },
-    { value: 'studio', label: 'Studio' },
-    { value: 'apartment', label: 'Apartment' }
+    { value: 'room', label: t('propertyType.room') },
+    { value: 'studio', label: t('propertyType.studio') },
+    { value: 'apartment', label: t('propertyType.apartment') }
   ];
 
   const handleTypeChange = (type: ListingType, checked: boolean) => {
@@ -62,32 +64,32 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
     if (filters.priceMin || filters.priceMax) {
       return `€${filters.priceMin || 400} - €${filters.priceMax || 1500}`;
     }
-    return 'Price';
+    return t('filters.price');
   };
 
   const getTypeLabel = () => {
     if (filters.type && filters.type.length > 0) {
       if (filters.type.length === 1) {
-        return listingTypes.find(t => t.value === filters.type![0])?.label || 'Type';
+        return listingTypes.find(t => t.value === filters.type![0])?.label || t('filters.type');
       }
-      return `${filters.type.length} types`;
+      return `${filters.type.length} ${t('filters.types')}`;
     }
-    return 'Type';
+    return t('filters.type');
   };
 
   const getUniversityLabel = () => {
     if (filters.universityId) {
       const uni = universities.find(u => u.id === filters.universityId);
-      return uni?.name || 'University';
+      return uni?.name || t('filters.university');
     }
-    return 'University';
+    return t('filters.university');
   };
 
   const getBedroomsLabel = () => {
     if (filters.bedrooms) {
-      return filters.bedrooms === 3 ? '3+ bedrooms' : `${filters.bedrooms} bedroom${filters.bedrooms > 1 ? 's' : ''}`;
+      return filters.bedrooms === 3 ? t('filters.bedroomsPlus') : `${filters.bedrooms} ${filters.bedrooms > 1 ? t('filters.bedroomsPlural') : t('filters.bedroom')}`;
     }
-    return 'Bedrooms';
+    return t('filters.bedrooms');
   };
 
   const getAmenitiesLabel = () => {
@@ -95,9 +97,9 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
       if (filters.amenities.length === 1) {
         return filters.amenities[0];
       }
-      return `${filters.amenities.length} amenities`;
+      return `${filters.amenities.length} ${t('filters.amenitiesCount')}`;
     }
-    return 'Amenities';
+    return t('filters.amenities');
   };
 
   const hasActiveFilters = () => {
@@ -128,7 +130,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
           </PopoverTrigger>
           <PopoverContent className="w-80 z-[60] bg-background border shadow-lg">
             <div className="space-y-4">
-              <Label className="text-sm font-medium">Price Range (Monthly)</Label>
+              <Label className="text-sm font-medium">{t('filters.priceRange')}</Label>
               <div className="px-2">
                 <Slider
                   value={priceRange}
@@ -162,7 +164,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
           </PopoverTrigger>
           <PopoverContent className="w-64 z-[60] bg-background border shadow-lg">
             <div className="space-y-3">
-              <Label className="text-sm font-medium">Property Type</Label>
+              <Label className="text-sm font-medium">{t('filters.propertyType')}</Label>
               <div className="space-y-2">
                 {listingTypes.map((type) => (
                   <div key={type.value} className="flex items-center space-x-2">
@@ -189,13 +191,13 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
               size="sm" 
               className="whitespace-nowrap"
             >
-              Available From
+              {t('filters.availableFrom')}
               <ChevronDown className="h-4 w-4 ml-1" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-64 z-[60] bg-background border shadow-lg">
             <div className="space-y-3">
-              <Label className="text-sm font-medium">Available From</Label>
+              <Label className="text-sm font-medium">{t('filters.availableFrom')}</Label>
               <Input 
                 type="date"
                 value={filters.availabilityDate || ''}
@@ -223,16 +225,16 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
           </PopoverTrigger>
           <PopoverContent className="w-64 z-[60] bg-background border shadow-lg">
             <div className="space-y-3">
-              <Label className="text-sm font-medium">Near University</Label>
+              <Label className="text-sm font-medium">{t('filters.nearUniversity')}</Label>
               <Select 
                 value={filters.universityId || 'any'} 
                 onValueChange={(value) => onFiltersChange({ ...filters, universityId: value === 'any' ? undefined : value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select university" />
+                  <SelectValue placeholder={t('filters.selectUniversity')} />
                 </SelectTrigger>
                 <SelectContent className="z-[60]">
-                  <SelectItem value="any">Any university</SelectItem>
+                  <SelectItem value="any">{t('filters.anyUniversity')}</SelectItem>
                   {universities.map((uni) => (
                     <SelectItem key={uni.id} value={uni.id}>
                       {uni.name}
@@ -259,7 +261,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
           </PopoverTrigger>
           <PopoverContent className="w-64 z-[60] bg-background border shadow-lg">
             <div className="space-y-3">
-              <Label className="text-sm font-medium">Bedrooms</Label>
+              <Label className="text-sm font-medium">{t('filters.bedrooms')}</Label>
               <Select 
                 value={filters.bedrooms?.toString() || 'any'} 
                 onValueChange={(value) => onFiltersChange({ 
@@ -268,13 +270,13 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
                 })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Any" />
+                  <SelectValue placeholder={t('filters.any')} />
                 </SelectTrigger>
                 <SelectContent className="z-[60]">
-                  <SelectItem value="any">Any</SelectItem>
-                  <SelectItem value="1">1 bedroom</SelectItem>
-                  <SelectItem value="2">2 bedrooms</SelectItem>
-                  <SelectItem value="3">3+ bedrooms</SelectItem>
+                  <SelectItem value="any">{t('filters.any')}</SelectItem>
+                  <SelectItem value="1">1 {t('filters.bedroom')}</SelectItem>
+                  <SelectItem value="2">2 {t('filters.bedroomsPlural')}</SelectItem>
+                  <SelectItem value="3">{t('filters.bedroomsPlus')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -292,7 +294,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
           })}
         >
           <Sofa className="h-4 w-4 mr-1" />
-          Furnished
+          {t('filters.furnished')}
         </Button>
 
         {/* Amenities Filter */}
@@ -310,7 +312,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
           </PopoverTrigger>
           <PopoverContent className="w-64 z-[60] bg-background border shadow-lg">
             <div className="space-y-3">
-              <Label className="text-sm font-medium">Amenities</Label>
+              <Label className="text-sm font-medium">{t('filters.amenities')}</Label>
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {commonAmenities.slice(0, 8).map((amenity) => (
                   <div key={amenity} className="flex items-center space-x-2">
@@ -338,7 +340,7 @@ export default function SearchFiltersComponent({ filters, onFiltersChange, class
             className="text-muted-foreground hover:text-foreground whitespace-nowrap ml-2"
           >
             <X className="h-4 w-4 mr-1" />
-            Clear all
+            {t('filters.clearAll')}
           </Button>
         )}
       </div>
