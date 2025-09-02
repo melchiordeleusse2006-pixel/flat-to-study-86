@@ -80,7 +80,7 @@ export default function Header() {
               ? 'text-foreground hover:text-foreground/80' 
               : 'text-white hover:text-white/80'
           }`}>
-            About us
+            {t('header.about')}
           </Link>
           
           {/* Show different content based on auth state */}
@@ -109,28 +109,28 @@ export default function Header() {
                     ) : (
                       <User className="h-4 w-4 mr-2" />
                     )}
-                    <span className="hidden md:inline">{profile?.full_name || user.email?.split('@')[0] || 'Account'}</span>
+                    <span className="hidden md:inline">{profile?.full_name || user.email?.split('@')[0] || t('header.account')}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild>
                     <Link to="/profile" className="flex items-center">
                       <Settings className="h-4 w-4 mr-2" />
-                      Profile
+                      {t('header.profile')}
                     </Link>
                   </DropdownMenuItem>
                   {profile?.user_type === 'student' && (
                     <DropdownMenuItem asChild>
                       <Link to="/favorites" className="flex items-center">
                         <Heart className="h-4 w-4 mr-2" />
-                        Favorites
+                        {t('header.favorites')}
                       </Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem asChild>
                     <Link to="/messages" className="flex items-center">
                       <MessageSquare className="h-4 w-4 mr-2" />
-                      Messages
+                      {t('header.messages')}
                       {profile?.user_type === 'agency' && unreadCount > 0 && (
                         <Badge className="ml-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
                           {unreadCount}
@@ -142,14 +142,14 @@ export default function Header() {
                     <DropdownMenuItem asChild>
                       <Link to="/my-listings" className="flex items-center">
                         <Settings className="h-4 w-4 mr-2" />
-                        My Listings
+                        {t('header.myListings')}
                       </Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOut} className="text-destructive">
                     <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
+                    {t('header.signOut')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -168,7 +168,7 @@ export default function Header() {
                   }`}
                 >
                   <User className="h-4 w-4 mr-1 md:mr-2" />
-                  <span className="hidden md:inline">Log In</span>
+                  <span className="hidden md:inline">{t('header.logIn')}</span>
                 </Button>
               </Link>
 
@@ -178,8 +178,8 @@ export default function Header() {
                     ? 'hero-gradient text-white border-0' 
                     : 'bg-white text-primary hover:bg-white/90 border-0'
                 }`}>
-                  <span className="hidden md:inline">Get started</span>
-                  <span className="md:hidden">Start</span>
+                  <span className="hidden md:inline">{t('header.getStarted')}</span>
+                  <span className="md:hidden">{t('header.start')}</span>
                 </Button>
               </Link>
             </>

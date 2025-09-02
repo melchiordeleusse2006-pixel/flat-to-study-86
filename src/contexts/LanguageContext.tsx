@@ -26,6 +26,9 @@ const translations = {
     'header.profileInfo': 'Profile Information',
     'header.language': 'Language',
     'header.hello': 'Hello',
+    'header.logIn': 'Log In',
+    'header.start': 'Start',
+    'header.account': 'Account',
     
     // Languages
     'language.english': 'English',
@@ -148,6 +151,9 @@ const translations = {
     'header.profileInfo': 'Informazioni Profilo',
     'header.language': 'Lingua',
     'header.hello': 'Ciao',
+    'header.logIn': 'Accedi',
+    'header.start': 'Inizia',
+    'header.account': 'Account',
     
     // Languages
     'language.english': 'Inglese',
