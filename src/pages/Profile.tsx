@@ -17,9 +17,11 @@ export default function Profile() {
   const { t } = useLanguage();
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [isEditingContact, setIsEditingContact] = useState(false);
+  const [isEditingAgencyInfo, setIsEditingAgencyInfo] = useState(false);
   const [descriptionValue, setDescriptionValue] = useState(profile?.description || '');
   const [emailValue, setEmailValue] = useState(profile?.email || '');
   const [phoneValue, setPhoneValue] = useState(profile?.phone || '');
+  const [agencyNameValue, setAgencyNameValue] = useState(profile?.agency_name || '');
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -108,6 +110,25 @@ export default function Profile() {
     }
   };
 
+  const handleSaveAgencyInfo = async () => {
+    setIsSaving(true);
+    try {
+      const { error } = await updateProfile({ 
+        agency_name: agencyNameValue 
+      });
+      if (error) {
+        toast.error('Failed to update agency information');
+      } else {
+        toast.success('Agency information updated successfully');
+        setIsEditingAgencyInfo(false);
+      }
+    } catch (error) {
+      toast.error('Failed to update agency information');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleCancelEdit = () => {
     setDescriptionValue(profile?.description || '');
     setIsEditingDescription(false);
@@ -117,6 +138,11 @@ export default function Profile() {
     setEmailValue(profile?.email || '');
     setPhoneValue(profile?.phone || '');
     setIsEditingContact(false);
+  };
+
+  const handleCancelAgencyEdit = () => {
+    setAgencyNameValue(profile?.agency_name || '');
+    setIsEditingAgencyInfo(false);
   };
 
   if (!user || !profile) {
@@ -186,10 +212,80 @@ export default function Profile() {
                     <span>{profile.university}</span>
                   </CardDescription>
                 )}
+                {profile.user_type === 'agency' && profile.agency_name && (
+                  <CardDescription className="mt-1">
+                    <span className="font-medium">{profile.agency_name}</span>
+                  </CardDescription>
+                )}
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Agency Information Section - Only for agencies */}
+            {profile.user_type === 'agency' && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium text-muted-foreground">Agency Information</h3>
+                  {!isEditingAgencyInfo && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsEditingAgencyInfo(true)}
+                      className="h-8 px-2"
+                    >
+                      <Edit2 className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+                
+                {isEditingAgencyInfo ? (
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <label className="text-xs font-medium text-muted-foreground">Agency Name</label>
+                      <Input
+                        type="text"
+                        value={agencyNameValue}
+                        onChange={(e) => setAgencyNameValue(e.target.value)}
+                        placeholder="Enter your agency name"
+                        className="w-full"
+                        maxLength={100}
+                      />
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleCancelAgencyEdit}
+                        disabled={isSaving}
+                        className="flex-1"
+                      >
+                        <X className="h-3 w-3 mr-1" />
+                        Cancel
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={handleSaveAgencyInfo}
+                        disabled={isSaving}
+                        className="flex-1"
+                      >
+                        <Save className="h-3 w-3 mr-1" />
+                        {isSaving ? 'Saving...' : 'Save'}
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-3 bg-muted/50 rounded-md">
+                    <div className="flex items-center space-x-2">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">
+                        {profile.agency_name || 'No agency name set. Click edit to add one.'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Description Section */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
