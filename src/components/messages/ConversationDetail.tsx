@@ -328,6 +328,45 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
         <CardContent className="flex-1 flex flex-col min-h-0 p-0">
           <ScrollArea className="flex-1 px-6" ref={scrollAreaRef}>
             <div className="space-y-4 py-4">
+              {/* Student Contact Info Card for Agencies */}
+              {profile?.user_type === 'agency' && (studentProfile || conversation.lastMessage.sender_university || conversation.lastMessage.sender_phone) && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Users className="h-4 w-4 text-blue-600" />
+                    <span className="font-medium text-blue-900">Student Contact Information</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                    {(studentProfile?.university || conversation.lastMessage.sender_university) && (
+                      <div className="flex items-center gap-2 text-blue-800">
+                        <GraduationCap className="h-4 w-4" />
+                        <div>
+                          <div className="font-medium">University</div>
+                          <div>{studentProfile?.university || conversation.lastMessage.sender_university}</div>
+                        </div>
+                      </div>
+                    )}
+                    {(studentProfile?.phone || conversation.lastMessage.sender_phone) && (
+                      <div className="flex items-center gap-2 text-blue-800">
+                        <Phone className="h-4 w-4" />
+                        <div>
+                          <div className="font-medium">Phone</div>
+                          <div>{studentProfile?.phone || conversation.lastMessage.sender_phone}</div>
+                        </div>
+                      </div>
+                    )}
+                    {studentProfile?.email && (
+                      <div className="flex items-center gap-2 text-blue-800">
+                        <Mail className="h-4 w-4" />
+                        <div>
+                          <div className="font-medium">Email</div>
+                          <div>{studentProfile.email}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {messages.length === 0 ? (
                 <div className="text-center text-muted-foreground py-8">
                   No messages yet. Start the conversation!
