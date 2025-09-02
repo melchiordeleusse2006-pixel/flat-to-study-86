@@ -30,9 +30,13 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
     fetchMessages();
     markMessagesAsRead();
 
-    // Set up real-time subscription for new messages
+    // Set up real-time subscription for new messages with proper filtering
+    const channelName = profile?.user_type === 'agency' 
+      ? `messages-${conversation.listing.id}-${conversation.studentSenderId || conversation.lastMessage.sender_id}`
+      : `messages-${conversation.listing.id}`;
+    
     const channel = supabase
-      .channel(`messages-${conversation.listing.id}`)
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -43,7 +47,21 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
         },
         (payload) => {
           const newMessage = payload.new as Message;
-          setMessages(prev => [...prev, newMessage]);
+          
+          // Filter messages for agency users to only show messages in their conversation
+          if (profile?.user_type === 'agency') {
+            const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
+            if (newMessage.sender_id !== studentId && newMessage.sender_id !== user?.id) {
+              return; // Not part of this conversation
+            }
+          }
+          
+          // Add message to state if not already present
+          setMessages(prev => {
+            const exists = prev.some(msg => msg.id === newMessage.id);
+            if (exists) return prev;
+            return [...prev, newMessage];
+          });
           
           // Show notification for students when they receive agency replies
           if (profile?.user_type === 'student' && newMessage.sender_id !== user?.id) {
@@ -52,6 +70,25 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
               description: `${newMessage.sender_name} replied to your message`,
             });
           }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `listing_id=eq.${conversation.listing.id}`
+        },
+        (payload) => {
+          const updatedMessage = payload.new as Message;
+          
+          // Update existing message in state
+          setMessages(prev => 
+            prev.map(msg => 
+              msg.id === updatedMessage.id ? updatedMessage : msg
+            )
+          );
         }
       )
       .subscribe();

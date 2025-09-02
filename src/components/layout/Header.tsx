@@ -31,6 +31,10 @@ export default function Header() {
   const isSearchPage = location.pathname === '/search';
   const shouldShowBackground = isScrolled || isSearchPage;
 
+  // Ensure header doesn't overlap content on specific pages
+  const pagesWithOverlapIssues = ['/messages', '/profile', '/auth', '/my-listings', '/favorites'];
+  const hasOverlapIssue = pagesWithOverlapIssues.includes(location.pathname);
+
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
       shouldShowBackground 
