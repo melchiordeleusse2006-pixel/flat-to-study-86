@@ -117,18 +117,25 @@ export function ConversationList({ onSelectConversation, selectedConversationId 
         });
 
         // Then, merge agency replies into existing conversations
-        // We need to find which student each agency reply is responding to
+        // Find the correct student for each agency reply by looking at conversation history
         agencyReplies.forEach((message: any) => {
           const listing = message.listings;
           if (!listing) return;
 
-          // Find student messages on the same listing to determine which conversation this belongs to
-          const relatedStudentMessages = studentMessages.filter(sm => sm.listing_id === message.listing_id);
+          // Find which student this agency message is replying to by checking the conversation history
+          // Look for recent student messages on the same listing that this could be replying to
+          const recentStudentMessages = studentMessages.filter(sm => 
+            sm.listing_id === message.listing_id &&
+            new Date(sm.created_at) <= new Date(message.created_at)
+          );
           
-          if (relatedStudentMessages.length > 0) {
-            // For now, associate with the first student conversation on this listing
-            // In a more complex system, we might need to track conversation threads
-            const studentSenderId = relatedStudentMessages[0].sender_id;
+          if (recentStudentMessages.length > 0) {
+            // Find the most recent student message before this agency reply
+            const latestStudentMessage = recentStudentMessages.reduce((latest, current) => 
+              new Date(current.created_at) > new Date(latest.created_at) ? current : latest
+            );
+            
+            const studentSenderId = latestStudentMessage.sender_id;
             const key = `${listing.id}-${studentSenderId}`;
             
             const conversation = conversationMap.get(key);

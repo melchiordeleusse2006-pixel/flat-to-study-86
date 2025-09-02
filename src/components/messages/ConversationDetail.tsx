@@ -120,7 +120,7 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
       if (profile?.user_type === 'agency') {
         // Get all messages between this agency and this specific student
         const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
-        query = query.or(`sender_id.eq.${studentId},sender_id.eq.${user?.id}`);
+        query = query.in('sender_id', [studentId, user?.id]);
       }
 
       const { data, error } = await query.order('created_at', { ascending: true });
