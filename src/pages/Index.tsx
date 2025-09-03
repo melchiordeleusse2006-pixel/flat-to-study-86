@@ -104,13 +104,15 @@ const Index = () => {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {universities.map(university => (
-                      <Card key={university.id} className="text-center hover:shadow-lg transition-shadow">
-                        <CardContent className="p-6">
-                          <MapPin className="h-8 w-8 text-primary mx-auto mb-3" />
-                          <h3 className="font-semibold mb-2">{university.name}</h3>
-                          <p className="text-sm text-muted-foreground">{university.city}, {university.country}</p>
-                        </CardContent>
-                      </Card>
+                      <Link key={university.id} to={`/search?location=${encodeURIComponent(university.city)}`}>
+                        <Card className="text-center hover:shadow-lg transition-shadow cursor-pointer">
+                          <CardContent className="p-6">
+                            <MapPin className="h-8 w-8 text-primary mx-auto mb-3" />
+                            <h3 className="font-semibold mb-2">{university.name}</h3>
+                            <p className="text-sm text-muted-foreground">{university.city}, {university.country}</p>
+                          </CardContent>
+                        </Card>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -380,13 +382,15 @@ const Index = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {universities.map(university => (
-                  <Card key={university.id} className="text-center hover:shadow-lg transition-shadow">
-                    <CardContent className="p-6">
-                      <MapPin className="h-8 w-8 text-primary mx-auto mb-3" />
-                      <h3 className="font-semibold mb-2">{university.name}</h3>
-                      <p className="text-sm text-muted-foreground">{university.city}, {university.country}</p>
-                    </CardContent>
-                  </Card>
+                  <Link key={university.id} to={`/search?location=${encodeURIComponent(university.city)}`}>
+                    <Card className="text-center hover:shadow-lg transition-shadow cursor-pointer">
+                      <CardContent className="p-6">
+                        <MapPin className="h-8 w-8 text-primary mx-auto mb-3" />
+                        <h3 className="font-semibold mb-2">{university.name}</h3>
+                        <p className="text-sm text-muted-foreground">{university.city}, {university.country}</p>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             </div>
