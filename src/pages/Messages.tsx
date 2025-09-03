@@ -58,13 +58,13 @@ export default function Messages() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className={`${isMobile ? 'px-0' : 'container max-w-6xl mx-auto'} ${isMobile ? 'pt-20' : 'py-8'}`}>
+      <main className={`${isMobile ? 'px-0' : 'container max-w-6xl mx-auto'} ${isMobile ? 'pt-24' : 'py-8 pt-24'}`}>
         {/* Mobile: Show either conversation list or detail */}
         {isMobile ? (
           <>
             {!showConversationDetail ? (
               /* Mobile Conversation List */
-              <div className="h-[calc(100vh-80px)] overflow-hidden">
+              <div className="h-[calc(100vh-96px)] overflow-hidden">
                 {/* Header */}
                 <div className="flex items-center gap-4 p-4 border-b bg-background">
                   <div>
@@ -78,7 +78,7 @@ export default function Messages() {
                   </div>
                 </div>
                 
-                <div className="h-[calc(100vh-140px)] overflow-hidden">
+                <div className="h-[calc(100vh-156px)] overflow-hidden">
                   <ConversationList 
                     onSelectConversation={handleSelectConversation}
                     selectedConversationId={selectedConversation ? 
@@ -91,7 +91,7 @@ export default function Messages() {
               </div>
             ) : (
               /* Mobile Conversation Detail */
-              <div className="h-[calc(100vh-80px)] overflow-hidden">
+              <div className="h-[calc(100vh-96px)] overflow-hidden">
                 {/* Mobile Header with Back Button */}
                 <div className="flex items-center gap-3 p-4 border-b bg-background">
                   <Button 
@@ -112,7 +112,7 @@ export default function Messages() {
                   </div>
                 </div>
                 
-                <div className="h-[calc(100vh-140px)]">
+                <div className="h-[calc(100vh-156px)]">
                   {selectedConversation && (
                     <ConversationDetail 
                       conversation={selectedConversation} 
