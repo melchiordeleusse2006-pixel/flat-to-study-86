@@ -30,7 +30,8 @@ export default function Header() {
   // Force header visibility on search page and messages page
   const isSearchPage = location.pathname === '/search';
   const isMessagesPage = location.pathname === '/messages';
-  const shouldShowBackground = isScrolled || isSearchPage || isMessagesPage;
+  const isMyListingsPage = location.pathname === '/my-listings';
+  const shouldShowBackground = isScrolled || isSearchPage || isMessagesPage || isMyListingsPage;
 
   // Ensure header doesn't overlap content on specific pages
   const pagesWithOverlapIssues = ['/messages', '/profile', '/auth', '/my-listings', '/favorites'];
