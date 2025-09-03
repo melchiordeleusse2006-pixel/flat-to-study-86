@@ -51,7 +51,7 @@ const Index = () => {
                 <Link to="/create-listing">
                   <Button size="lg" className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
                     <Plus className="mr-2 h-5 w-5" />
-                    Add your listings
+                    {t('home.addYourListings')}
                   </Button>
                 </Link>
                 <div className="text-center">

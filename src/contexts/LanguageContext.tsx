@@ -384,7 +384,7 @@ const translations = {
     'home.heroTitle': 'La tua casa studentesca perfetta, ora e qui!',
     'home.heroSubtitle': 'Colleghiamo gli studenti a alloggi verificati vicino all\'Università Bocconi e alle altre principali università di Milano. Scelto dalle agenzie, amato dagli studenti.',
     'home.heroSubtitleStudent': 'Pronto a trovare il tuo alloggio perfetto per studenti?',
-    'home.heroSubtitleRealtor': 'Gestisci i tuoi annunci e connettiti con inquilini potenziali.',
+    'home.heroSubtitleRealtor': 'Gestisci i tuoi annunci immobiliari e la tua attività con efficacia.',
     'home.findPlace': 'Trova un Posto',
     'home.universitiesTitle': 'Ideale per studenti delle università d\'eccellenza.',
     'home.universitiesSubtitle': 'Trova alloggi a distanza pedonale o con facile collegamento alle migliori università di Milano',
