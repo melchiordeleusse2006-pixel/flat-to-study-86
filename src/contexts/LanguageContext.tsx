@@ -285,6 +285,7 @@ const translations = {
     'messages.typeMessage': 'Type your message...',
     'messages.noConversationsYet': 'No conversations yet',
     'messages.noConversationsDesc': 'When students send inquiries about your listings, they\'ll appear here.',
+    'messages.backToHome': 'Back to home',
     
     // Favorites
     'favorites.title': 'My Favorites',
@@ -622,6 +623,7 @@ const translations = {
     'messages.typeMessage': 'Scrivi il tuo messaggio...',
     'messages.noConversationsYet': 'Nessuna conversazione al momento',
     'messages.noConversationsDesc': 'Quando gli studenti invieranno richieste sui tuoi annunci, appariranno qui.',
+    'messages.backToHome': 'Torna a casa',
     
     // Favorites
     'favorites.title': 'I Miei Preferiti',

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { MessageCircle, ArrowLeft } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import { useAuth } from '@/hooks/useAuth';
@@ -67,7 +67,13 @@ export default function Messages() {
               <div className="h-[calc(100vh-96px)] overflow-hidden">
                 {/* Header */}
                 <div className="flex items-center gap-4 p-4 border-b bg-background">
-                  <div>
+                  <Link to="/">
+                    <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                      <ArrowLeft className="h-4 w-4" />
+                      <span className="text-sm">{t('messages.backToHome')}</span>
+                    </Button>
+                  </Link>
+                  <div className="flex-1">
                     <h1 className="text-xl font-bold">{t('messages.title')}</h1>
                     <p className="text-xs text-muted-foreground">
                       {profile?.user_type === 'agency' 
@@ -128,6 +134,12 @@ export default function Messages() {
           <>
             {/* Header */}
             <div className="flex items-center gap-4 mb-8">
+              <Link to="/">
+                <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  <span>{t('messages.backToHome')}</span>
+                </Button>
+              </Link>
               <div>
                 <h1 className="text-3xl font-bold">{t('messages.title')}</h1>
                 <p className="text-muted-foreground">
