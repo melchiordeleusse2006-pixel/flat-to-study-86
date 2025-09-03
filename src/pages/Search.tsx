@@ -25,11 +25,18 @@ export default function Search() {
   const [filters, setFilters] = useState<SearchFiltersType>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('relevance');
-  const [viewMode, setViewMode] = useState<ViewMode>(!isMobile ? 'map' : 'grid');
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [loading, setLoading] = useState(true);
   const [hoveredListingId, setHoveredListingId] = useState<string | null>(null);
   const [geocodingComplete, setGeocodingComplete] = useState(false);
   const [visibleListings, setVisibleListings] = useState<Listing[]>([]);
+
+  // Ensure mobile users always start with grid view
+  useEffect(() => {
+    if (isMobile && viewMode !== 'grid') {
+      setViewMode('grid');
+    }
+  }, [isMobile]);
 
   // Fetch listings from database
   useEffect(() => {
