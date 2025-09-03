@@ -17,6 +17,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function CreateListing() {
   const { user, profile, loading } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -206,8 +207,16 @@ export default function CreateListing() {
   };
 
   const commonAmenities = [
-    'WiFi', 'Washing Machine', 'Dishwasher', 'Parking', 'Balcony', 
-    'Garden', 'Gym', 'Swimming Pool', 'Air Conditioning', 'Heating'
+    { key: 'wifi', label: t('amenities.wifi') },
+    { key: 'washingMachine', label: t('amenities.washingMachine') },
+    { key: 'dishwasher', label: t('amenities.dishwasher') },
+    { key: 'parking', label: t('amenities.parking') },
+    { key: 'balcony', label: t('amenities.balcony') },
+    { key: 'garden', label: t('amenities.garden') },
+    { key: 'gym', label: t('amenities.gym') },
+    { key: 'swimmingPool', label: t('amenities.swimmingPool') },
+    { key: 'airConditioning', label: t('amenities.airConditioning') },
+    { key: 'heating', label: t('amenities.heating') }
   ];
 
   return (
@@ -220,12 +229,12 @@ export default function CreateListing() {
           <Link to="/">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
+              {t('createListing.back')}
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold">Create New Listing</h1>
-            <p className="text-muted-foreground">Add a new property to your portfolio</p>
+            <h1 className="text-3xl font-bold">{t('createListing.title')}</h1>
+            <p className="text-muted-foreground">{t('createListing.subtitle')}</p>
           </div>
         </div>
 
@@ -235,40 +244,40 @@ export default function CreateListing() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Home className="h-5 w-5" />
-                Basic Information
+                {t('createListing.basicInfo')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="title">Property Title</Label>
+                  <Label htmlFor="title">{t('createListing.propertyTitle')}</Label>
                   <Input
                     id="title"
-                    placeholder="e.g., Cozy Studio Near University"
+                    placeholder="es. Monolocale Accogliente vicino all'Università"
                     value={formData.title}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="type">Property Type</Label>
+                  <Label htmlFor="type">{t('createListing.propertyType')}</Label>
                   <Select value={formData.type} onValueChange={(value: ListingType) => setFormData({...formData, type: value})}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
+                      <SelectValue placeholder={t('createListing.selectType')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="room">Room</SelectItem>
-                      <SelectItem value="studio">Studio</SelectItem>
-                      <SelectItem value="apartment">Apartment</SelectItem>
+                      <SelectItem value="room">{t('propertyType.room')}</SelectItem>
+                      <SelectItem value="studio">{t('propertyType.studio')}</SelectItem>
+                      <SelectItem value="apartment">{t('propertyType.apartment')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">{t('createListing.description')}</Label>
                 <Textarea
                   id="description"
-                  placeholder="Describe your property..."
+                  placeholder={t('createListing.descriptionPlaceholder')}
                   rows={4}
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
@@ -282,12 +291,12 @@ export default function CreateListing() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Camera className="h-5 w-5" />
-                Property Images
+                {t('createListing.propertyImages')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="images">Upload Images</Label>
+                <Label htmlFor="images">{t('createListing.uploadImages')}</Label>
                 <Input
                   id="images"
                   type="file"
@@ -329,34 +338,34 @@ export default function CreateListing() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPin className="h-5 w-5" />
-                Location
+                {t('createListing.location')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
+                <Label htmlFor="address">{t('createListing.address')}</Label>
                 <Input
                   id="address"
-                  placeholder="Street address"
+                  placeholder={t('createListing.addressPlaceholder')}
                   value={formData.addressLine}
                   onChange={(e) => setFormData({...formData, addressLine: e.target.value})}
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="city">City</Label>
+                  <Label htmlFor="city">{t('createListing.city')}</Label>
                   <Input
                     id="city"
-                    placeholder="City"
+                    placeholder={t('createListing.cityPlaceholder')}
                     value={formData.city}
                     onChange={(e) => setFormData({...formData, city: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="country">Country</Label>
+                  <Label htmlFor="country">{t('createListing.country')}</Label>
                   <Input
                     id="country"
-                    placeholder="Country"
+                    placeholder={t('createListing.countryPlaceholder')}
                     value={formData.country}
                     onChange={(e) => setFormData({...formData, country: e.target.value})}
                   />
@@ -370,13 +379,13 @@ export default function CreateListing() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Euro className="h-5 w-5" />
-                Pricing & Details
+                {t('createListing.pricingDetails')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="rent">Monthly Rent (EUR)</Label>
+                  <Label htmlFor="rent">{t('createListing.monthlyRent')}</Label>
                   <Input
                     id="rent"
                     type="number"
@@ -386,7 +395,7 @@ export default function CreateListing() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="deposit">Deposit (EUR)</Label>
+                  <Label htmlFor="deposit">{t('createListing.deposit')}</Label>
                   <Input
                     id="deposit"
                     type="number"
@@ -399,7 +408,7 @@ export default function CreateListing() {
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="bedrooms">Bedrooms</Label>
+                  <Label htmlFor="bedrooms">{t('createListing.bedrooms')}</Label>
                   <Input
                     id="bedrooms"
                     type="number"
@@ -409,7 +418,7 @@ export default function CreateListing() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="bathrooms">Bathrooms</Label>
+                  <Label htmlFor="bathrooms">{t('createListing.bathrooms')}</Label>
                   <Input
                     id="bathrooms"
                     type="number"
@@ -419,16 +428,16 @@ export default function CreateListing() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="floor">Floor</Label>
+                  <Label htmlFor="floor">{t('createListing.floor')}</Label>
                   <Input
                     id="floor"
-                    placeholder="2nd"
+                    placeholder={t('createListing.floorPlaceholder')}
                     value={formData.floor}
                     onChange={(e) => setFormData({...formData, floor: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="size">Size (sqm)</Label>
+                  <Label htmlFor="size">{t('createListing.size')}</Label>
                   <Input
                     id="size"
                     type="number"
@@ -440,13 +449,13 @@ export default function CreateListing() {
                </div>
 
                <div className="space-y-2">
-                 <Label htmlFor="agencyFee">Agency Fee</Label>
-                 <Input
-                   id="agencyFee"
-                   placeholder="e.g., 500 EUR or 1 month rent"
-                   value={formData.agencyFee}
-                   onChange={(e) => setFormData({...formData, agencyFee: e.target.value})}
-                 />
+                <Label htmlFor="agencyFee">{t('createListing.agencyFee')}</Label>
+                <Input
+                  id="agencyFee"
+                  placeholder={t('createListing.agencyFeePlaceholder')}
+                  value={formData.agencyFee}
+                  onChange={(e) => setFormData({...formData, agencyFee: e.target.value})}
+                />
                </div>
 
                <div className="flex gap-6">
@@ -456,7 +465,7 @@ export default function CreateListing() {
                     checked={formData.furnished}
                     onCheckedChange={(checked) => setFormData({...formData, furnished: checked as boolean})}
                   />
-                  <Label htmlFor="furnished">Furnished</Label>
+                  <Label htmlFor="furnished">{t('createListing.furnished')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -464,7 +473,7 @@ export default function CreateListing() {
                     checked={formData.billsIncluded}
                     onCheckedChange={(checked) => setFormData({...formData, billsIncluded: checked as boolean})}
                   />
-                  <Label htmlFor="bills">Bills Included</Label>
+                  <Label htmlFor="bills">{t('createListing.billsIncluded')}</Label>
                 </div>
               </div>
             </CardContent>
@@ -473,24 +482,24 @@ export default function CreateListing() {
           {/* Amenities */}
           <Card>
             <CardHeader>
-              <CardTitle>Amenities</CardTitle>
+              <CardTitle>{t('createListing.amenities')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {commonAmenities.map((amenity) => (
-                  <div key={amenity} className="flex items-center space-x-2">
+                  <div key={amenity.key} className="flex items-center space-x-2">
                     <Checkbox
-                      id={amenity}
-                      checked={formData.amenities.includes(amenity)}
+                      id={amenity.key}
+                      checked={formData.amenities.includes(amenity.key)}
                       onCheckedChange={(checked) => {
                         if (checked) {
-                          setFormData({...formData, amenities: [...formData.amenities, amenity]});
+                          setFormData({...formData, amenities: [...formData.amenities, amenity.key]});
                         } else {
-                          setFormData({...formData, amenities: formData.amenities.filter(a => a !== amenity)});
+                          setFormData({...formData, amenities: formData.amenities.filter(a => a !== amenity.key)});
                         }
                       }}
                     />
-                    <Label htmlFor={amenity}>{amenity}</Label>
+                    <Label htmlFor={amenity.key}>{amenity.label}</Label>
                   </div>
                 ))}
               </div>
@@ -502,12 +511,12 @@ export default function CreateListing() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5" />
-                Availability
+                {t('createListing.availability')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <Label htmlFor="availability">Available From</Label>
+                <Label htmlFor="availability">{t('createListing.availableFrom')}</Label>
                 <Input
                   id="availability"
                   type="date"
@@ -526,10 +535,10 @@ export default function CreateListing() {
               className="hero-gradient text-white border-0"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Creating...' : 'Create Listing'}
+              {isSubmitting ? t('createListing.creating') : t('createListing.create')}
             </Button>
             <Button type="button" variant="outline" size="lg" onClick={() => navigate('/')}>
-              Cancel
+              {t('createListing.cancel')}
             </Button>
           </div>
         </form>
