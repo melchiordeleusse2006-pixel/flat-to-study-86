@@ -31,10 +31,12 @@ export default function Search() {
   const [geocodingComplete, setGeocodingComplete] = useState(false);
   const [visibleListings, setVisibleListings] = useState<Listing[]>([]);
 
-  // Ensure mobile users always start with grid view
+  // Set appropriate default view mode based on device
   useEffect(() => {
-    if (isMobile && viewMode !== 'grid') {
+    if (isMobile) {
       setViewMode('grid');
+    } else {
+      setViewMode('map');
     }
   }, [isMobile]);
 
