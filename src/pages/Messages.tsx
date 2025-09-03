@@ -66,14 +66,14 @@ export default function Messages() {
               /* Mobile Conversation List */
               <div className="h-[calc(100vh-96px)] overflow-hidden">
                 {/* Header */}
-                <div className="flex items-center gap-4 p-4 border-b bg-background">
-                  <Link to="/">
-                    <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                      <ArrowLeft className="h-4 w-4" />
-                      <span className="text-sm">{t('messages.backToHome')}</span>
+                <div className="relative flex items-center justify-center p-4 border-b bg-background">
+                  <Link to="/" className="absolute left-4">
+                    <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground">
+                      <ArrowLeft className="h-3 w-3 mr-1" />
+                      {t('messages.backToHome')}
                     </Button>
                   </Link>
-                  <div className="flex-1">
+                  <div className="text-center">
                     <h1 className="text-xl font-bold">{t('messages.title')}</h1>
                     <p className="text-xs text-muted-foreground">
                       {profile?.user_type === 'agency' 
@@ -133,14 +133,14 @@ export default function Messages() {
           /* Desktop: Side-by-side layout */
           <>
             {/* Header */}
-            <div className="flex items-center gap-4 mb-8">
-              <Link to="/">
-                <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  <span>{t('messages.backToHome')}</span>
+            <div className="relative flex items-center justify-center mb-8">
+              <Link to="/" className="absolute left-0">
+                <Button variant="ghost" size="sm" className="text-sm text-muted-foreground hover:text-foreground">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  {t('messages.backToHome')}
                 </Button>
               </Link>
-              <div>
+              <div className="text-center">
                 <h1 className="text-3xl font-bold">{t('messages.title')}</h1>
                 <p className="text-muted-foreground">
                   {profile?.user_type === 'agency' 
