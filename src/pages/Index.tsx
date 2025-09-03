@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { Search, Users, Shield, MapPin, Heart, MessageCircle, BarChart3, Plus, Eye, ChevronDown } from 'lucide-react';
+import { ScrollIndicator } from '@/components/ui/scroll-indicator';
 import { universities, mockListings } from '@/data/mockData';
 import { Logo } from '@/components/ui/logo';
 import { useAuth } from '@/hooks/useAuth';
@@ -51,7 +52,7 @@ const Index = () => {
                 <Link to="/create-listing">
                   <Button size="lg" className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
                     <Plus className="mr-2 h-5 w-5" />
-                    {t('home.addYourListings')}
+                    {t('addYourListings')}
                   </Button>
                 </Link>
                 <div className="text-center">
@@ -78,6 +79,11 @@ const Index = () => {
           <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-white/20"></div>
           <div className="absolute bottom-20 right-20 w-24 h-24 rounded-full bg-white/15"></div>
           <div className="absolute top-1/2 right-10 w-16 h-16 rounded-full bg-white/25"></div>
+        </div>
+        
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 w-full">
+          <ScrollIndicator />
         </div>
       </section>
 
@@ -236,6 +242,11 @@ const Index = () => {
                     </Card>
                   </div>
                 </div>
+                
+                {/* Scroll Indicator for Student Section */}
+                <div className="flex justify-center py-8">
+                  <ScrollIndicator className="text-muted-foreground" />
+                </div>
               </section>
             </>
           ) : isRealtor ? (
@@ -344,6 +355,11 @@ const Index = () => {
                       {t('home.helpDesc')}
                     </p>
                   </div>
+                </div>
+                
+                {/* Scroll Indicator for Realtor Section */}
+                <div className="flex justify-center py-8">
+                  <ScrollIndicator className="text-muted-foreground" />
                 </div>
               </section>
             </>
@@ -472,6 +488,11 @@ const Index = () => {
                   </p>
                 </div>
               </div>
+            </div>
+            
+            {/* Scroll Indicator for General Section */}
+            <div className="flex justify-center py-8">
+              <ScrollIndicator className="text-muted-foreground" />
             </div>
           </section>
         </>

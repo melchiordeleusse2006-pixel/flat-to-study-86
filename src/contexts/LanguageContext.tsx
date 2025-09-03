@@ -99,6 +99,8 @@ const translations = {
     'home.perfectLocations': 'Perfect Locations',
     'home.perfectLocationsDesc': 'Properties near top Milan universities with easy commute options.',
     
+    'addYourListings': '+ Add Your Listing',
+    
     // Auth Page
     'auth.backToHome': 'Back to Home',
     'auth.title': 'Log In to Flat2Study',
@@ -430,6 +432,8 @@ const translations = {
     'home.studentOnlyDesc': 'Una piattaforma esclusiva per studenti, che garantisce la migliore esperienza a tutti gli utenti.',
     'home.perfectLocations': 'Posizioni Perfette',
     'home.perfectLocationsDesc': 'Alloggi vicino alle principali università di Milano, con comode opzioni di trasporto.',
+    
+    'addYourListings': '+ Pubblica Il Tuo Annuncio',
     
     // Auth Page
     'auth.backToHome': 'Torna alla Home',
