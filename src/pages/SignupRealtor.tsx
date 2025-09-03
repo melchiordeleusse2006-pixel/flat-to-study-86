@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,6 +10,7 @@ import { Loader2, ArrowLeft, Upload, User } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function SignupRealtor() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { signUp } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -38,13 +40,13 @@ export default function SignupRealtor() {
     setSuccess(null);
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('auth.passwordsNoMatch'));
       setLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      setError(t('auth.passwordTooShort'));
       setLoading(false);
       return;
     }
@@ -62,13 +64,13 @@ export default function SignupRealtor() {
     
     if (error) {
       if (error.message?.includes('already registered')) {
-        setError('An account with this email already exists. Please log in instead.');
+        setError(t('auth.accountExists'));
       } else {
-        setError(error.message || 'Failed to create account');
+        setError(error.message || t('auth.createFailed'));
       }
       setLoading(false);
     } else {
-      setSuccess('Account created successfully! Please check your email to verify your account.');
+      setSuccess(t('auth.accountCreated'));
       setLoading(false);
     }
   };
@@ -83,15 +85,15 @@ export default function SignupRealtor() {
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Selection
+            {t('signup.student.backToSelection')}
           </Button>
         </div>
 
         <Card>
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">Realtor Registration</CardTitle>
+            <CardTitle className="text-2xl font-bold">{t('signup.realtor.title')}</CardTitle>
             <CardDescription>
-              Create your professional account to start listing properties
+              {t('signup.realtor.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -110,7 +112,7 @@ export default function SignupRealtor() {
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Profile Picture */}
               <div className="space-y-2">
-                <Label>Profile Picture</Label>
+                <Label>{t('signup.student.profilePicture')}</Label>
                 <div className="flex items-center space-x-4">
                   <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
                     {profilePicture ? (
@@ -135,7 +137,7 @@ export default function SignupRealtor() {
                       <Button type="button" variant="outline" size="sm" asChild>
                         <span>
                           <Upload className="h-4 w-4 mr-2" />
-                          Upload Photo
+                          {t('signup.student.uploadPhoto')}
                         </span>
                       </Button>
                     </Label>
@@ -145,11 +147,11 @@ export default function SignupRealtor() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name">{t('signup.student.name')}</Label>
                   <Input
                     id="name"
                     type="text"
-                    placeholder="First name"
+                    placeholder={t('signup.student.namePlaceholder')}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
@@ -157,11 +159,11 @@ export default function SignupRealtor() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="surname">Surname</Label>
+                  <Label htmlFor="surname">{t('signup.student.surname')}</Label>
                   <Input
                     id="surname"
                     type="text"
-                    placeholder="Last name"
+                    placeholder={t('signup.student.surnamePlaceholder')}
                     value={surname}
                     onChange={(e) => setSurname(e.target.value)}
                     required
@@ -170,11 +172,11 @@ export default function SignupRealtor() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">{t('signup.student.phone')}</Label>
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="+39 123 456 7890"
+                  placeholder={t('signup.student.phonePlaceholder')}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
@@ -182,11 +184,11 @@ export default function SignupRealtor() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('signup.student.email')}</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your.email@company.com"
+                  placeholder={t('signup.realtor.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -194,11 +196,11 @@ export default function SignupRealtor() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="company">Company</Label>
+                <Label htmlFor="company">{t('signup.realtor.company')}</Label>
                 <Input
                   id="company"
                   type="text"
-                  placeholder="Real Estate Agency Name"
+                  placeholder={t('signup.realtor.companyPlaceholder')}
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
                   required
@@ -206,11 +208,11 @@ export default function SignupRealtor() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="license">License Number</Label>
+                <Label htmlFor="license">{t('signup.realtor.license')}</Label>
                 <Input
                   id="license"
                   type="text"
-                  placeholder="Professional license number"
+                  placeholder={t('signup.realtor.licensePlaceholder')}
                   value={licenseNumber}
                   onChange={(e) => setLicenseNumber(e.target.value)}
                   required
@@ -218,11 +220,11 @@ export default function SignupRealtor() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('auth.password')}</Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Create a password (min. 6 characters)"
+                  placeholder={t('signup.student.passwordCreate')}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -231,11 +233,11 @@ export default function SignupRealtor() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm Password</Label>
+                <Label htmlFor="confirm-password">{t('signup.student.confirmPassword')}</Label>
                 <Input
                   id="confirm-password"
                   type="password"
-                  placeholder="Confirm your password"
+                  placeholder={t('signup.student.confirmPasswordPlaceholder')}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
@@ -244,15 +246,15 @@ export default function SignupRealtor() {
 
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Create Realtor Account
+                {t('signup.realtor.createAccount')}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                Already have an account?{' '}
+                {t('signup.student.alreadyHaveAccount')}{' '}
                 <Link to="/auth" className="text-primary hover:underline">
-                  Log in here
+                  {t('signup.student.logInHere')}
                 </Link>
               </p>
             </div>

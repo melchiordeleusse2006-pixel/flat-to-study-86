@@ -39,7 +39,7 @@ export default function Auth() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Checking authentication...</span>
+          <span>{t('auth.checkingAuth')}</span>
         </div>
       </div>
     );
@@ -53,7 +53,7 @@ export default function Auth() {
     const { error } = await signIn(signInEmail, signInPassword);
     
     if (error) {
-      setError(error.message || 'Failed to log in');
+      setError(error.message || t('auth.loginFailed'));
       setLoading(false);
     } else {
       // Success! The useEffect above will handle navigation once user is set
@@ -69,9 +69,9 @@ export default function Auth() {
     const { error } = await resetPassword(resetEmail);
     
     if (error) {
-      setError(error.message || 'Failed to send reset email');
+      setError(error.message || t('auth.resetFailed'));
     } else {
-      setSuccess('Password reset email sent! Check your inbox and follow the instructions.');
+      setSuccess(t('auth.resetSuccess'));
       setShowForgotPassword(false);
       setResetEmail('');
     }
@@ -88,15 +88,15 @@ export default function Auth() {
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Home
+            {t('auth.backToHome')}
           </Button>
         </div>
 
         <Card>
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">Log In to Flat2Study</CardTitle>
+            <CardTitle className="text-2xl font-bold">{t('auth.title')}</CardTitle>
             <CardDescription>
-              Access your account to manage your listings and messages
+              {t('auth.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -115,11 +115,11 @@ export default function Auth() {
             {!showForgotPassword ? (
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
+                  <Label htmlFor="signin-email">{t('auth.email')}</Label>
                   <Input
                     id="signin-email"
                     type="email"
-                    placeholder="your.email@example.com"
+                    placeholder={t('auth.emailPlaceholder')}
                     value={signInEmail}
                     onChange={(e) => setSignInEmail(e.target.value)}
                     required
@@ -127,11 +127,11 @@ export default function Auth() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
+                  <Label htmlFor="signin-password">{t('auth.password')}</Label>
                   <Input
                     id="signin-password"
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder={t('auth.passwordPlaceholder')}
                     value={signInPassword}
                     onChange={(e) => setSignInPassword(e.target.value)}
                     required
@@ -140,7 +140,7 @@ export default function Auth() {
 
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Log In
+                  {t('auth.logIn')}
                 </Button>
 
                 <div className="text-center">
@@ -149,26 +149,26 @@ export default function Auth() {
                     onClick={() => setShowForgotPassword(true)}
                     className="text-sm text-primary hover:underline"
                   >
-                    Forgot your password?
+                    {t('auth.forgotPassword')}
                   </button>
                 </div>
               </form>
             ) : (
               <div className="space-y-4">
                 <div className="text-center">
-                  <h3 className="font-medium mb-2">Reset your password</h3>
+                  <h3 className="font-medium mb-2">{t('auth.resetTitle')}</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Enter your email address and we'll send you a link to reset your password.
+                    {t('auth.resetDescription')}
                   </p>
                 </div>
                 
                 <form onSubmit={handleForgotPassword} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="reset-email">Email</Label>
+                    <Label htmlFor="reset-email">{t('auth.email')}</Label>
                     <Input
                       id="reset-email"
                       type="email"
-                      placeholder="your.email@example.com"
+                      placeholder={t('auth.emailPlaceholder')}
                       value={resetEmail}
                       onChange={(e) => setResetEmail(e.target.value)}
                       required
@@ -177,7 +177,7 @@ export default function Auth() {
 
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Send Reset Email
+                    {t('auth.sendResetEmail')}
                   </Button>
 
                   <div className="text-center">
@@ -190,7 +190,7 @@ export default function Auth() {
                       }}
                       className="text-sm text-muted-foreground hover:underline"
                     >
-                      Back to log in
+                      {t('auth.backToLogin')}
                     </button>
                   </div>
                 </form>
@@ -199,9 +199,9 @@ export default function Auth() {
 
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                Don't have an account?{' '}
+                {t('auth.noAccount')}{' '}
                 <Link to="/get-started" className="text-primary hover:underline font-medium">
-                  Get started here
+                  {t('auth.getStarted')}
                 </Link>
               </p>
             </div>
