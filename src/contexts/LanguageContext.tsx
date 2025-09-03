@@ -678,14 +678,18 @@ const translations = {
 };
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('en');
-
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('language') as Language;
-    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'it')) {
-      setLanguageState(savedLanguage);
+  // Initialize language from localStorage immediately to avoid flash of wrong language
+  const getInitialLanguage = (): Language => {
+    if (typeof window !== 'undefined') {
+      const savedLanguage = localStorage.getItem('language') as Language;
+      if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'it')) {
+        return savedLanguage;
+      }
     }
-  }, []);
+    return 'en';
+  };
+
+  const [language, setLanguageState] = useState<Language>(getInitialLanguage);
 
   const setLanguage = (newLanguage: Language) => {
     setLanguageState(newLanguage);
