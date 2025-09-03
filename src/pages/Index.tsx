@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
-import { Search, Users, Shield, MapPin, Heart, MessageCircle, BarChart3, Plus, Eye } from 'lucide-react';
+import { Search, Users, Shield, MapPin, Heart, MessageCircle, BarChart3, Plus, Eye, ChevronDown } from 'lucide-react';
 import { universities, mockListings } from '@/data/mockData';
 import { Logo } from '@/components/ui/logo';
 import { useAuth } from '@/hooks/useAuth';

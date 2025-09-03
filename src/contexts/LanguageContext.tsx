@@ -628,10 +628,10 @@ const translations = {
     // Create Listing
     'createListing.title': 'Crea Nuovo Annuncio',
     'createListing.subtitle': 'Aggiungi una nuova proprietà al tuo portfolio',
-    'createListing.basicInfo': 'Informazioni Base',
-    'createListing.propertyTitle': 'Titolo Proprietà',
-    'createListing.propertyType': 'Tipo Proprietà',
-    'createListing.selectType': 'Seleziona tipo',
+    'createListing.basicInfo': 'Informazioni di Base',
+    'createListing.propertyTitle': 'Titolo Annuncio',
+    'createListing.propertyType': 'Tipologia di Immobile',
+    'createListing.selectType': 'Seleziona tipologia',
     'createListing.description': 'Descrizione',
     'createListing.uploadImages': 'Carica Immagini',
     'createListing.address': 'Indirizzo',
@@ -649,6 +649,8 @@ const translations = {
     'createListing.error': 'Errore',
     'createListing.success': 'Successo',
     'createListing.listingCreated': 'Annuncio creato con successo!',
+    'createListing.back': 'Indietro',
+    'createListing.cancel': 'Annulla',
     
     // Filters
     'filters.price': 'Prezzo',

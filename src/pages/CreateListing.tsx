@@ -13,6 +13,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { ListingType } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function CreateListing() {
   const { user, profile, loading } = useAuth();
