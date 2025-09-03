@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Home, Plus, Eye, Edit, Trash2 } from 'lucide-react';
+import { Home, Plus, Eye, Edit, Trash2, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import { useAuth } from '@/hooks/useAuth';
@@ -148,20 +148,27 @@ export default function MyListings() {
       
       <main className="container max-w-6xl mx-auto py-8 pt-24">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex h-10 w-10 items-center justify-center rounded-lg hero-gradient">
-              <Home className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold">{t('myListings.title')}</h1>
-              <p className="text-muted-foreground">
-                {t('myListings.subtitle')} ({listings.length} {t('myListings.totalCount')})
-              </p>
+        <div className="relative flex items-center justify-center mb-8">
+          <Link to="/" className="absolute left-0">
+            <Button variant="ghost" size="sm" className="text-sm text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {t('messages.backToHome')}
+            </Button>
+          </Link>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-4 mb-2">
+              <div className="h-10 w-10 flex items-center justify-center rounded-lg hero-gradient">
+                <Home className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold">{t('myListings.title')}</h1>
+                <p className="text-muted-foreground">
+                  {t('myListings.subtitle')} ({listings.length} {t('myListings.totalCount')})
+                </p>
+              </div>
             </div>
           </div>
-          
-          <Link to="/create-listing">
+          <Link to="/create-listing" className="absolute right-0">
             <Button className="hero-gradient text-white border-0">
               <Plus className="h-4 w-4 mr-2" />
               {t('myListings.addNewListing')}
