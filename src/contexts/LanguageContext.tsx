@@ -49,12 +49,12 @@ const translations = {
     
     // Homepage
     'home.heroWelcome': 'Welcome back',
-    'home.heroTitle': 'Find Your Perfect Student Home in Milan',
+    'home.heroTitle': 'Your perfect student home here and now.',
     'home.heroSubtitle': 'Connecting students with verified housing near Bocconi University and other top Milan universities. Trusted by agencies, loved by students.',
     'home.heroSubtitleStudent': 'Ready to find your perfect student accommodation?',
     'home.heroSubtitleRealtor': 'Manage your listings and connect with potential tenants.',
     'home.findPlace': 'Find a Place',
-    'home.universitiesTitle': 'Perfect for Students Near Top Universities',
+    'home.universitiesTitle': 'Perfect for students near leading universities.',
     'home.universitiesSubtitle': 'Find housing within walking distance or easy commute to Milan\'s best universities',
     'home.featuredTitle': 'Featured Properties',
     'home.featuredSubtitle': 'Hand-picked accommodations from trusted agencies',
@@ -90,14 +90,14 @@ const translations = {
     'home.quickActionsRealtorSubtitle': 'Manage your property listings and business',
     
     // Benefits Section
-    'home.whyChooseTitle': 'Why Choose flat2study?',
-    'home.whyChooseSubtitle': 'We make finding student accommodation in Milan safe, easy, and reliable',
+    'home.whyChooseTitle': 'Why choose flat2study?',
+    'home.whyChooseSubtitle': 'We make finding student accommodation in Milan safe, easy, and reliable.',
     'home.verifiedProperties': 'Verified Properties',
-    'home.verifiedPropertiesDesc': 'All properties are verified and listed by trusted agencies and landlords',
+    'home.verifiedPropertiesDesc': 'All properties are verified and listed by trusted agencies and landlords.',
     'home.studentOnly': 'Student-Only',
-    'home.studentOnlyDesc': 'Exclusive platform for students, ensuring the best experience for all users',
+    'home.studentOnlyDesc': 'Exclusive platform for students, ensuring the best experience for all users.',
     'home.perfectLocations': 'Perfect Locations',
-    'home.perfectLocationsDesc': 'Properties near top Milan universities with easy commute options',
+    'home.perfectLocationsDesc': 'Properties near top Milan universities with easy commute options.',
     
     // Search Page
     'search.placeholder': 'Search by location, university, or amenities...',
