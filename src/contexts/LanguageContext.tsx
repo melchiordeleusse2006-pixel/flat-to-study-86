@@ -89,6 +89,16 @@ const translations = {
     'home.helpDesc': 'We are here to help you with anything you need. We answer in 24 hours or less.',
     'home.quickActionsRealtorSubtitle': 'Manage your property listings and business',
     
+    // Benefits Section
+    'home.whyChooseTitle': 'Why Choose flat2study?',
+    'home.whyChooseSubtitle': 'We make finding student accommodation in Milan safe, easy, and reliable',
+    'home.verifiedProperties': 'Verified Properties',
+    'home.verifiedPropertiesDesc': 'All properties are verified and listed by trusted agencies and landlords',
+    'home.studentOnly': 'Student-Only',
+    'home.studentOnlyDesc': 'Exclusive platform for students, ensuring the best experience for all users',
+    'home.perfectLocations': 'Perfect Locations',
+    'home.perfectLocationsDesc': 'Properties near top Milan universities with easy commute options',
+    
     // Search Page
     'search.placeholder': 'Search by location, university, or amenities...',
     'search.sortBy': 'Sort by:',
@@ -297,12 +307,12 @@ const translations = {
     
     // Homepage
     'home.heroWelcome': 'Bentornato',
-    'home.heroTitle': 'Trova la Tua Casa Perfetta per Studenti a Milano',
-    'home.heroSubtitle': 'Colleghiamo studenti con alloggi verificati vicino all\'Università Bocconi e altre università top di Milano. Fidato dalle agenzie, amato dagli studenti.',
+    'home.heroTitle': 'La tua casa studentesca perfetta, ora e qui!',
+    'home.heroSubtitle': 'Colleghiamo gli studenti a alloggi verificati vicino all\'Università Bocconi e alle altre principali università di Milano. Scelto dalle agenzie, amato dagli studenti.',
     'home.heroSubtitleStudent': 'Pronto a trovare il tuo alloggio perfetto per studenti?',
     'home.heroSubtitleRealtor': 'Gestisci i tuoi annunci e connettiti con inquilini potenziali.',
     'home.findPlace': 'Trova un Posto',
-    'home.universitiesTitle': 'Perfetto per Studenti Vicino alle Migliori Università',
+    'home.universitiesTitle': 'Ideale per studenti delle università d\'eccellenza.',
     'home.universitiesSubtitle': 'Trova alloggi a distanza pedonale o con facile collegamento alle migliori università di Milano',
     'home.featuredTitle': 'Proprietà in Evidenza',
     'home.featuredSubtitle': 'Alloggi selezionati da agenzie di fiducia',
@@ -336,6 +346,16 @@ const translations = {
     'home.contactUs': 'Contattaci a teodor.cosmovici@studbocconi.it',
     'home.helpDesc': 'Siamo qui per aiutarti con tutto quello di cui hai bisogno. Rispondiamo entro 24 ore o meno.',
     'home.quickActionsRealtorSubtitle': 'Gestisci i tuoi annunci immobiliari e il tuo business',
+    
+    // Benefits Section
+    'home.whyChooseTitle': 'Perché scegliere Flat2Study?',
+    'home.whyChooseSubtitle': 'Rendiamo la ricerca di un alloggio per studenti a Milano sicura, semplice e affidabile.',
+    'home.verifiedProperties': 'Proprietà Verificate',
+    'home.verifiedPropertiesDesc': 'Tutti gli alloggi sono verificati e pubblicati da agenzie e proprietari di fiducia.',
+    'home.studentOnly': 'Solo per Studenti',
+    'home.studentOnlyDesc': 'Una piattaforma esclusiva per studenti, che garantisce la migliore esperienza a tutti gli utenti.',
+    'home.perfectLocations': 'Posizioni Perfette',
+    'home.perfectLocationsDesc': 'Alloggi vicino alle principali università di Milano, con comode opzioni di trasporto.',
     
     // Search Page
     'search.placeholder': 'Cerca per posizione, università o servizi...',

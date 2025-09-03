@@ -435,9 +435,9 @@ const Index = () => {
           <section className="py-16 px-4 bg-muted/30">
             <div className="container mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold mb-4">Why Choose flat2study?</h2>
+                <h2 className="text-3xl font-bold mb-4">{t('home.whyChooseTitle')}</h2>
                 <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                  We make finding student accommodation in Milan safe, easy, and reliable
+                  {t('home.whyChooseSubtitle')}
                 </p>
               </div>
               
@@ -446,9 +446,9 @@ const Index = () => {
                   <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Shield className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">Verified Properties</h3>
+                  <h3 className="text-xl font-semibold mb-3">{t('home.verifiedProperties')}</h3>
                   <p className="text-muted-foreground">
-                    All properties are verified and listed by trusted agencies and landlords
+                    {t('home.verifiedPropertiesDesc')}
                   </p>
                 </div>
                 
@@ -456,9 +456,9 @@ const Index = () => {
                   <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Users className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">Student-Only</h3>
+                  <h3 className="text-xl font-semibold mb-3">{t('home.studentOnly')}</h3>
                   <p className="text-muted-foreground">
-                    Exclusive platform for students, ensuring the best experience for all users
+                    {t('home.studentOnlyDesc')}
                   </p>
                 </div>
                 
@@ -466,9 +466,9 @@ const Index = () => {
                   <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <MapPin className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">Perfect Locations</h3>
+                  <h3 className="text-xl font-semibold mb-3">{t('home.perfectLocations')}</h3>
                   <p className="text-muted-foreground">
-                    Properties near top Milan universities with easy commute options
+                    {t('home.perfectLocationsDesc')}
                   </p>
                 </div>
               </div>
