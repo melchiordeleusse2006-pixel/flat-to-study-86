@@ -202,6 +202,7 @@ const translations = {
     'profile.saving': 'Saving...',
     'profile.noDescription': 'No description added yet. Click the edit button to add one.',
     'profile.contact': 'Contact',
+    'profile.contactInformation': 'Contact Information',
     'profile.memberSince': 'Member since',
     'profile.pleaseSignIn': 'Please sign in to view your profile.',
     
@@ -282,6 +283,8 @@ const translations = {
     'messages.messageError': 'Failed to send message. Please try again.',
     'messages.typeReply': 'Type your reply...',
     'messages.typeMessage': 'Type your message...',
+    'messages.noConversationsYet': 'No conversations yet',
+    'messages.noConversationsDesc': 'When students send inquiries about your listings, they\'ll appear here.',
     
     // Favorites
     'favorites.title': 'My Favorites',
@@ -526,7 +529,7 @@ const translations = {
     
     // Profile Page
     'profile.back': 'Indietro',
-    'profile.about': 'Info',
+    'profile.about': 'Informazioni',
     'profile.agency': 'Agenzia',
     'profile.student': 'Studente',
     'profile.tellAbout': 'Raccontaci di te...',
@@ -534,8 +537,9 @@ const translations = {
     'profile.cancel': 'Annulla',
     'profile.save': 'Salva',
     'profile.saving': 'Salvando...',
-    'profile.noDescription': 'Nessuna descrizione aggiunta ancora. Clicca il pulsante modifica per aggiungerne una.',
+    'profile.noDescription': 'Non hai ancora aggiunto una descrizione. Clicca su modifica per scriverne una.',
     'profile.contact': 'Contatta',
+    'profile.contactInformation': 'Informazioni di Contatto',
     'profile.memberSince': 'Membro dal',
     'profile.pleaseSignIn': 'Effettua l\'accesso per visualizzare il tuo profilo.',
     
@@ -616,6 +620,8 @@ const translations = {
     'messages.messageError': 'Impossibile inviare il messaggio. Riprova.',
     'messages.typeReply': 'Scrivi la tua risposta...',
     'messages.typeMessage': 'Scrivi il tuo messaggio...',
+    'messages.noConversationsYet': 'Nessuna conversazione al momento',
+    'messages.noConversationsDesc': 'Quando gli studenti invieranno richieste sui tuoi annunci, appariranno qui.',
     
     // Favorites
     'favorites.title': 'I Miei Preferiti',

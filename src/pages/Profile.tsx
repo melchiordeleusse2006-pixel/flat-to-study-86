@@ -193,7 +193,7 @@ export default function Profile() {
             {/* Description Section */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium text-muted-foreground">About</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">{t('profile.about')}</h3>
                 {!isEditingDescription && (
                   <Button
                     variant="ghost"
@@ -242,7 +242,7 @@ export default function Profile() {
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground min-h-[60px] p-3 bg-muted/50 rounded-md">
-                  {profile.description || 'No description added yet. Click the edit button to add one.'}
+                  {profile.description || t('profile.noDescription')}
                 </p>
               )}
             </div>
@@ -250,7 +250,7 @@ export default function Profile() {
             {/* Contact Information Section */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium text-muted-foreground">Contact Information</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">{t('profile.contactInformation')}</h3>
                 {!isEditingContact && (
                   <Button
                     variant="ghost"

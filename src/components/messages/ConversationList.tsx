@@ -4,6 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ConversationItem } from './ConversationItem';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 import type { Conversation } from '@/types/messages';
 
 interface ConversationListProps {
@@ -13,6 +14,7 @@ interface ConversationListProps {
 
 export function ConversationList({ onSelectConversation, selectedConversationId }: ConversationListProps) {
   const { user, profile } = useAuth();
+  const { t } = useLanguage();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -194,10 +196,10 @@ export function ConversationList({ onSelectConversation, selectedConversationId 
     return (
       <Card className="h-full p-6">
         <div className="text-center text-muted-foreground">
-          <p className="text-lg font-medium mb-2">No conversations yet</p>
+          <p className="text-lg font-medium mb-2">{t('messages.noConversationsYet')}</p>
           <p className="text-sm">
             {profile?.user_type === 'agency' 
-              ? 'When students send inquiries about your listings, they\'ll appear here.'
+              ? t('messages.noConversationsDesc')
               : 'Send a message to an agency through a listing to start a conversation.'
             }
           </p>
