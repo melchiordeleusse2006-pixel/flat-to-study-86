@@ -156,24 +156,11 @@ export default function MyListings() {
             </Button>
           </Link>
           <div className="text-center">
-            <div className="flex items-center justify-center gap-4 mb-2">
-              <div className="h-10 w-10 flex items-center justify-center rounded-lg hero-gradient">
-                <Home className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold">{t('myListings.title')}</h1>
-                <p className="text-muted-foreground">
-                  {t('myListings.subtitle')} ({listings.length} {t('myListings.totalCount')})
-                </p>
-              </div>
-            </div>
+            <h1 className="text-3xl font-bold">{t('myListings.title')}</h1>
+            <p className="text-muted-foreground">
+              {t('myListings.subtitle')} ({listings.length} {t('myListings.totalCount')})
+            </p>
           </div>
-          <Link to="/create-listing" className="absolute right-0">
-            <Button className="hero-gradient text-white border-0">
-              <Plus className="h-4 w-4 mr-2" />
-              {t('myListings.addNewListing')}
-            </Button>
-          </Link>
         </div>
 
         {/* Listings Grid */}
@@ -188,7 +175,7 @@ export default function MyListings() {
               <Link to="/create-listing">
                 <Button className="hero-gradient text-white border-0">
                   <Plus className="h-4 w-4 mr-2" />
-                  {t('myListings.createFirstListing')}
+                  {listings.length === 0 ? t('myListings.createFirstListing') : t('myListings.addNewListing')}
                 </Button>
               </Link>
             </CardContent>
