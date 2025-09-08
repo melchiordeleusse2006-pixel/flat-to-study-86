@@ -28,7 +28,7 @@ const handler = async (req: Request): Promise<Response> => {
     
     console.log("Processing notification for message:", message_id);
 
-    // Get message details with listing and agency info
+    // Get message details with listing and both sender and agency profiles
     const { data: messageData, error: messageError } = await supabase
       .from('messages')
       .select(`
@@ -40,10 +40,18 @@ const handler = async (req: Request): Promise<Response> => {
           rent_monthly_eur,
           images
         ),
-        profiles:agency_id (
+        agency_profile:agency_id (
           agency_name,
           email,
-          full_name
+          full_name,
+          user_type
+        ),
+        sender_profile:sender_id (
+          id,
+          full_name,
+          email,
+          user_type,
+          university
         )
       `)
       .eq('id', message_id)
@@ -57,22 +65,113 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    const { listings: listing, profiles: agency } = messageData;
+    const { listings: listing, agency_profile, sender_profile } = messageData;
     
-    if (!agency?.email) {
-      console.log("No agency email found, skipping notification");
+    // Determine who should receive the notification
+    let recipientEmail = '';
+    let recipientName = '';
+    let senderName = '';
+    let isAgencyToStudent = false;
+    
+    if (sender_profile?.user_type === 'agency') {
+      // Agency sent message to student, notify the student
+      // Get the student who originally messaged about this listing
+      const { data: originalStudentMessage } = await supabase
+        .from('messages')
+        .select(`
+          sender_profile:sender_id (
+            email,
+            full_name,
+            user_type
+          )
+        `)
+        .eq('listing_id', messageData.listing_id)
+        .neq('sender_id', messageData.sender_id)
+        .eq('sender_profile.user_type', 'student')
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .single();
+        
+      if (originalStudentMessage?.sender_profile?.email) {
+        recipientEmail = originalStudentMessage.sender_profile.email;
+        recipientName = originalStudentMessage.sender_profile.full_name || 'Student';
+        senderName = agency_profile?.agency_name || agency_profile?.full_name || 'Agency';
+        isAgencyToStudent = true;
+      }
+    } else {
+      // Student sent message to agency, notify the agency (original behavior)
+      if (agency_profile?.email) {
+        recipientEmail = agency_profile.email;
+        recipientName = agency_profile.agency_name || agency_profile.full_name || 'Agency';
+        senderName = messageData.sender_name;
+        isAgencyToStudent = false;
+      }
+    }
+    
+    if (!recipientEmail) {
+      console.log("No recipient email found, skipping notification");
       return new Response(JSON.stringify({ success: true, skipped: true }), {
         status: 200,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
-    // Send email notification
+    // Send email notification with appropriate template
     const emailResponse = await resend.emails.send({
       from: "flat2study <notifications@flat2study.com>",
-      to: [agency.email],
-      subject: `New message about your listing: ${listing.title}`,
-      html: `
+      to: [recipientEmail],
+      subject: isAgencyToStudent 
+        ? `Reply from ${senderName} about listing: ${listing.title}`
+        : `New message about your listing: ${listing.title}`,
+      html: isAgencyToStudent ? `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 8px 8px 0 0;">
+            <h1 style="color: white; margin: 0; font-size: 24px;">New Reply on flat2study</h1>
+          </div>
+          
+          <div style="background: #f8f9fa; padding: 20px; border-radius: 0 0 8px 8px;">
+            <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
+              Hello ${recipientName},
+            </p>
+            
+            <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
+              You have received a reply from <strong>${senderName}</strong> about your inquiry on flat2study!
+            </p>
+            
+            <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea;">
+              <h3 style="margin-top: 0; color: #333;">Listing Details:</h3>
+              <p style="margin: 5px 0;"><strong>Property:</strong> ${listing.title}</p>
+              <p style="margin: 5px 0;"><strong>Location:</strong> ${listing.address_line}, ${listing.city}</p>
+              <p style="margin: 5px 0;"><strong>Rent:</strong> €${listing.rent_monthly_eur}/month</p>
+            </div>
+            
+            <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745;">
+              <h3 style="margin-top: 0; color: #333;">Reply from ${senderName}:</h3>
+              <p style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin: 5px 0; font-style: italic;">
+                "${messageData.message}"
+              </p>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="https://flat2study.com/messages" 
+                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                        color: white; 
+                        padding: 12px 30px; 
+                        text-decoration: none; 
+                        border-radius: 6px; 
+                        font-weight: bold;
+                        display: inline-block;">
+                View and Reply on flat2study
+              </a>
+            </div>
+            
+            <p style="font-size: 14px; color: #666; margin-top: 30px;">
+              Best regards,<br>
+              The flat2study Team
+            </p>
+          </div>
+        </div>
+      ` : `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 8px 8px 0 0;">
             <h1 style="color: white; margin: 0; font-size: 24px;">New Message on flat2study</h1>
@@ -80,7 +179,7 @@ const handler = async (req: Request): Promise<Response> => {
           
           <div style="background: #f8f9fa; padding: 20px; border-radius: 0 0 8px 8px;">
             <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
-              Hello ${agency.agency_name || agency.full_name},
+              Hello ${recipientName},
             </p>
             
             <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
@@ -96,7 +195,7 @@ const handler = async (req: Request): Promise<Response> => {
             
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745;">
               <h3 style="margin-top: 0; color: #333;">Message Details:</h3>
-              <p style="margin: 5px 0;"><strong>From:</strong> ${messageData.sender_name}</p>
+              <p style="margin: 5px 0;"><strong>From:</strong> ${senderName}</p>
               ${messageData.sender_phone ? `<p style="margin: 5px 0;"><strong>Phone:</strong> ${messageData.sender_phone}</p>` : ''}
               ${messageData.sender_university ? `<p style="margin: 5px 0;"><strong>University:</strong> ${messageData.sender_university}</p>` : ''}
               <p style="margin: 15px 0 5px 0;"><strong>Message:</strong></p>
