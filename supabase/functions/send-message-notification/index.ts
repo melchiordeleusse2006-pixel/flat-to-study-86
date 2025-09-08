@@ -28,7 +28,7 @@ const handler = async (req: Request): Promise<Response> => {
     
     console.log("Processing notification for message:", message_id);
 
-    // Get message details with listing and both sender and recipient profiles
+    // Get message details with listing and agency info
     const { data: messageData, error: messageError } = await supabase
       .from('messages')
       .select(`
@@ -40,16 +40,10 @@ const handler = async (req: Request): Promise<Response> => {
           rent_monthly_eur,
           images
         ),
-        agency_profiles:agency_id (
+        profiles:agency_id (
           agency_name,
           email,
-          full_name,
-          user_type
-        ),
-        sender_profiles:sender_id (
-          email,
-          full_name,
-          user_type
+          full_name
         )
       `)
       .eq('id', message_id)
@@ -63,65 +57,21 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    const { listings: listing, agency_profiles: agency, sender_profiles: sender } = messageData;
+    const { listings: listing, profiles: agency } = messageData;
     
-    // Determine recipient - if sender is agency, notify student; if sender is student, notify agency
-    let recipientEmail, recipientName, isAgency;
-    
-    if (sender?.user_type === 'agency') {
-      // Agency sent message, find the student who originally messaged this listing
-      const { data: originalMessage } = await supabase
-        .from('messages')
-        .select(`
-          sender_profiles:sender_id (
-            email,
-            full_name,
-            user_type
-          )
-        `)
-        .eq('listing_id', messageData.listing_id)
-        .neq('sender_id', messageData.sender_id)
-        .limit(1)
-        .single();
-      
-      if (originalMessage?.sender_profiles) {
-        recipientEmail = originalMessage.sender_profiles.email;
-        recipientName = originalMessage.sender_profiles.full_name;
-        isAgency = false;
-      }
-    } else {
-      // Student sent message, notify agency
-      recipientEmail = agency?.email;
-      recipientName = agency?.agency_name || agency?.full_name;
-      isAgency = true;
-    }
-    
-    if (!recipientEmail) {
-      console.log("No recipient email found, skipping notification");
+    if (!agency?.email) {
+      console.log("No agency email found, skipping notification");
       return new Response(JSON.stringify({ success: true, skipped: true }), {
         status: 200,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
-    // Customize email content based on recipient type
-    const subject = isAgency 
-      ? `New message about your listing: ${listing.title}`
-      : `New reply from ${agency?.agency_name || agency?.full_name} about ${listing.title}`;
-      
-    const greeting = isAgency 
-      ? `Hello ${recipientName},`
-      : `Hello ${recipientName},`;
-      
-    const messageText = isAgency
-      ? "You have received a new message about your listing on flat2study!"
-      : "You have received a reply about your message on flat2study!";
-
     // Send email notification
     const emailResponse = await resend.emails.send({
       from: "flat2study <notifications@flat2study.com>",
-      to: [recipientEmail],
-      subject,
+      to: [agency.email],
+      subject: `New message about your listing: ${listing.title}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 8px 8px 0 0;">
@@ -130,11 +80,11 @@ const handler = async (req: Request): Promise<Response> => {
           
           <div style="background: #f8f9fa; padding: 20px; border-radius: 0 0 8px 8px;">
             <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
-              ${greeting}
+              Hello ${agency.agency_name || agency.full_name},
             </p>
             
             <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
-              ${messageText}
+              You have received a new message about your listing on flat2study!
             </p>
             
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea;">
