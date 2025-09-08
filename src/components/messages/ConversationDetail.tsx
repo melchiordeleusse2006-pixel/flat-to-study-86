@@ -268,34 +268,6 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
                 </div>
                 <Badge variant="secondary" className="text-xs">€{conversation.listing.rent_monthly_eur}/month</Badge>
               </div>
-              
-              {profile?.user_type === 'agency' && conversation.studentName && (
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2 text-xs">
-                    <Users className="h-3 w-3" />
-                    <span className="font-medium">Student:</span>
-                    <span>{conversation.studentName}</span>
-                  </div>
-                  {(studentProfile?.university || conversation.lastMessage.sender_university) && (
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <GraduationCap className="h-3 w-3" />
-                      <span>{studentProfile?.university || conversation.lastMessage.sender_university}</span>
-                    </div>
-                  )}
-                  {(studentProfile?.phone || conversation.lastMessage.sender_phone) && (
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Phone className="h-3 w-3" />
-                      <span>{studentProfile?.phone || conversation.lastMessage.sender_phone}</span>
-                    </div>
-                  )}
-                  {studentProfile?.email && (
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Mail className="h-3 w-3" />
-                      <span>{studentProfile.email}</span>
-                    </div>
-                  )}
-                </div>
-              )}
 
               {profile?.user_type === 'student' && conversation.agency && (
                 <div className="space-y-0.5">
@@ -323,44 +295,54 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
         </CardHeader>
       </Card>
 
+      {/* Student Details Card for Agencies */}
+      {profile?.user_type === 'agency' && (studentProfile || conversation.studentName || conversation.lastMessage.sender_university || conversation.lastMessage.sender_phone) && (
+        <Card className="flex-shrink-0 mb-3 bg-blue-50/50 border-blue-200">
+          <CardHeader className="pb-3 py-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Users className="h-4 w-4 text-blue-600" />
+              <CardTitle className="text-sm text-blue-900">Student Contact Information</CardTitle>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm font-medium text-blue-800">
+                <span>{conversation.studentName || conversation.lastMessage.sender_name}</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-blue-700">
+                {(studentProfile?.university || conversation.lastMessage.sender_university) && (
+                  <div className="flex items-center gap-2">
+                    <GraduationCap className="h-4 w-4" />
+                    <span>{studentProfile?.university || conversation.lastMessage.sender_university}</span>
+                  </div>
+                )}
+                {(studentProfile?.phone || conversation.lastMessage.sender_phone) && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    <span>{studentProfile?.phone || conversation.lastMessage.sender_phone}</span>
+                  </div>
+                )}
+                {studentProfile?.email && (
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4" />
+                    <span>{studentProfile.email}</span>
+                  </div>
+                )}
+                {studentProfile?.full_name && studentProfile.full_name !== (conversation.studentName || conversation.lastMessage.sender_name) && (
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    <span>Full name: {studentProfile.full_name}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+      )}
+
       {/* Messages */}
       <Card className="flex-1 flex flex-col min-h-0">
         <CardContent className="flex-1 flex flex-col min-h-0 p-0">
           <ScrollArea className="flex-1 px-6" ref={scrollAreaRef}>
             <div className="space-y-4 py-4">
-              {/* Student Contact Info Bubble for Agencies */}
-              {profile?.user_type === 'agency' && (studentProfile || conversation.lastMessage.sender_university || conversation.lastMessage.sender_phone) && (
-                <div className="p-4 rounded-lg bg-blue-50 border border-blue-200 max-w-[80%]">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-blue-600" />
-                      <span className="font-medium text-sm text-blue-900">Student Information</span>
-                    </div>
-                    <span className="text-xs text-blue-600">Contact Details</span>
-                  </div>
-                  <div className="space-y-2 text-sm text-blue-800">
-                    <div className="font-medium">{conversation.studentName || conversation.lastMessage.sender_name}</div>
-                    {(studentProfile?.university || conversation.lastMessage.sender_university) && (
-                      <div className="flex items-center gap-2">
-                        <GraduationCap className="h-4 w-4" />
-                        <span>{studentProfile?.university || conversation.lastMessage.sender_university}</span>
-                      </div>
-                    )}
-                    {(studentProfile?.phone || conversation.lastMessage.sender_phone) && (
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4" />
-                        <span>{studentProfile?.phone || conversation.lastMessage.sender_phone}</span>
-                      </div>
-                    )}
-                    {studentProfile?.email && (
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4" />
-                        <span>{studentProfile.email}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
 
               {messages.length === 0 ? (
                 <div className="text-center text-muted-foreground py-8">
