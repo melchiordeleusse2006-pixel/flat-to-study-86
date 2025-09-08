@@ -17,9 +17,11 @@ export default function Profile() {
   const { t } = useLanguage();
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [isEditingContact, setIsEditingContact] = useState(false);
+  const [isEditingUniversity, setIsEditingUniversity] = useState(false);
   const [descriptionValue, setDescriptionValue] = useState(profile?.description || '');
   const [emailValue, setEmailValue] = useState(profile?.email || '');
   const [phoneValue, setPhoneValue] = useState(profile?.phone || '');
+  const [universityValue, setUniversityValue] = useState(profile?.university || '');
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -113,10 +115,32 @@ export default function Profile() {
     setIsEditingDescription(false);
   };
 
+  const handleSaveUniversity = async () => {
+    setIsSaving(true);
+    try {
+      const { error } = await updateProfile({ university: universityValue });
+      if (error) {
+        toast.error('Failed to update university');
+      } else {
+        toast.success('University updated successfully');
+        setIsEditingUniversity(false);
+      }
+    } catch (error) {
+      toast.error('Failed to update university');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleCancelContactEdit = () => {
     setEmailValue(profile?.email || '');
     setPhoneValue(profile?.phone || '');
     setIsEditingContact(false);
+  };
+
+  const handleCancelUniversityEdit = () => {
+    setUniversityValue(profile?.university || '');
+    setIsEditingUniversity(false);
   };
 
   if (!user || !profile) {
@@ -180,10 +204,10 @@ export default function Profile() {
                     {profile.user_type === 'agency' ? 'Agency' : 'Student'}
                   </Badge>
                 </CardTitle>
-                {profile.user_type === 'student' && profile.university && (
+                {profile.user_type === 'student' && (
                   <CardDescription className="flex items-center space-x-1 mt-1">
                     <GraduationCap className="h-3 w-3" />
-                    <span>{profile.university}</span>
+                    <span>{profile.university || 'No university set'}</span>
                   </CardDescription>
                 )}
               </div>
@@ -324,6 +348,64 @@ export default function Profile() {
                 </div>
               )}
             </div>
+
+            {/* University Section - Only for students */}
+            {profile.user_type === 'student' && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium text-muted-foreground">University</h3>
+                  {!isEditingUniversity && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsEditingUniversity(true)}
+                      className="h-8 px-2"
+                    >
+                      <Edit2 className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+                
+                {isEditingUniversity ? (
+                  <div className="space-y-3">
+                    <Input
+                      value={universityValue}
+                      onChange={(e) => setUniversityValue(e.target.value)}
+                      placeholder="Enter your university name"
+                      className="w-full"
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleCancelUniversityEdit}
+                        disabled={isSaving}
+                        className="flex-1"
+                      >
+                        <X className="h-3 w-3 mr-1" />
+                        Cancel
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={handleSaveUniversity}
+                        disabled={isSaving}
+                        className="flex-1"
+                      >
+                        <Save className="h-3 w-3 mr-1" />
+                        {isSaving ? 'Saving...' : 'Save'}
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-2 p-3 bg-muted/50 rounded-md">
+                    <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">
+                      {profile.university || 'No university set'}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
             
             <div className="pt-4 border-t text-center">
               <p className="text-xs text-muted-foreground">
