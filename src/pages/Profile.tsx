@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { User, Mail, GraduationCap, ArrowLeft, Edit2, Save, X, Camera, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -368,12 +369,18 @@ export default function Profile() {
                 
                 {isEditingUniversity ? (
                   <div className="space-y-3">
-                    <Input
-                      value={universityValue}
-                      onChange={(e) => setUniversityValue(e.target.value)}
-                      placeholder="Enter your university name"
-                      className="w-full"
-                    />
+                    <Select value={universityValue} onValueChange={setUniversityValue}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select your university" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Bocconi">Bocconi University</SelectItem>
+                        <SelectItem value="Politecnico">Politecnico di Milano</SelectItem>
+                        <SelectItem value="Cattolica">Università Cattolica del Sacro Cuore</SelectItem>
+                        <SelectItem value="La Statale">Università Statale</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <div className="flex gap-2">
                       <Button
                         variant="ghost"
