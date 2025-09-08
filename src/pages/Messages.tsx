@@ -6,8 +6,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ConversationList } from '@/components/messages/ConversationList';
 import { ConversationDetail } from '@/components/messages/ConversationDetail';
+import { ZapierWebhookSettings } from '@/components/messages/ZapierWebhookSettings';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Conversation } from '@/types/messages';
 
 export default function Messages() {
@@ -130,8 +132,7 @@ export default function Messages() {
             )}
           </>
         ) : (
-          /* Desktop: Side-by-side layout */
-          <>
+          <Tabs defaultValue="messages" className="w-full">
             {/* Header */}
             <div className="relative flex items-center justify-center mb-8">
               <Link to="/" className="absolute left-0">
@@ -151,8 +152,15 @@ export default function Messages() {
               </div>
             </div>
 
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="messages">Messages</TabsTrigger>
+              <TabsTrigger value="notifications">Email Notifications</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="messages" className="h-[calc(100vh-200px)]">
+
             {/* Messages Interface */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-140px)] overflow-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full overflow-hidden">
               {/* Conversations List - Fixed */}
               <div className="h-full overflow-hidden">
                 <ConversationList 
@@ -187,7 +195,12 @@ export default function Messages() {
                 )}
               </div>
             </div>
-          </>
+            </TabsContent>
+
+            <TabsContent value="notifications">
+              <ZapierWebhookSettings />
+            </TabsContent>
+          </Tabs>
         )}
       </main>
     </div>
