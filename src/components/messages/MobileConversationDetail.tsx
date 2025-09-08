@@ -204,30 +204,6 @@ export function MobileConversationDetail({
           console.log('Notification sending failed (fallback):', notificationError);
           // Don't show error to user, this is just a fallback
         }
-
-        // Zapier webhook fallback
-        const zapierWebhook = localStorage.getItem('zapier_webhook_url');
-        if (zapierWebhook) {
-          try {
-            await fetch(zapierWebhook, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              mode: "no-cors",
-              body: JSON.stringify({
-                type: "new_message",
-                message_id: insertedMessage.id,
-                listing_title: conversation.listing.title,
-                sender_name: messageData.sender_name,
-                message: messageData.message,
-                timestamp: new Date().toISOString(),
-                listing_address: `${conversation.listing.address_line}, ${conversation.listing.city}`,
-                rent_monthly: conversation.listing.rent_monthly_eur
-              }),
-            });
-          } catch (zapierError) {
-            console.log('Zapier webhook failed:', zapierError);
-          }
-        }
       }
 
       if (profile.user_type === 'agency') {
