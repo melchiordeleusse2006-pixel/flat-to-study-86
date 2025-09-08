@@ -313,6 +313,16 @@ export type Database = {
           video_url: string
         }[]
       }
+      get_user_profile_type: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      user_has_sent_messages_to_any_listing: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          listing_id: string
+        }[]
+      }
       user_has_sent_messages_to_listing: {
         Args: { p_listing_id: string }
         Returns: boolean
