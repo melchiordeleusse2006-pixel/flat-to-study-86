@@ -335,10 +335,6 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
-      user_has_messaged_listing: {
-        Args: { p_listing_id: string; p_user_id: string }
-        Returns: boolean
-      }
       user_has_sent_messages_to_any_listing: {
         Args: Record<PropertyKey, never>
         Returns: {
