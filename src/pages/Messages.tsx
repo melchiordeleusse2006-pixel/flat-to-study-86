@@ -61,84 +61,78 @@ export default function Messages() {
       <Header />
       
       <main className={`${isMobile ? 'px-0' : 'container max-w-6xl mx-auto'} ${isMobile ? 'pt-24' : 'py-8 pt-24'}`}>
+        {/* Mobile: Show either conversation list or detail */}
         {isMobile ? (
-          <Tabs defaultValue="messages" className="h-[calc(100vh-96px)] flex flex-col">
-            {/* Mobile Header with Tabs */}
-            <div className="flex-shrink-0 border-b bg-background">
-              <div className="relative flex items-center justify-center p-4">
-                <Link to="/" className="absolute left-4">
-                  <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground">
-                    <ArrowLeft className="h-3 w-3 mr-1" />
-                    {t('messages.backToHome')}
-                  </Button>
-                </Link>
-                <div className="text-center">
-                  <h1 className="text-xl font-bold">{t('messages.title')}</h1>
-                  <p className="text-xs text-muted-foreground">
-                    {profile?.user_type === 'agency' 
-                      ? t('messages.manageTenantInquiries')
-                      : t('messages.conversationsWithAgencies')
-                    }
-                  </p>
-                </div>
-              </div>
-              
-              <div className="px-4 pb-4">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="messages" className="text-xs">Messages</TabsTrigger>
-                  <TabsTrigger value="notifications" className="text-xs">Email Setup</TabsTrigger>
-                </TabsList>
-              </div>
-            </div>
-
-            <TabsContent value="messages" className="flex-1 overflow-hidden mt-0">
-              {!showConversationDetail ? (
-                <ConversationList 
-                  onSelectConversation={handleSelectConversation}
-                  selectedConversationId={selectedConversation ? 
-                    (profile?.user_type === 'agency' 
-                      ? `${selectedConversation.listing.id}-${selectedConversation.studentSenderId}`
-                      : selectedConversation.listing.id) : undefined}
-                  key={refreshConversations}
-                />
-              ) : (
-                <div className="h-full overflow-hidden">
-                  {/* Mobile Header with Back Button */}
-                  <div className="flex items-center gap-3 p-4 border-b bg-background">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={handleBackToList}
-                      className="p-2"
-                    >
-                      <ArrowLeft className="h-5 w-5" />
+          <>
+            {!showConversationDetail ? (
+              /* Mobile Conversation List */
+              <div className="h-[calc(100vh-96px)] overflow-hidden">
+                {/* Header */}
+                <div className="relative flex items-center justify-center p-4 border-b bg-background">
+                  <Link to="/" className="absolute left-4">
+                    <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground">
+                      <ArrowLeft className="h-3 w-3 mr-1" />
+                      {t('messages.backToHome')}
                     </Button>
-                    <div className="flex-1">
-                      <h2 className="text-lg font-semibold truncate">
-                        {selectedConversation?.listing.title}
-                      </h2>
-                      <p className="text-xs text-muted-foreground">
-                        {selectedConversation?.listing.address_line}, {selectedConversation?.listing.city}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="h-[calc(100%-80px)]">
-                    {selectedConversation && (
-                      <ConversationDetail 
-                        conversation={selectedConversation} 
-                        onMessagesRead={() => setRefreshConversations(prev => prev + 1)}
-                      />
-                    )}
+                  </Link>
+                  <div className="text-center">
+                    <h1 className="text-xl font-bold">{t('messages.title')}</h1>
+                    <p className="text-xs text-muted-foreground">
+                      {profile?.user_type === 'agency' 
+                        ? t('messages.manageTenantInquiries')
+                        : t('messages.conversationsWithAgencies')
+                      }
+                    </p>
                   </div>
                 </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="notifications" className="flex-1 overflow-auto mt-0 p-4">
-              <ZapierWebhookSettings />
-            </TabsContent>
+                
+                <div className="h-[calc(100vh-156px)] overflow-hidden">
+                  <ConversationList 
+                    onSelectConversation={handleSelectConversation}
+                    selectedConversationId={selectedConversation ? 
+                      (profile?.user_type === 'agency' 
+                        ? `${selectedConversation.listing.id}-${selectedConversation.studentSenderId}`
+                        : selectedConversation.listing.id) : undefined}
+                    key={refreshConversations}
+                  />
+                </div>
+              </div>
+            ) : (
+              /* Mobile Conversation Detail */
+              <div className="h-[calc(100vh-96px)] overflow-hidden">
+                {/* Mobile Header with Back Button */}
+                <div className="flex items-center gap-3 p-4 border-b bg-background">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={handleBackToList}
+                    className="p-2"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </Button>
+                  <div className="flex-1">
+                    <h2 className="text-lg font-semibold truncate">
+                      {selectedConversation?.listing.title}
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
+                      {selectedConversation?.listing.address_line}, {selectedConversation?.listing.city}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="h-[calc(100vh-156px)]">
+                  {selectedConversation && (
+                    <ConversationDetail 
+                      conversation={selectedConversation} 
+                      onMessagesRead={() => setRefreshConversations(prev => prev + 1)}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+          </>
         ) : (
+          <Tabs defaultValue="messages" className="w-full">
             {/* Header */}
             <div className="relative flex items-center justify-center mb-8">
               <Link to="/" className="absolute left-0">
