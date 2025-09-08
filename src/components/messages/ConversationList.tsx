@@ -150,10 +150,13 @@ export function ConversationList({ onSelectConversation, selectedConversationId 
           }
         });
       } else {
-        // For students: Group by listing
+        // For students: Group by listing, but only include their own messages
         messages?.forEach((message: any) => {
           const listing = message.listings;
           if (!listing) return;
+
+          // Only include messages sent by the current student
+          if (message.sender_id !== user.id) return;
 
           const key = listing.id;
 
