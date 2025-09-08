@@ -23,7 +23,7 @@ export default function SignupRealtor() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
-  const [licenseNumber, setLicenseNumber] = useState('');
+  
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -56,7 +56,6 @@ export default function SignupRealtor() {
       user_type: 'realtor',
       phone,
       company,
-      license_number: licenseNumber,
       profile_picture: profilePicture ? profilePicture.name : null
     };
 
@@ -207,17 +206,6 @@ export default function SignupRealtor() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="license">{t('signup.realtor.license')}</Label>
-                <Input
-                  id="license"
-                  type="text"
-                  placeholder={t('signup.realtor.licensePlaceholder')}
-                  value={licenseNumber}
-                  onChange={(e) => setLicenseNumber(e.target.value)}
-                  required
-                />
-              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="password">{t('auth.password')}</Label>
