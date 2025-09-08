@@ -7,7 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, ArrowLeft, Upload, User } from 'lucide-react';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Loader2, ArrowLeft, Upload, User, Check, ChevronsUpDown } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function SignupStudent() {
@@ -23,6 +25,7 @@ export default function SignupStudent() {
   const [surname, setSurname] = useState('');
   const [phone, setPhone] = useState('');
   const [countryCode, setCountryCode] = useState('+39');
+  const [countryCodeOpen, setCountryCodeOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [university, setUniversity] = useState('');
   const [proofOfEnrollment, setProofOfEnrollment] = useState<File | null>(null);
@@ -195,83 +198,325 @@ export default function SignupStudent() {
               <div className="space-y-2">
                 <Label htmlFor="phone">{t('signup.student.phone')} *</Label>
                 <div className="flex space-x-2">
-                  <Select value={countryCode} onValueChange={setCountryCode}>
-                    <SelectTrigger className="w-24">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="+1">🇺🇸 +1</SelectItem>
-                      <SelectItem value="+44">🇬🇧 +44</SelectItem>
-                      <SelectItem value="+33">🇫🇷 +33</SelectItem>
-                      <SelectItem value="+49">🇩🇪 +49</SelectItem>
-                      <SelectItem value="+34">🇪🇸 +34</SelectItem>
-                      <SelectItem value="+39">🇮🇹 +39</SelectItem>
-                      <SelectItem value="+31">🇳🇱 +31</SelectItem>
-                      <SelectItem value="+32">🇧🇪 +32</SelectItem>
-                      <SelectItem value="+41">🇨🇭 +41</SelectItem>
-                      <SelectItem value="+43">🇦🇹 +43</SelectItem>
-                      <SelectItem value="+351">🇵🇹 +351</SelectItem>
-                      <SelectItem value="+45">🇩🇰 +45</SelectItem>
-                      <SelectItem value="+46">🇸🇪 +46</SelectItem>
-                      <SelectItem value="+47">🇳🇴 +47</SelectItem>
-                      <SelectItem value="+358">🇫🇮 +358</SelectItem>
-                      <SelectItem value="+48">🇵🇱 +48</SelectItem>
-                      <SelectItem value="+420">🇨🇿 +420</SelectItem>
-                      <SelectItem value="+36">🇭🇺 +36</SelectItem>
-                      <SelectItem value="+386">🇸🇮 +386</SelectItem>
-                      <SelectItem value="+385">🇭🇷 +385</SelectItem>
-                      <SelectItem value="+30">🇬🇷 +30</SelectItem>
-                      <SelectItem value="+90">🇹🇷 +90</SelectItem>
-                      <SelectItem value="+7">🇷🇺 +7</SelectItem>
-                      <SelectItem value="+380">🇺🇦 +380</SelectItem>
-                      <SelectItem value="+91">🇮🇳 +91</SelectItem>
-                      <SelectItem value="+86">🇨🇳 +86</SelectItem>
-                      <SelectItem value="+81">🇯🇵 +81</SelectItem>
-                      <SelectItem value="+82">🇰🇷 +82</SelectItem>
-                      <SelectItem value="+55">🇧🇷 +55</SelectItem>
-                      <SelectItem value="+52">🇲🇽 +52</SelectItem>
-                      <SelectItem value="+54">🇦🇷 +54</SelectItem>
-                      <SelectItem value="+56">🇨🇱 +56</SelectItem>
-                      <SelectItem value="+57">🇨🇴 +57</SelectItem>
-                      <SelectItem value="+58">🇻🇪 +58</SelectItem>
-                      <SelectItem value="+51">🇵🇪 +51</SelectItem>
-                      <SelectItem value="+593">🇪🇨 +593</SelectItem>
-                      <SelectItem value="+598">🇺🇾 +598</SelectItem>
-                      <SelectItem value="+595">🇵🇾 +595</SelectItem>
-                      <SelectItem value="+591">🇧🇴 +591</SelectItem>
-                      <SelectItem value="+61">🇦🇺 +61</SelectItem>
-                      <SelectItem value="+64">🇳🇿 +64</SelectItem>
-                      <SelectItem value="+27">🇿🇦 +27</SelectItem>
-                      <SelectItem value="+20">🇪🇬 +20</SelectItem>
-                      <SelectItem value="+234">🇳🇬 +234</SelectItem>
-                      <SelectItem value="+254">🇰🇪 +254</SelectItem>
-                      <SelectItem value="+212">🇲🇦 +212</SelectItem>
-                      <SelectItem value="+216">🇹🇳 +216</SelectItem>
-                      <SelectItem value="+213">🇩🇿 +213</SelectItem>
-                      <SelectItem value="+218">🇱🇾 +218</SelectItem>
-                      <SelectItem value="+966">🇸🇦 +966</SelectItem>
-                      <SelectItem value="+971">🇦🇪 +971</SelectItem>
-                      <SelectItem value="+974">🇶🇦 +974</SelectItem>
-                      <SelectItem value="+965">🇰🇼 +965</SelectItem>
-                      <SelectItem value="+968">🇴🇲 +968</SelectItem>
-                      <SelectItem value="+973">🇧🇭 +973</SelectItem>
-                      <SelectItem value="+962">🇯🇴 +962</SelectItem>
-                      <SelectItem value="+961">🇱🇧 +961</SelectItem>
-                      <SelectItem value="+963">🇸🇾 +963</SelectItem>
-                      <SelectItem value="+964">🇮🇶 +964</SelectItem>
-                      <SelectItem value="+98">🇮🇷 +98</SelectItem>
-                      <SelectItem value="+92">🇵🇰 +92</SelectItem>
-                      <SelectItem value="+880">🇧🇩 +880</SelectItem>
-                      <SelectItem value="+94">🇱🇰 +94</SelectItem>
-                      <SelectItem value="+977">🇳🇵 +977</SelectItem>
-                      <SelectItem value="+60">🇲🇾 +60</SelectItem>
-                      <SelectItem value="+65">🇸🇬 +65</SelectItem>
-                      <SelectItem value="+66">🇹🇭 +66</SelectItem>
-                      <SelectItem value="+84">🇻🇳 +84</SelectItem>
-                      <SelectItem value="+62">🇮🇩 +62</SelectItem>
-                      <SelectItem value="+63">🇵🇭 +63</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Popover open={countryCodeOpen} onOpenChange={setCountryCodeOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={countryCodeOpen}
+                        className="w-32 justify-between"
+                      >
+                        {countryCode || "Select..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 p-0">
+                      <Command>
+                        <CommandInput placeholder="Search country..." />
+                        <CommandEmpty>No country found.</CommandEmpty>
+                        <CommandList>
+                          <CommandGroup heading="Priority Countries">
+                            <CommandItem
+                              value="+33 France"
+                              onSelect={() => {
+                                setCountryCode("+33");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+33" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇫🇷 +33 France
+                            </CommandItem>
+                            <CommandItem
+                              value="+39 Italy"
+                              onSelect={() => {
+                                setCountryCode("+39");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+39" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇮🇹 +39 Italy
+                            </CommandItem>
+                            <CommandItem
+                              value="+40 Romania"
+                              onSelect={() => {
+                                setCountryCode("+40");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+40" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇷🇴 +40 Romania
+                            </CommandItem>
+                            <CommandItem
+                              value="+90 Turkey"
+                              onSelect={() => {
+                                setCountryCode("+90");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+90" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇹🇷 +90 Turkey
+                            </CommandItem>
+                          </CommandGroup>
+                          <CommandGroup heading="Other Countries">
+                            <CommandItem
+                              value="+1 United States"
+                              onSelect={() => {
+                                setCountryCode("+1");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+1" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇺🇸 +1 United States
+                            </CommandItem>
+                            <CommandItem
+                              value="+44 United Kingdom"
+                              onSelect={() => {
+                                setCountryCode("+44");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+44" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇬🇧 +44 United Kingdom
+                            </CommandItem>
+                            <CommandItem
+                              value="+49 Germany"
+                              onSelect={() => {
+                                setCountryCode("+49");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+49" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇩🇪 +49 Germany
+                            </CommandItem>
+                            <CommandItem
+                              value="+34 Spain"
+                              onSelect={() => {
+                                setCountryCode("+34");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+34" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇪🇸 +34 Spain
+                            </CommandItem>
+                            <CommandItem
+                              value="+31 Netherlands"
+                              onSelect={() => {
+                                setCountryCode("+31");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+31" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇳🇱 +31 Netherlands
+                            </CommandItem>
+                            <CommandItem
+                              value="+32 Belgium"
+                              onSelect={() => {
+                                setCountryCode("+32");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+32" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇧🇪 +32 Belgium
+                            </CommandItem>
+                            <CommandItem
+                              value="+41 Switzerland"
+                              onSelect={() => {
+                                setCountryCode("+41");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+41" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇨🇭 +41 Switzerland
+                            </CommandItem>
+                            <CommandItem
+                              value="+43 Austria"
+                              onSelect={() => {
+                                setCountryCode("+43");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+43" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇦🇹 +43 Austria
+                            </CommandItem>
+                            <CommandItem
+                              value="+351 Portugal"
+                              onSelect={() => {
+                                setCountryCode("+351");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+351" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇵🇹 +351 Portugal
+                            </CommandItem>
+                            <CommandItem
+                              value="+30 Greece"
+                              onSelect={() => {
+                                setCountryCode("+30");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+30" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇬🇷 +30 Greece
+                            </CommandItem>
+                            <CommandItem
+                              value="+7 Russia"
+                              onSelect={() => {
+                                setCountryCode("+7");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+7" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇷🇺 +7 Russia
+                            </CommandItem>
+                            <CommandItem
+                              value="+91 India"
+                              onSelect={() => {
+                                setCountryCode("+91");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+91" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇮🇳 +91 India
+                            </CommandItem>
+                            <CommandItem
+                              value="+86 China"
+                              onSelect={() => {
+                                setCountryCode("+86");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+86" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇨🇳 +86 China
+                            </CommandItem>
+                            <CommandItem
+                              value="+81 Japan"
+                              onSelect={() => {
+                                setCountryCode("+81");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+81" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇯🇵 +81 Japan
+                            </CommandItem>
+                            <CommandItem
+                              value="+82 South Korea"
+                              onSelect={() => {
+                                setCountryCode("+82");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+82" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇰🇷 +82 South Korea
+                            </CommandItem>
+                            <CommandItem
+                              value="+55 Brazil"
+                              onSelect={() => {
+                                setCountryCode("+55");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+55" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇧🇷 +55 Brazil
+                            </CommandItem>
+                            <CommandItem
+                              value="+61 Australia"
+                              onSelect={() => {
+                                setCountryCode("+61");
+                                setCountryCodeOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  countryCode === "+61" ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              🇦🇺 +61 Australia
+                            </CommandItem>
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                   <Input
                     id="phone"
                     type="tel"
