@@ -186,11 +186,25 @@ export function MobileConversationDetail({
         sender_id: user.id
       };
 
-      const { error } = await supabase
+      const { data: insertedMessage, error } = await supabase
         .from('messages')
-        .insert(messageData);
+        .insert(messageData)
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Frontend fallback: trigger notification if message inserted successfully
+      if (insertedMessage) {
+        try {
+          await supabase.functions.invoke('send-message-notification', {
+            body: { message_id: insertedMessage.id }
+          });
+        } catch (notificationError) {
+          console.log('Notification sending failed (fallback):', notificationError);
+          // Don't show error to user, this is just a fallback
+        }
+      }
 
       if (profile.user_type === 'agency') {
         await supabase
