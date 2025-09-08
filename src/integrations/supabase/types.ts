@@ -253,6 +253,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_verify_user_email: {
+        Args: { user_email: string }
+        Returns: boolean
+      }
       agency_has_published_listings: {
         Args: { agency_profile_id: string }
         Returns: boolean
