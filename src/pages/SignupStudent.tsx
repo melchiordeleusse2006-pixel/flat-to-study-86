@@ -22,6 +22,7 @@ export default function SignupStudent() {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+39');
   const [email, setEmail] = useState('');
   const [university, setUniversity] = useState('');
   const [proofOfEnrollment, setProofOfEnrollment] = useState<File | null>(null);
@@ -64,10 +65,17 @@ export default function SignupStudent() {
       return;
     }
 
+    if (!phone.trim()) {
+      setError('Phone number is required');
+      setLoading(false);
+      return;
+    }
+
     const fullName = `${name} ${surname}`;
+    const fullPhoneNumber = `${countryCode}${phone}`;
     const additionalData = {
       user_type: 'student',
-      phone,
+      phone: fullPhoneNumber,
       university,
       profile_picture: profilePicture ? profilePicture.name : null,
       proof_of_enrollment: proofOfEnrollment ? proofOfEnrollment.name : null
@@ -185,15 +193,95 @@ export default function SignupStudent() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">{t('signup.student.phone')}</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder={t('signup.student.phonePlaceholder')}
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  required
-                />
+                <Label htmlFor="phone">{t('signup.student.phone')} *</Label>
+                <div className="flex space-x-2">
+                  <Select value={countryCode} onValueChange={setCountryCode}>
+                    <SelectTrigger className="w-24">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="+1">🇺🇸 +1</SelectItem>
+                      <SelectItem value="+44">🇬🇧 +44</SelectItem>
+                      <SelectItem value="+33">🇫🇷 +33</SelectItem>
+                      <SelectItem value="+49">🇩🇪 +49</SelectItem>
+                      <SelectItem value="+34">🇪🇸 +34</SelectItem>
+                      <SelectItem value="+39">🇮🇹 +39</SelectItem>
+                      <SelectItem value="+31">🇳🇱 +31</SelectItem>
+                      <SelectItem value="+32">🇧🇪 +32</SelectItem>
+                      <SelectItem value="+41">🇨🇭 +41</SelectItem>
+                      <SelectItem value="+43">🇦🇹 +43</SelectItem>
+                      <SelectItem value="+351">🇵🇹 +351</SelectItem>
+                      <SelectItem value="+45">🇩🇰 +45</SelectItem>
+                      <SelectItem value="+46">🇸🇪 +46</SelectItem>
+                      <SelectItem value="+47">🇳🇴 +47</SelectItem>
+                      <SelectItem value="+358">🇫🇮 +358</SelectItem>
+                      <SelectItem value="+48">🇵🇱 +48</SelectItem>
+                      <SelectItem value="+420">🇨🇿 +420</SelectItem>
+                      <SelectItem value="+36">🇭🇺 +36</SelectItem>
+                      <SelectItem value="+386">🇸🇮 +386</SelectItem>
+                      <SelectItem value="+385">🇭🇷 +385</SelectItem>
+                      <SelectItem value="+30">🇬🇷 +30</SelectItem>
+                      <SelectItem value="+90">🇹🇷 +90</SelectItem>
+                      <SelectItem value="+7">🇷🇺 +7</SelectItem>
+                      <SelectItem value="+380">🇺🇦 +380</SelectItem>
+                      <SelectItem value="+91">🇮🇳 +91</SelectItem>
+                      <SelectItem value="+86">🇨🇳 +86</SelectItem>
+                      <SelectItem value="+81">🇯🇵 +81</SelectItem>
+                      <SelectItem value="+82">🇰🇷 +82</SelectItem>
+                      <SelectItem value="+55">🇧🇷 +55</SelectItem>
+                      <SelectItem value="+52">🇲🇽 +52</SelectItem>
+                      <SelectItem value="+54">🇦🇷 +54</SelectItem>
+                      <SelectItem value="+56">🇨🇱 +56</SelectItem>
+                      <SelectItem value="+57">🇨🇴 +57</SelectItem>
+                      <SelectItem value="+58">🇻🇪 +58</SelectItem>
+                      <SelectItem value="+51">🇵🇪 +51</SelectItem>
+                      <SelectItem value="+593">🇪🇨 +593</SelectItem>
+                      <SelectItem value="+598">🇺🇾 +598</SelectItem>
+                      <SelectItem value="+595">🇵🇾 +595</SelectItem>
+                      <SelectItem value="+591">🇧🇴 +591</SelectItem>
+                      <SelectItem value="+61">🇦🇺 +61</SelectItem>
+                      <SelectItem value="+64">🇳🇿 +64</SelectItem>
+                      <SelectItem value="+27">🇿🇦 +27</SelectItem>
+                      <SelectItem value="+20">🇪🇬 +20</SelectItem>
+                      <SelectItem value="+234">🇳🇬 +234</SelectItem>
+                      <SelectItem value="+254">🇰🇪 +254</SelectItem>
+                      <SelectItem value="+212">🇲🇦 +212</SelectItem>
+                      <SelectItem value="+216">🇹🇳 +216</SelectItem>
+                      <SelectItem value="+213">🇩🇿 +213</SelectItem>
+                      <SelectItem value="+218">🇱🇾 +218</SelectItem>
+                      <SelectItem value="+966">🇸🇦 +966</SelectItem>
+                      <SelectItem value="+971">🇦🇪 +971</SelectItem>
+                      <SelectItem value="+974">🇶🇦 +974</SelectItem>
+                      <SelectItem value="+965">🇰🇼 +965</SelectItem>
+                      <SelectItem value="+968">🇴🇲 +968</SelectItem>
+                      <SelectItem value="+973">🇧🇭 +973</SelectItem>
+                      <SelectItem value="+962">🇯🇴 +962</SelectItem>
+                      <SelectItem value="+961">🇱🇧 +961</SelectItem>
+                      <SelectItem value="+963">🇸🇾 +963</SelectItem>
+                      <SelectItem value="+964">🇮🇶 +964</SelectItem>
+                      <SelectItem value="+98">🇮🇷 +98</SelectItem>
+                      <SelectItem value="+92">🇵🇰 +92</SelectItem>
+                      <SelectItem value="+880">🇧🇩 +880</SelectItem>
+                      <SelectItem value="+94">🇱🇰 +94</SelectItem>
+                      <SelectItem value="+977">🇳🇵 +977</SelectItem>
+                      <SelectItem value="+60">🇲🇾 +60</SelectItem>
+                      <SelectItem value="+65">🇸🇬 +65</SelectItem>
+                      <SelectItem value="+66">🇹🇭 +66</SelectItem>
+                      <SelectItem value="+84">🇻🇳 +84</SelectItem>
+                      <SelectItem value="+62">🇮🇩 +62</SelectItem>
+                      <SelectItem value="+63">🇵🇭 +63</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="123 456 7890"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                    className="flex-1"
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
