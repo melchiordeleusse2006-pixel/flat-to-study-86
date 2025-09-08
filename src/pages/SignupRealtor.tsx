@@ -53,13 +53,13 @@ export default function SignupRealtor() {
 
     const fullName = `${name} ${surname}`;
     const additionalData = {
-      user_type: 'realtor',
+      user_type: 'agency',
       phone,
       company,
       profile_picture: profilePicture ? profilePicture.name : null
     };
 
-    const { error } = await signUp(email, password, 'realtor', fullName, additionalData);
+    const { error } = await signUp(email, password, 'agency', fullName, additionalData);
     
     if (error) {
       if (error.message?.includes('already registered')) {
