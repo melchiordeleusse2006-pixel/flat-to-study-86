@@ -163,15 +163,24 @@ export function MobileConversationDetail({
 
     setSending(true);
     try {
+      // Fetch the most current profile data to ensure university info is up-to-date
+      const { data: currentProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      const profileToUse = currentProfile || profile;
+
       const messageData = {
         message: replyText.trim(),
-        sender_name: profile.user_type === 'agency' 
-          ? (profile.agency_name || profile.full_name || 'Agency')
-          : (profile.full_name || 'Student'),
-        sender_phone: profile.phone,
-        sender_university: profile.user_type === 'student' ? profile.university : null,
+        sender_name: profileToUse.user_type === 'agency' 
+          ? (profileToUse.agency_name || profileToUse.full_name || 'Agency')
+          : (profileToUse.full_name || 'Student'),
+        sender_phone: profileToUse.phone,
+        sender_university: profileToUse.user_type === 'student' ? profileToUse.university : null,
         listing_id: conversation.listing.id,
-        agency_id: conversation.agency?.id || profile.id,
+        agency_id: conversation.agency?.id || profileToUse.id,
         sender_id: user.id
       };
 
