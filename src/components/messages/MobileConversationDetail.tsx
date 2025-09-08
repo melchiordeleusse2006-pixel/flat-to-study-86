@@ -261,39 +261,34 @@ export function MobileConversationDetail({
       <div className="flex-1 flex flex-col min-h-0">
         <ScrollArea className="flex-1 px-4">
           <div className="space-y-3 py-4">
-            {/* Student Contact Info Card for Agencies */}
+            {/* Student Contact Info Bubble for Agencies */}
             {profile?.user_type === 'agency' && (studentProfile || conversation.lastMessage.sender_university || conversation.lastMessage.sender_phone) && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Users className="h-4 w-4 text-blue-600" />
-                  <span className="font-medium text-blue-900 text-sm">Student Contact Information</span>
+              <div className="p-3 rounded-lg bg-blue-50 border border-blue-200 max-w-[85%]">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-3 w-3 text-blue-600" />
+                    <span className="font-medium text-xs text-blue-900">Student Information</span>
+                  </div>
+                  <span className="text-xs text-blue-600">Contact Details</span>
                 </div>
-                <div className="space-y-2 text-xs">
+                <div className="space-y-1 text-xs text-blue-800">
+                  <div className="font-medium">{conversation.studentName || conversation.lastMessage.sender_name}</div>
                   {(studentProfile?.university || conversation.lastMessage.sender_university) && (
-                    <div className="flex items-center gap-2 text-blue-800">
+                    <div className="flex items-center gap-2">
                       <GraduationCap className="h-3 w-3" />
-                      <div>
-                        <span className="font-medium">University: </span>
-                        <span>{studentProfile?.university || conversation.lastMessage.sender_university}</span>
-                      </div>
+                      <span>{studentProfile?.university || conversation.lastMessage.sender_university}</span>
                     </div>
                   )}
                   {(studentProfile?.phone || conversation.lastMessage.sender_phone) && (
-                    <div className="flex items-center gap-2 text-blue-800">
+                    <div className="flex items-center gap-2">
                       <Phone className="h-3 w-3" />
-                      <div>
-                        <span className="font-medium">Phone: </span>
-                        <span>{studentProfile?.phone || conversation.lastMessage.sender_phone}</span>
-                      </div>
+                      <span>{studentProfile?.phone || conversation.lastMessage.sender_phone}</span>
                     </div>
                   )}
                   {studentProfile?.email && (
-                    <div className="flex items-center gap-2 text-blue-800">
+                    <div className="flex items-center gap-2">
                       <Mail className="h-3 w-3" />
-                      <div>
-                        <span className="font-medium">Email: </span>
-                        <span>{studentProfile.email}</span>
-                      </div>
+                      <span>{studentProfile.email}</span>
                     </div>
                   )}
                 </div>
