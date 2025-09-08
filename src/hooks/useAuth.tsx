@@ -93,7 +93,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       if (error) {
         console.error('Error fetching profile:', error);
-        // Don't let profile errors block auth - user can still be authenticated
+        // For infinite recursion or other policy errors, still allow authentication
+        if (error.code === '42P17' || error.message?.includes('infinite recursion')) {
+          console.log('Profile fetch blocked by RLS policy, user remains authenticated');
+        }
         setProfile(null);
       } else if (data) {
         console.log('Profile fetched successfully');
