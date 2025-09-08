@@ -275,6 +275,24 @@ export type Database = {
           agency_phone: string
         }[]
       }
+      get_current_user_profile: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          agency_name: string | null
+          avatar_url: string | null
+          company_size: string | null
+          created_at: string
+          description: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          university: string | null
+          updated_at: string
+          user_id: string
+          user_type: string
+        }
+      }
       get_listings_with_agency: {
         Args: {
           p_city?: string

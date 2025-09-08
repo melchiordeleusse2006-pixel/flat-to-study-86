@@ -85,18 +85,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchProfile = async (userId: string) => {
     try {
       console.log('Fetching profile for user:', userId);
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
+      // Use the security definer function to avoid RLS recursion
+      const { data, error } = await supabase.rpc('get_current_user_profile');
       
       if (error) {
         console.error('Error fetching profile:', error);
-        // For infinite recursion or other policy errors, still allow authentication
-        if (error.code === '42P17' || error.message?.includes('infinite recursion')) {
-          console.log('Profile fetch blocked by RLS policy, user remains authenticated');
-        }
         setProfile(null);
       } else if (data) {
         console.log('Profile fetched successfully');
