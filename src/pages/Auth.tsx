@@ -25,13 +25,13 @@ export default function Auth() {
 
   // Redirect authenticated users to homepage
   useEffect(() => {
-    console.log('Auth page - authLoading:', authLoading, 'user:', !!user, 'profile:', profile?.user_type);
-    if (!authLoading && user && profile) {
+    console.log('Auth page - authLoading:', authLoading, 'user:', !!user);
+    if (!authLoading && user) {
       console.log('Redirecting authenticated user to homepage');
-      // All authenticated users go to the main homepage
+      // Redirect immediately when user is authenticated, regardless of profile status
       navigate('/', { replace: true });
     }
-  }, [user, profile, authLoading, navigate]);
+  }, [user, authLoading, navigate]);
 
   // Show loading while auth is initializing
   if (authLoading) {
