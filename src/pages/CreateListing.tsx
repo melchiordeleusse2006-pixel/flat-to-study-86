@@ -253,7 +253,7 @@ export default function CreateListing() {
                   <Label htmlFor="title">{t('createListing.propertyTitle')}</Label>
                   <Input
                     id="title"
-                    placeholder={t('createListing.titlePlaceholder')}
+                    placeholder="es. Monolocale Accogliente vicino all'Università"
                     value={formData.title}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
                   />
