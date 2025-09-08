@@ -145,14 +145,16 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
         .from('profiles')
         .select('*')
         .eq('user_id', studentId)
-        .single();
+        .maybeSingle();
       
       if (error) {
         console.error('Error fetching student profile:', error);
         return;
       }
       
-      setStudentProfile(data);
+      if (data) {
+        setStudentProfile(data);
+      }
     } catch (error) {
       console.error('Error fetching student profile:', error);
     }
