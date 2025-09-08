@@ -271,29 +271,35 @@ export function MobileConversationDetail({
                   <span className="text-xs text-blue-600">Contact Details</span>
                 </div>
                 <div className="space-y-1 text-xs text-blue-800">
-                  <div className="font-medium">{conversation.studentName || conversation.lastMessage.sender_name}</div>
+                  {/* Name */}
+                  <div className="flex items-center gap-2">
+                    <Users className="h-3 w-3" />
+                    <span className="font-medium">
+                      {studentProfile?.full_name || conversation.studentName || conversation.lastMessage.sender_name}
+                    </span>
+                  </div>
+                  
+                  {/* University */}
                   {(studentProfile?.university || conversation.lastMessage.sender_university) && (
                     <div className="flex items-center gap-2">
                       <GraduationCap className="h-3 w-3" />
-                      <span>{studentProfile?.university || conversation.lastMessage.sender_university}</span>
+                      <span>University: {studentProfile?.university || conversation.lastMessage.sender_university}</span>
                     </div>
                   )}
+                  
+                  {/* Phone */}
                   {(studentProfile?.phone || conversation.lastMessage.sender_phone) && (
                     <div className="flex items-center gap-2">
                       <Phone className="h-3 w-3" />
-                      <span>{studentProfile?.phone || conversation.lastMessage.sender_phone}</span>
+                      <span>Phone: {studentProfile?.phone || conversation.lastMessage.sender_phone}</span>
                     </div>
                   )}
+                  
+                  {/* Email */}
                   {studentProfile?.email && (
                     <div className="flex items-center gap-2">
                       <Mail className="h-3 w-3" />
-                      <span>{studentProfile.email}</span>
-                    </div>
-                  )}
-                  {studentProfile?.full_name && studentProfile.full_name !== (conversation.studentName || conversation.lastMessage.sender_name) && (
-                    <div className="flex items-center gap-2">
-                      <Users className="h-3 w-3" />
-                      <span>Full name: {studentProfile.full_name}</span>
+                      <span>Email: {studentProfile.email}</span>
                     </div>
                   )}
                 </div>
