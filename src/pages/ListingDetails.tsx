@@ -173,6 +173,9 @@ export default function ListingDetails() {
 
     setSendingMessage(true);
     try {
+      // Generate conversation ID for proper message isolation
+      const conversationId = `listing-${listing.id}-student-${user.id}`;
+
       const { error } = await supabase
         .from('messages')
         .insert({
@@ -182,7 +185,8 @@ export default function ListingDetails() {
           message: message.trim(),
           sender_name: profile.full_name || 'Student',
           sender_phone: profile.phone,
-          sender_university: profile.university
+          sender_university: profile.university,
+          conversation_id: conversationId
         });
 
       if (error) {
