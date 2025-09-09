@@ -107,7 +107,7 @@ export default function ListingCard({
                           <img 
                             src={image}
                             alt={`${listing.title} - Image ${index + 1}`}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover object-center"
                             draggable={false}
                           />
                           
@@ -124,10 +124,12 @@ export default function ListingCard({
                   <CarouselPrevious 
                     className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 bg-white/90 hover:bg-white border-none shadow-md z-30 disabled:opacity-50"
                     size="sm"
+                    onClick={(e) => e.stopPropagation()}
                   />
                   <CarouselNext 
                     className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 bg-white/90 hover:bg-white border-none shadow-md z-30 disabled:opacity-50"
                     size="sm"
+                    onClick={(e) => e.stopPropagation()}
                   />
                   
                   {/* Dots indicator */}
