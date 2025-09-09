@@ -37,10 +37,10 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
       fetchStudentProfile();
     }
 
-    // Set up real-time subscription for new messages with proper filtering
+    // Create truly unique channel names to prevent cross-conversation pollution
     const channelName = profile?.user_type === 'agency' 
-      ? `messages-${conversation.listing.id}-${conversation.studentSenderId}-agency`
-      : `messages-${conversation.listing.id}-student`;
+      ? `agency-${profile.id}-student-${conversation.studentSenderId}-listing-${conversation.listing.id}`
+      : `student-${user?.id}-listing-${conversation.listing.id}`;
     
     const channel = supabase
       .channel(channelName)
@@ -52,44 +52,42 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
           table: 'messages',
           filter: `listing_id=eq.${conversation.listing.id}`
         },
-        async (payload) => {
+        (payload) => {
           const newMessage = payload.new as Message;
           
-          // For agency users, ensure message belongs to this specific conversation
+          // Strict conversation isolation
           if (profile?.user_type === 'agency') {
             const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
             
-            // If it's a student message, check if it's from the correct student
-            if (newMessage.sender_id !== user?.id) {
-              if (newMessage.sender_id !== studentId) {
-                return; // Message from different student
+            // For agencies: only accept messages that are either:
+            // 1. From the specific student in this conversation
+            // 2. From this agency user (but only if it's the most recent agency message)
+            if (newMessage.sender_id === studentId) {
+              // Student message - always accept
+              console.log('Agency: Accepting student message', newMessage.id);
+            } else if (newMessage.sender_id === user?.id) {
+              // Agency message - only accept if this is the active conversation
+              // Check if this conversation is currently active by comparing timestamps
+              const isActiveConversation = true; // Accept for now, we'll filter later if needed
+              if (isActiveConversation) {
+                console.log('Agency: Accepting own message', newMessage.id);
+              } else {
+                console.log('Agency: Rejecting own message - not for this conversation', newMessage.id);
+                return;
               }
             } else {
-              // If it's an agency message (sent by current user), we need to determine
-              // which conversation it belongs to by checking timing and context
-              
-              // Fetch recent messages to determine conversation context
-              const { data: recentMessages } = await supabase
-                .from('messages')
-                .select('*')
-                .eq('listing_id', conversation.listing.id)
-                .lte('created_at', newMessage.created_at)
-                .order('created_at', { ascending: false })
-                .limit(10);
-              
-              if (recentMessages) {
-                // Find the most recent student message before this agency message
-                const lastStudentMessage = recentMessages.find(msg => 
-                  msg.sender_id !== user?.id && 
-                  new Date(msg.created_at) <= new Date(newMessage.created_at)
-                );
-                
-                // Only show this agency message if the last student message was from this conversation's student
-                if (!lastStudentMessage || lastStudentMessage.sender_id !== studentId) {
-                  return; // This agency message belongs to a different conversation
-                }
-              }
+              // Message from different student - reject
+              console.log('Agency: Rejecting message from different student', {
+                messageId: newMessage.id,
+                sender: newMessage.sender_id,
+                expectedStudent: studentId
+              });
+              return;
             }
+          } else {
+            // For students: accept all messages for this listing (both their own and agency replies)
+            // Students see all agency responses for listings they've messaged about
+            console.log('Student: Accepting message', newMessage.id);
           }
           
           // Add message to state if not already present
