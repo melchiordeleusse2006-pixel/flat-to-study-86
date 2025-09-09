@@ -79,35 +79,59 @@ const handler = async (req: Request): Promise<Response> => {
       // Extract student ID from conversation_id field
       let studentId: string | null = null;
       
+      console.log('Processing agency message, conversation_id:', messageData.conversation_id);
+      
       if (messageData.conversation_id) {
         // Parse conversation_id format: "listing-{listing_id}-student-{student_id}"
         const conversationIdParts = messageData.conversation_id.split('-');
+        console.log('Conversation ID parts:', conversationIdParts);
+        
         if (conversationIdParts.length >= 4 && conversationIdParts[2] === 'student') {
           studentId = conversationIdParts[3];
+          console.log('Extracted student ID:', studentId);
         }
       }
       
       if (!studentId) {
         console.log('Could not extract student ID from conversation_id:', messageData.conversation_id);
-        return new Response(JSON.stringify({ error: 'Could not determine recipient student' }), {
+        return new Response(JSON.stringify({ 
+          error: 'Could not determine recipient student',
+          conversation_id: messageData.conversation_id,
+          conversation_id_parts: messageData.conversation_id?.split('-') || null
+        }), {
           status: 400,
           headers: { 'Content-Type': 'application/json', ...corsHeaders }
         });
       }
       
+      console.log('Fetching student profile for ID:', studentId);
+      
       // Get the student profile
-      const { data: studentProfile } = await supabase
+      const { data: studentProfile, error: studentError } = await supabase
         .from('profiles')
         .select('email, full_name, user_type')
         .eq('user_id', studentId)
         .eq('user_type', 'student')
         .single();
+      
+      console.log('Student profile result:', { studentProfile, studentError });
           
       if (studentProfile?.email) {
         recipientEmail = studentProfile.email;
         recipientName = studentProfile.full_name || 'Student';
         senderName = agencyProfile?.agency_name || agencyProfile?.full_name || 'Agency';
         isAgencyToStudent = true;
+        console.log('Setting up email for agency->student:', { recipientEmail, recipientName, senderName });
+      } else {
+        console.log('No email found for student or student not found');
+        return new Response(JSON.stringify({ 
+          error: 'Student email not found',
+          studentId: studentId,
+          studentProfile: studentProfile 
+        }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
       }
     } else {
       // Student sent message to agency, notify the agency (original behavior)
