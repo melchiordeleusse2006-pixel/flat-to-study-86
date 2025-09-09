@@ -87,56 +87,60 @@ export default function ListingCard({
               </div>
             ) : (
               // Multiple images - use carousel with arrows and swipe
-              <Carousel 
-                className="w-full h-full" 
-                opts={{ 
-                  align: "start",
-                  loop: true 
-                }}
+              <div 
+                className="relative h-full"
+                onClick={(e) => e.stopPropagation()} // Prevent card click when interacting with carousel
               >
-                <CarouselContent className="h-full">
-                  {listing.images.map((image, index) => (
-                    <CarouselItem key={index} className="h-full">
-                      <div className="relative h-full">
-                        <img 
-                          src={image}
-                          alt={`${listing.title} - Image ${index + 1}`}
-                          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                        />
-                        
-                        {/* Image counter */}
-                        <div className="absolute top-2 right-12 bg-black/50 text-white px-2 py-1 rounded text-xs">
-                          {index + 1}/{listing.images.length}
+                <Carousel 
+                  className="w-full h-full" 
+                  opts={{ 
+                    align: "start",
+                    loop: true,
+                    dragFree: true,
+                    containScroll: "trimSnaps"
+                  }}
+                >
+                  <CarouselContent className="h-full -ml-0">
+                    {listing.images.map((image, index) => (
+                      <CarouselItem key={index} className="h-full pl-0 basis-full">
+                        <div className="relative h-full">
+                          <img 
+                            src={image}
+                            alt={`${listing.title} - Image ${index + 1}`}
+                            className="w-full h-full object-cover"
+                            draggable={false}
+                          />
+                          
+                          {/* Image counter */}
+                          <div className="absolute top-2 right-12 bg-black/50 text-white px-2 py-1 rounded text-xs z-20">
+                            {index + 1}/{listing.images.length}
+                          </div>
                         </div>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                
-                {/* Navigation arrows - visible on desktop, hidden on mobile for better swipe */}
-                {!isMobile && (
-                  <>
-                    <CarouselPrevious 
-                      className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 bg-white/80 hover:bg-white border-none shadow-md"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                    <CarouselNext 
-                      className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 bg-white/80 hover:bg-white border-none shadow-md"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  </>
-                )}
-                
-                {/* Dots indicator */}
-                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
-                  {listing.images.map((_, index) => (
-                    <div
-                      key={index}
-                      className="w-1.5 h-1.5 rounded-full bg-white/70"
-                    />
-                  ))}
-                </div>
-              </Carousel>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  
+                  {/* Navigation arrows - always visible */}
+                  <CarouselPrevious 
+                    className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 bg-white/90 hover:bg-white border-none shadow-md z-30 disabled:opacity-50"
+                    size="sm"
+                  />
+                  <CarouselNext 
+                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 bg-white/90 hover:bg-white border-none shadow-md z-30 disabled:opacity-50"
+                    size="sm"
+                  />
+                  
+                  {/* Dots indicator */}
+                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-20">
+                    {listing.images.map((_, index) => (
+                      <div
+                        key={index}
+                        className="w-1.5 h-1.5 rounded-full bg-white/70"
+                      />
+                    ))}
+                  </div>
+                </Carousel>
+              </div>
             )}
           </>
         )}
