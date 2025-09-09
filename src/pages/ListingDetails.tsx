@@ -21,17 +21,22 @@ import {
   Phone, 
   Mail, 
   Building,
-  Send
+  Send,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import SimpleMapView from '@/components/map/SimpleMapView';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function ListingDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, profile } = useAuth();
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -291,31 +296,68 @@ export default function ListingDetails() {
                 <CardContent className="p-0">
                   {listing.images.length > 0 ? (
                     <div className="relative">
-                      <img 
-                        src={listing.images[currentImageIndex]}
-                        alt={listing.title}
-                        className="w-full h-64 md:h-96 object-cover rounded-lg"
-                      />
-                      
-                      {/* Image Navigation */}
-                      {listing.images.length > 1 && (
-                        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                          {listing.images.map((_, index) => (
-                            <button
-                              key={index}
-                              onClick={() => setCurrentImageIndex(index)}
-                              className={`w-3 h-3 rounded-full transition-colors ${
-                                index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                              }`}
-                            />
-                          ))}
+                      {listing.images.length === 1 ? (
+                        // Single image - no carousel needed
+                        <div className="relative">
+                          <img 
+                            src={listing.images[0]}
+                            alt={listing.title}
+                            className="w-full h-64 md:h-96 object-cover rounded-lg"
+                          />
+                          <Badge className="absolute top-4 left-4 bg-background/90 text-foreground">
+                            {getTypeDisplayName(listing.type)}
+                          </Badge>
                         </div>
+                      ) : (
+                        // Multiple images - use carousel with arrows and swipe
+                        <Carousel 
+                          className="w-full" 
+                          opts={{ 
+                            align: "start",
+                            loop: true 
+                          }}
+                        >
+                          <CarouselContent>
+                            {listing.images.map((image, index) => (
+                              <CarouselItem key={index}>
+                                <div className="relative">
+                                  <img 
+                                    src={image}
+                                    alt={`${listing.title} - Image ${index + 1}`}
+                                    className="w-full h-64 md:h-96 object-cover rounded-lg"
+                                  />
+                                  <Badge className="absolute top-4 left-4 bg-background/90 text-foreground">
+                                    {getTypeDisplayName(listing.type)}
+                                  </Badge>
+                                  
+                                  {/* Image counter */}
+                                  <div className="absolute top-4 right-4 bg-black/50 text-white px-2 py-1 rounded text-sm">
+                                    {index + 1} / {listing.images.length}
+                                  </div>
+                                </div>
+                              </CarouselItem>
+                            ))}
+                          </CarouselContent>
+                          
+                          {/* Navigation arrows - hidden on mobile for better swipe experience */}
+                          {!isMobile && (
+                            <>
+                              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white border-none shadow-lg" />
+                              <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white border-none shadow-lg" />
+                            </>
+                          )}
+                          
+                          {/* Dots indicator */}
+                          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                            {listing.images.map((_, index) => (
+                              <div
+                                key={index}
+                                className="w-2 h-2 rounded-full bg-white/70"
+                              />
+                            ))}
+                          </div>
+                        </Carousel>
                       )}
-                      
-                      {/* Type Badge */}
-                      <Badge className="absolute top-4 left-4 bg-background/90 text-foreground">
-                        {getTypeDisplayName(listing.type)}
-                      </Badge>
                     </div>
                   ) : (
                     <div className="w-full h-64 md:h-96 bg-muted rounded-lg flex items-center justify-center">
