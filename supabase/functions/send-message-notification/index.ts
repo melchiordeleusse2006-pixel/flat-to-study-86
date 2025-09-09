@@ -76,23 +76,32 @@ const handler = async (req: Request): Promise<Response> => {
     
     if (senderProfile?.user_type === 'agency') {
       // Agency sent message to student, notify the student
-      // Find the most recent student message in this conversation thread
-      const { data: recentStudentMessages } = await supabase
-        .from('messages')
-        .select('sender_id')
-        .eq('listing_id', messageData.listing_id)
-        .neq('sender_id', messageData.sender_id)
-        .order('created_at', { ascending: false })
-        .limit(1);
-        
-      if (recentStudentMessages && recentStudentMessages.length > 0) {
-        // Get the student profile
-        const { data: studentProfile } = await supabase
-          .from('profiles')
-          .select('email, full_name, user_type')
-          .eq('user_id', recentStudentMessages[0].sender_id)
-          .eq('user_type', 'student')
-          .single();
+      // Extract student ID from conversation_id field
+      let studentId: string | null = null;
+      
+      if (messageData.conversation_id) {
+        // Parse conversation_id format: "listing-{listing_id}-student-{student_id}"
+        const conversationIdParts = messageData.conversation_id.split('-');
+        if (conversationIdParts.length >= 4 && conversationIdParts[2] === 'student') {
+          studentId = conversationIdParts[3];
+        }
+      }
+      
+      if (!studentId) {
+        console.log('Could not extract student ID from conversation_id:', messageData.conversation_id);
+        return new Response(JSON.stringify({ error: 'Could not determine recipient student' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+      
+      // Get the student profile
+      const { data: studentProfile } = await supabase
+        .from('profiles')
+        .select('email, full_name, user_type')
+        .eq('user_id', studentId)
+        .eq('user_type', 'student')
+        .single();
           
         if (studentProfile?.email) {
           recipientEmail = studentProfile.email;
