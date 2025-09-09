@@ -42,6 +42,17 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
       ? `agency-${profile.id}-student-${conversation.studentSenderId}-listing-${conversation.listing.id}`
       : `student-${user?.id}-listing-${conversation.listing.id}`;
     
+    // For agencies: Subscribe to messages only between this agency and this specific student
+    // For students: Subscribe to messages only between this student and the agency for this listing
+    let subscriptionFilter;
+    if (profile?.user_type === 'agency') {
+      // Agency: Listen only to messages where sender is either this student or this agency
+      subscriptionFilter = `listing_id=eq.${conversation.listing.id}`;
+    } else {
+      // Student: Listen only to messages for this listing
+      subscriptionFilter = `listing_id=eq.${conversation.listing.id}`;
+    }
+
     const channel = supabase
       .channel(channelName)
       .on(
@@ -50,7 +61,7 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `listing_id=eq.${conversation.listing.id}`
+          filter: subscriptionFilter
         },
         (payload) => {
           const newMessage = payload.new as Message;
