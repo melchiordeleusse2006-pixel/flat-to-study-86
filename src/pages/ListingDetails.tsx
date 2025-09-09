@@ -526,21 +526,27 @@ export default function ListingDetails() {
                     <h4 className="font-semibold text-lg">{listing.agency.name}</h4>
                   </div>
                   
-                  {/* Always show contact information */}
-                  <div className="space-y-2">
-                    {listing.agency.phone && (
-                      <div className="flex items-center space-x-2">
-                        <Phone className="h-4 w-4 text-muted-foreground" />
-                        <span>{listing.agency.phone}</span>
-                      </div>
-                    )}
-                    {listing.agency.billingEmail && (
-                      <div className="flex items-center space-x-2">
-                        <Mail className="h-4 w-4 text-muted-foreground" />
-                        <span>{listing.agency.billingEmail}</span>
-                      </div>
-                    )}
-                  </div>
+                  {/* Show contact information only if user is logged in */}
+                  {user ? (
+                    <div className="space-y-2">
+                      {listing.agency.phone && (
+                        <div className="flex items-center space-x-2">
+                          <Phone className="h-4 w-4 text-muted-foreground" />
+                          <span>{listing.agency.phone}</span>
+                        </div>
+                      )}
+                      {listing.agency.billingEmail && (
+                        <div className="flex items-center space-x-2">
+                          <Mail className="h-4 w-4 text-muted-foreground" />
+                          <span>{listing.agency.billingEmail}</span>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-muted-foreground text-sm">
+                      <p>Please log in to view contact details</p>
+                    </div>
+                  )}
 
                   {!user && (
                     <div className="pt-4 border-t">
