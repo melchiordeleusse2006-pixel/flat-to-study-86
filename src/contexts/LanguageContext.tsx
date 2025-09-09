@@ -365,6 +365,18 @@ const translations = {
     'createListing.success': 'Success',
     'createListing.listingCreated': 'Listing created successfully!',
     
+    // Amenities
+    'amenities.wifi': 'WiFi',
+    'amenities.washingMachine': 'Washing Machine',
+    'amenities.dishwasher': 'Dishwasher',
+    'amenities.parking': 'Parking',
+    'amenities.balcony': 'Balcony',
+    'amenities.garden': 'Garden',
+    'amenities.gym': 'Gym',
+    'amenities.swimmingPool': 'Swimming Pool',
+    'amenities.airConditioning': 'Air Conditioning',
+    'amenities.heating': 'Heating',
+    
     // Filters
     'filters.price': 'Price',
     'filters.priceRange': 'Price Range (Monthly)',
