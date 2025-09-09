@@ -91,7 +91,7 @@ const handler = async (req: Request): Promise<Response> => {
         console.log('Could not extract student ID from conversation_id:', messageData.conversation_id);
         return new Response(JSON.stringify({ error: 'Could not determine recipient student' }), {
           status: 400,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
         });
       }
       
@@ -103,12 +103,11 @@ const handler = async (req: Request): Promise<Response> => {
         .eq('user_type', 'student')
         .single();
           
-        if (studentProfile?.email) {
-          recipientEmail = studentProfile.email;
-          recipientName = studentProfile.full_name || 'Student';
-          senderName = agencyProfile?.agency_name || agencyProfile?.full_name || 'Agency';
-          isAgencyToStudent = true;
-        }
+      if (studentProfile?.email) {
+        recipientEmail = studentProfile.email;
+        recipientName = studentProfile.full_name || 'Student';
+        senderName = agencyProfile?.agency_name || agencyProfile?.full_name || 'Agency';
+        isAgencyToStudent = true;
       }
     } else {
       // Student sent message to agency, notify the agency (original behavior)
