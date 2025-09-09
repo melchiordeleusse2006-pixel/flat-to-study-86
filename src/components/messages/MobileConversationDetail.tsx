@@ -41,7 +41,7 @@ export function MobileConversationDetail({
 
     // Set up real-time subscription for new messages
     const channelName = profile?.user_type === 'agency' 
-      ? `messages-${conversation.listing.id}-${conversation.studentSenderId || conversation.lastMessage.sender_id}`
+      ? `messages-${conversation.listing.id}-${conversation.studentSenderId}`
       : `messages-${conversation.listing.id}`;
     
     const channel = supabase

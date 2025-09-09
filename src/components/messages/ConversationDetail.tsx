@@ -38,7 +38,7 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
 
     // Set up real-time subscription for new messages with proper filtering
     const channelName = profile?.user_type === 'agency' 
-      ? `messages-${conversation.listing.id}-${conversation.studentSenderId || conversation.lastMessage.sender_id}`
+      ? `messages-${conversation.listing.id}-${conversation.studentSenderId}`
       : `messages-${conversation.listing.id}`;
     
     const channel = supabase
