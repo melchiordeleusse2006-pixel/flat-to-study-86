@@ -83,11 +83,13 @@ const handler = async (req: Request): Promise<Response> => {
       
       if (messageData.conversation_id) {
         // Parse conversation_id format: "listing-{listing_id}-student-{student_id}"
-        const conversationIdParts = messageData.conversation_id.split('-');
-        console.log('Conversation ID parts:', conversationIdParts);
+        // Need to handle UUIDs which contain hyphens
+        const studentKeywordIndex = messageData.conversation_id.indexOf('-student-');
+        console.log('Student keyword index:', studentKeywordIndex);
         
-        if (conversationIdParts.length >= 4 && conversationIdParts[2] === 'student') {
-          studentId = conversationIdParts[3];
+        if (studentKeywordIndex !== -1) {
+          // Extract everything after "-student-"
+          studentId = messageData.conversation_id.substring(studentKeywordIndex + 9);
           console.log('Extracted student ID:', studentId);
         }
       }
