@@ -83,70 +83,42 @@ export function ConversationList({ onSelectConversation, selectedConversationId 
       const conversationMap = new Map<string, Conversation>();
 
       if (profile.user_type === 'agency') {
-        // For agencies: Group by listing and the original student sender
-        // We need to identify conversations by the student who initiated them
-        const studentMessages = messages?.filter(msg => msg.sender_id !== user.id) || [];
-        const agencyReplies = messages?.filter(msg => msg.sender_id === user.id) || [];
-
-        // First, create conversations for student messages
-        studentMessages.forEach((message: any) => {
+        // For agencies: Group by listing and student sender (simpler approach)
+        messages?.forEach((message: any) => {
           const listing = message.listings;
           if (!listing) return;
 
-          const key = `${listing.id}-${message.sender_id}`;
+          // For agency messages, use the listing ID as the key (simpler grouping)
+          // But track the student who initiated the conversation for display
+          const key = listing.id;
+          const isStudentMessage = message.sender_id !== user.id;
 
           if (!conversationMap.has(key)) {
             conversationMap.set(key, {
               listing,
-              agency: message.profiles,
+              agency: undefined, // Agency doesn't need agency info
               lastMessage: message,
               unreadCount: 0,
-              studentName: message.sender_name,
-              studentSenderId: message.sender_id // Store the original student sender ID
+              studentName: isStudentMessage ? message.sender_name : undefined,
+              studentSenderId: isStudentMessage ? message.sender_id : undefined
             });
           } else {
             const existing = conversationMap.get(key)!;
+            // Update last message if this is newer
             if (new Date(message.created_at) > new Date(existing.lastMessage.created_at)) {
               existing.lastMessage = message;
             }
+            // Update student info if this is a student message and we don't have it yet
+            if (isStudentMessage && !existing.studentName) {
+              existing.studentName = message.sender_name;
+              existing.studentSenderId = message.sender_id;
+            }
           }
 
-          // Count unread messages from students
-          if (!message.read_at) {
+          // Count unread messages from students only
+          if (isStudentMessage && !message.read_at) {
             const existing = conversationMap.get(key)!;
             existing.unreadCount++;
-          }
-        });
-
-        // Then, merge agency replies into existing conversations
-        // Find the correct student for each agency reply by looking at conversation history
-        agencyReplies.forEach((message: any) => {
-          const listing = message.listings;
-          if (!listing) return;
-
-          // Find which student this agency message is replying to by checking the conversation history
-          // Look for recent student messages on the same listing that this could be replying to
-          const recentStudentMessages = studentMessages.filter(sm => 
-            sm.listing_id === message.listing_id &&
-            new Date(sm.created_at) <= new Date(message.created_at)
-          );
-          
-          if (recentStudentMessages.length > 0) {
-            // Find the most recent student message before this agency reply
-            const latestStudentMessage = recentStudentMessages.reduce((latest, current) => 
-              new Date(current.created_at) > new Date(latest.created_at) ? current : latest
-            );
-            
-            const studentSenderId = latestStudentMessage.sender_id;
-            const key = `${listing.id}-${studentSenderId}`;
-            
-            const conversation = conversationMap.get(key);
-            if (conversation) {
-              // Update last message if this reply is newer
-              if (new Date(message.created_at) > new Date(conversation.lastMessage.created_at)) {
-                conversation.lastMessage = message;
-              }
-            }
           }
         });
       } else {
@@ -216,10 +188,8 @@ export function ConversationList({ onSelectConversation, selectedConversationId 
       <ScrollArea className="h-full">
         <div className="p-4 space-y-2">
           {conversations.map((conversation) => {
-            // For agencies, use the student sender ID, for students use listing ID
-            const conversationKey = profile?.user_type === 'agency' 
-              ? `${conversation.listing.id}-${conversation.studentSenderId}`
-              : conversation.listing.id;
+            // Use listing ID as key for both agencies and students (simplified)
+            const conversationKey = conversation.listing.id;
             
             return (
               <ConversationItem

@@ -28,7 +28,7 @@ const handler = async (req: Request): Promise<Response> => {
     
     console.log("Processing notification for message:", message_id);
 
-    // Get message details with listing and both sender and agency profiles
+    // Get message details with listing and agency profile
     const { data: messageData, error: messageError } = await supabase
       .from('messages')
       .select(`
@@ -39,19 +39,6 @@ const handler = async (req: Request): Promise<Response> => {
           city,
           rent_monthly_eur,
           images
-        ),
-        agency_profile:agency_id (
-          agency_name,
-          email,
-          full_name,
-          user_type
-        ),
-        sender_profile:sender_id (
-          id,
-          full_name,
-          email,
-          user_type,
-          university
         )
       `)
       .eq('id', message_id)
@@ -65,7 +52,21 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    const { listings: listing, agency_profile, sender_profile } = messageData;
+    // Get agency profile separately
+    const { data: agencyProfile, error: agencyError } = await supabase
+      .from('profiles')
+      .select('id, agency_name, email, full_name, user_type')
+      .eq('id', messageData.agency_id)
+      .single();
+
+    // Get sender profile separately  
+    const { data: senderProfile, error: senderError } = await supabase
+      .from('profiles')
+      .select('id, full_name, email, user_type, university')
+      .eq('user_id', messageData.sender_id)
+      .single();
+
+    const { listings: listing } = messageData;
     
     // Determine who should receive the notification
     let recipientEmail = '';
@@ -73,36 +74,38 @@ const handler = async (req: Request): Promise<Response> => {
     let senderName = '';
     let isAgencyToStudent = false;
     
-    if (sender_profile?.user_type === 'agency') {
+    if (senderProfile?.user_type === 'agency') {
       // Agency sent message to student, notify the student
       // Get the student who originally messaged about this listing
-      const { data: originalStudentMessage } = await supabase
+      const { data: originalStudentMessages } = await supabase
         .from('messages')
-        .select(`
-          sender_profile:sender_id (
-            email,
-            full_name,
-            user_type
-          )
-        `)
+        .select('sender_id')
         .eq('listing_id', messageData.listing_id)
         .neq('sender_id', messageData.sender_id)
-        .eq('sender_profile.user_type', 'student')
         .order('created_at', { ascending: true })
-        .limit(1)
-        .single();
+        .limit(1);
         
-      if (originalStudentMessage?.sender_profile?.email) {
-        recipientEmail = originalStudentMessage.sender_profile.email;
-        recipientName = originalStudentMessage.sender_profile.full_name || 'Student';
-        senderName = agency_profile?.agency_name || agency_profile?.full_name || 'Agency';
-        isAgencyToStudent = true;
+      if (originalStudentMessages && originalStudentMessages.length > 0) {
+        // Get the student profile
+        const { data: studentProfile } = await supabase
+          .from('profiles')
+          .select('email, full_name, user_type')
+          .eq('user_id', originalStudentMessages[0].sender_id)
+          .eq('user_type', 'student')
+          .single();
+          
+        if (studentProfile?.email) {
+          recipientEmail = studentProfile.email;
+          recipientName = studentProfile.full_name || 'Student';
+          senderName = agencyProfile?.agency_name || agencyProfile?.full_name || 'Agency';
+          isAgencyToStudent = true;
+        }
       }
     } else {
       // Student sent message to agency, notify the agency (original behavior)
-      if (agency_profile?.email) {
-        recipientEmail = agency_profile.email;
-        recipientName = agency_profile.agency_name || agency_profile.full_name || 'Agency';
+      if (agencyProfile?.email) {
+        recipientEmail = agencyProfile.email;
+        recipientName = agencyProfile.agency_name || agencyProfile.full_name || 'Agency';
         senderName = messageData.sender_name;
         isAgencyToStudent = false;
       }
