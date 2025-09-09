@@ -36,16 +36,16 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Mobile Language Selector - Only on homepage and mobile */}
-      {isMobile && (
-        <div className="fixed top-4 right-4 z-50 bg-background/80 backdrop-blur-sm rounded-full p-2 border shadow-lg">
-          <LanguageSelector variant="mobile-icon" />
-        </div>
-      )}
-      
       {/* Hero Section - Full viewport height */}
       <section className="relative h-screen flex items-center justify-center hero-gradient text-white overflow-hidden">
         <div className="container mx-auto text-center relative z-10 px-4">
+          {/* Mobile Language Selector - Only on homepage and mobile */}
+          {isMobile && (
+            <div className="mb-6">
+              <LanguageSelector variant="mobile-icon" />
+            </div>
+          )}
+          
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
             {user && profile ? `${t('home.heroWelcome')}, ${profile.full_name || 'User'}!` : t('home.heroTitle')}
           </h1>
