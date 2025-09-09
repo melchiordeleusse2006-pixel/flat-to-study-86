@@ -39,8 +39,8 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
 
     // Set up real-time subscription for new messages with proper filtering
     const channelName = profile?.user_type === 'agency' 
-      ? `messages-${conversation.listing.id}-${conversation.studentSenderId}`
-      : `messages-${conversation.listing.id}`;
+      ? `messages-${conversation.listing.id}-${conversation.studentSenderId}-agency`
+      : `messages-${conversation.listing.id}-student`;
     
     const channel = supabase
       .channel(channelName)
@@ -52,18 +52,44 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
           table: 'messages',
           filter: `listing_id=eq.${conversation.listing.id}`
         },
-        (payload) => {
+        async (payload) => {
           const newMessage = payload.new as Message;
           
-          // For agency users, filter messages to only show messages in their specific conversation
+          // For agency users, ensure message belongs to this specific conversation
           if (profile?.user_type === 'agency') {
             const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
-            if (newMessage.sender_id !== studentId && newMessage.sender_id !== user?.id) {
-              return; // Not part of this conversation
+            
+            // If it's a student message, check if it's from the correct student
+            if (newMessage.sender_id !== user?.id) {
+              if (newMessage.sender_id !== studentId) {
+                return; // Message from different student
+              }
+            } else {
+              // If it's an agency message (sent by current user), we need to determine
+              // which conversation it belongs to by checking timing and context
+              
+              // Fetch recent messages to determine conversation context
+              const { data: recentMessages } = await supabase
+                .from('messages')
+                .select('*')
+                .eq('listing_id', conversation.listing.id)
+                .lte('created_at', newMessage.created_at)
+                .order('created_at', { ascending: false })
+                .limit(10);
+              
+              if (recentMessages) {
+                // Find the most recent student message before this agency message
+                const lastStudentMessage = recentMessages.find(msg => 
+                  msg.sender_id !== user?.id && 
+                  new Date(msg.created_at) <= new Date(newMessage.created_at)
+                );
+                
+                // Only show this agency message if the last student message was from this conversation's student
+                if (!lastStudentMessage || lastStudentMessage.sender_id !== studentId) {
+                  return; // This agency message belongs to a different conversation
+                }
+              }
             }
-          } else {
-            // For students, include all messages for this listing (both their messages and agency replies)
-            // No additional filtering needed as the listing_id filter handles this
           }
           
           // Add message to state if not already present
