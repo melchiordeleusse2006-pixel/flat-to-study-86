@@ -146,6 +146,7 @@ export type Database = {
       messages: {
         Row: {
           agency_id: string
+          conversation_id: string | null
           created_at: string
           id: string
           listing_id: string
@@ -156,9 +157,11 @@ export type Database = {
           sender_name: string
           sender_phone: string | null
           sender_university: string | null
+          updated_at: string | null
         }
         Insert: {
           agency_id: string
+          conversation_id?: string | null
           created_at?: string
           id?: string
           listing_id: string
@@ -169,9 +172,11 @@ export type Database = {
           sender_name: string
           sender_phone?: string | null
           sender_university?: string | null
+          updated_at?: string | null
         }
         Update: {
           agency_id?: string
+          conversation_id?: string | null
           created_at?: string
           id?: string
           listing_id?: string
@@ -182,6 +187,7 @@ export type Database = {
           sender_name?: string
           sender_phone?: string | null
           sender_university?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -260,6 +266,10 @@ export type Database = {
       agency_has_published_listings: {
         Args: { agency_profile_id: string }
         Returns: boolean
+      }
+      generate_conversation_id: {
+        Args: { p_listing_id: string; p_student_id: string }
+        Returns: string
       }
       get_agency_business_info: {
         Args: { agency_id_param: string }

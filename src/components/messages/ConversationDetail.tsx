@@ -42,16 +42,10 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
       ? `agency-${profile.id}-student-${conversation.studentSenderId}-listing-${conversation.listing.id}`
       : `student-${user?.id}-listing-${conversation.listing.id}`;
     
-    // For agencies: Subscribe to messages only between this agency and this specific student
-    // For students: Subscribe to messages only between this student and the agency for this listing
-    let subscriptionFilter;
-    if (profile?.user_type === 'agency') {
-      // Agency: Listen only to messages where sender is either this student or this agency
-      subscriptionFilter = `listing_id=eq.${conversation.listing.id}`;
-    } else {
-      // Student: Listen only to messages for this listing
-      subscriptionFilter = `listing_id=eq.${conversation.listing.id}`;
-    }
+    // Generate a conversation ID to ensure proper message isolation
+    const conversationId = profile?.user_type === 'agency' 
+      ? `listing-${conversation.listing.id}-student-${conversation.studentSenderId}`
+      : `listing-${conversation.listing.id}-student-${user?.id}`;
 
     const channel = supabase
       .channel(channelName)
@@ -61,7 +55,8 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: subscriptionFilter
+          // Filter by conversation_id to ensure proper isolation
+          filter: `conversation_id=eq.${conversationId}`
         },
         (payload) => {
           const newMessage = payload.new as Message;
@@ -165,19 +160,17 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
 
   const fetchMessages = async () => {
     try {
-      let query = supabase
+      // Generate conversation ID for filtering
+      const conversationId = profile?.user_type === 'agency' 
+        ? `listing-${conversation.listing.id}-student-${conversation.studentSenderId}`
+        : `listing-${conversation.listing.id}-student-${user?.id}`;
+
+      // Fetch messages for this specific conversation
+      const { data, error } = await supabase
         .from('messages')
         .select('*')
-        .eq('listing_id', conversation.listing.id);
-
-      // For agencies, get all messages in this conversation (both from student and agency)
-      if (profile?.user_type === 'agency') {
-        // Get all messages between this agency and this specific student
-        const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
-        query = query.in('sender_id', [studentId, user?.id]);
-      }
-
-      const { data, error } = await query.order('created_at', { ascending: true });
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true });
 
       if (error) {
         console.error('Error fetching messages:', error);
@@ -217,15 +210,18 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
     if (!user || !profile) return;
 
     try {
+      // Generate conversation ID for filtering
+      const conversationId = profile.user_type === 'agency' 
+        ? `listing-${conversation.listing.id}-student-${conversation.studentSenderId}`
+        : `listing-${conversation.listing.id}-student-${user.id}`;
+
       if (profile.user_type === 'agency') {
         // Mark all unread messages from students in this conversation as read
-        const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
         const { error } = await supabase
           .from('messages')
           .update({ read_at: new Date().toISOString() })
-          .eq('listing_id', conversation.listing.id)
-          .eq('sender_id', studentId) // Only mark student messages as read
-          .eq('agency_id', profile.id)
+          .eq('conversation_id', conversationId)
+          .neq('sender_id', user.id) // Only mark student messages as read
           .is('read_at', null);
         
         if (error) {
@@ -235,11 +231,12 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
         }
       } else if (profile.user_type === 'student') {
         // Mark all unread agency messages in this conversation as read
+        const conversationId = `listing-${conversation.listing.id}-student-${user.id}`;
         const { error } = await supabase
           .from('messages')
           .update({ read_at: new Date().toISOString() })
-          .eq('listing_id', conversation.listing.id)
-          .neq('sender_id', user.id) // Only mark agency messages as read (not student's own messages)
+          .eq('conversation_id', conversationId)
+          .neq('sender_id', user.id) // Only mark agency messages as read
           .is('read_at', null);
         
         if (error) {
@@ -272,6 +269,11 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
 
       const profileToUse = currentProfile || profile;
 
+      // Generate conversation ID for proper message isolation
+      const conversationId = profile.user_type === 'agency'
+        ? `listing-${conversation.listing.id}-student-${conversation.studentSenderId}`
+        : `listing-${conversation.listing.id}-student-${user.id}`;
+
       const messageData = {
         message: replyText.trim(),
         sender_name: profileToUse.user_type === 'agency' 
@@ -281,7 +283,8 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
         sender_university: profileToUse.user_type === 'student' ? profileToUse.university : null,
         listing_id: conversation.listing.id,
         agency_id: conversation.agency?.id || profileToUse.id,
-        sender_id: user.id
+        sender_id: user.id,
+        conversation_id: conversationId
       };
 
       const { data: insertedMessage, error } = await supabase
