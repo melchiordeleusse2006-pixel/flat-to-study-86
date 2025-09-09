@@ -13,7 +13,7 @@ export const MILAN_UNIVERSITIES: University[] = [
     name: 'Università Bocconi',
     shortName: 'Bocconi',
     lat: 45.4470,
-    lng: 9.1920
+    lng: 9.1905
   },
   {
     id: 'cattolica',
