@@ -14,6 +14,9 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
 );
 
+// In-memory set to track recently processed messages (prevents duplicates)
+const processedMessages = new Set<string>();
+
 interface MessageNotificationRequest {
   message_id: string;
 }
@@ -25,6 +28,23 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const { message_id }: MessageNotificationRequest = await req.json();
+    
+    // Check if we've already processed this message recently
+    if (processedMessages.has(message_id)) {
+      console.log("Duplicate notification request for message:", message_id, "- skipping");
+      return new Response(JSON.stringify({ success: true, skipped: true, reason: "duplicate" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+    
+    // Mark message as being processed
+    processedMessages.add(message_id);
+    
+    // Clean up old entries after 5 minutes to prevent memory leaks
+    setTimeout(() => {
+      processedMessages.delete(message_id);
+    }, 5 * 60 * 1000);
     
     console.log("Processing notification for message:", message_id);
 
