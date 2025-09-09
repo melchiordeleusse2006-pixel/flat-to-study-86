@@ -86,71 +86,62 @@ export default function ListingCard({
                 />
               </div>
             ) : (
-              // Multiple images - use carousel with arrows and swipe
-              <div 
-                className="relative h-full"
-                onMouseDown={(e) => e.stopPropagation()}
-                onTouchStart={(e) => e.stopPropagation()}
-              >
-                <Carousel 
-                  className="w-full h-full" 
-                  opts={{ 
-                    align: "start",
-                    loop: true,
-                    skipSnaps: false,
-                    dragFree: false
+              // Multiple images - simple manual navigation
+              <div className="relative h-full">
+                <img 
+                  src={listing.images[currentImageIndex]}
+                  alt={`${listing.title} - Image ${currentImageIndex + 1}`}
+                  className="w-full h-full object-cover object-center"
+                  draggable={false}
+                />
+                
+                {/* Image counter */}
+                <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-xs z-20">
+                  {currentImageIndex + 1}/{listing.images.length}
+                </div>
+                
+                {/* Navigation arrows */}
+                <button
+                  className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 bg-white/90 hover:bg-white border-none shadow-md z-30 rounded-full flex items-center justify-center"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setCurrentImageIndex(prev => 
+                      prev === 0 ? listing.images.length - 1 : prev - 1
+                    );
                   }}
                 >
-                  <CarouselContent className="h-full">
-                    {listing.images.map((image, index) => (
-                      <CarouselItem key={index} className="h-full">
-                        <div className="relative h-full">
-                          <img 
-                            src={image}
-                            alt={`${listing.title} - Image ${index + 1}`}
-                            className="w-full h-full object-cover object-[50%_40%]"
-                            draggable={false}
-                          />
-                          
-                          {/* Image counter */}
-                          <div className="absolute top-2 right-12 bg-black/50 text-white px-2 py-1 rounded text-xs z-20">
-                            {index + 1}/{listing.images.length}
-                          </div>
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  
-                  {/* Navigation arrows - prevent event bubbling */}
-                  <CarouselPrevious 
-                    className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 bg-white/90 hover:bg-white border-none shadow-md z-30"
-                    onMouseDown={(e) => e.stopPropagation()}
-                    onTouchStart={(e) => e.stopPropagation()}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  />
-                  <CarouselNext 
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 bg-white/90 hover:bg-white border-none shadow-md z-30"
-                    onMouseDown={(e) => e.stopPropagation()}
-                    onTouchStart={(e) => e.stopPropagation()}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  />
-                  
-                  {/* Dots indicator */}
-                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-20">
-                    {listing.images.map((_, index) => (
-                      <div
-                        key={index}
-                        className="w-1.5 h-1.5 rounded-full bg-white/70"
-                      />
-                    ))}
-                  </div>
-                </Carousel>
+                  ←
+                </button>
+                <button
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 bg-white/90 hover:bg-white border-none shadow-md z-30 rounded-full flex items-center justify-center"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setCurrentImageIndex(prev => 
+                      prev === listing.images.length - 1 ? 0 : prev + 1
+                    );
+                  }}
+                >
+                  →
+                </button>
+                
+                {/* Dots indicator */}
+                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-20">
+                  {listing.images.map((_, index) => (
+                    <button
+                      key={index}
+                      className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                        index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                      }`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setCurrentImageIndex(index);
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
             )}
           </>
