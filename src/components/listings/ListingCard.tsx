@@ -6,6 +6,8 @@ import { Heart, MapPin, Bed, Bath, Calendar, Wifi, Car, Users, Map } from 'lucid
 import { Link } from 'react-router-dom';
 import ListingMap from '@/components/map/ListingMap';
 import { useFavorites } from '@/hooks/useFavorites';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ListingCardProps {
   listing: Listing;
@@ -23,6 +25,7 @@ export default function ListingCard({
   className 
 }: ListingCardProps) {
   const { isFavorited, toggleFavorite } = useFavorites();
+  const isMobile = useIsMobile();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showMap, setShowMap] = useState(false);
 
@@ -73,28 +76,67 @@ export default function ListingCard({
       <div className="relative h-48 overflow-hidden">
         {listing.images.length > 0 && (
           <>
-            <img 
-              src={listing.images[currentImageIndex]}
-              alt={listing.title}
-              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-            />
-            
-            {/* Image Navigation Dots */}
-            {listing.images.length > 1 && (
-              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
-                {listing.images.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCurrentImageIndex(index);
-                    }}
-                    className={`w-2 h-2 rounded-full transition-colors ${
-                      index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                    }`}
-                  />
-                ))}
+            {listing.images.length === 1 ? (
+              // Single image - no carousel needed
+              <div className="relative h-full">
+                <img 
+                  src={listing.images[0]}
+                  alt={listing.title}
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                />
               </div>
+            ) : (
+              // Multiple images - use carousel with arrows and swipe
+              <Carousel 
+                className="w-full h-full" 
+                opts={{ 
+                  align: "start",
+                  loop: true 
+                }}
+              >
+                <CarouselContent className="h-full">
+                  {listing.images.map((image, index) => (
+                    <CarouselItem key={index} className="h-full">
+                      <div className="relative h-full">
+                        <img 
+                          src={image}
+                          alt={`${listing.title} - Image ${index + 1}`}
+                          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                        />
+                        
+                        {/* Image counter */}
+                        <div className="absolute top-2 right-12 bg-black/50 text-white px-2 py-1 rounded text-xs">
+                          {index + 1}/{listing.images.length}
+                        </div>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                
+                {/* Navigation arrows - visible on desktop, hidden on mobile for better swipe */}
+                {!isMobile && (
+                  <>
+                    <CarouselPrevious 
+                      className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 bg-white/80 hover:bg-white border-none shadow-md"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <CarouselNext 
+                      className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 bg-white/80 hover:bg-white border-none shadow-md"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </>
+                )}
+                
+                {/* Dots indicator */}
+                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+                  {listing.images.map((_, index) => (
+                    <div
+                      key={index}
+                      className="w-1.5 h-1.5 rounded-full bg-white/70"
+                    />
+                  ))}
+                </div>
+              </Carousel>
             )}
           </>
         )}
@@ -103,7 +145,7 @@ export default function ListingCard({
         <Button
           variant="ghost"
           size="sm"
-          className="absolute top-2 right-2 h-8 w-8 p-0 bg-white/90 hover:bg-white"
+          className="absolute top-2 right-2 h-8 w-8 p-0 bg-white/90 hover:bg-white z-10"
           onClick={(e) => {
             e.stopPropagation();
             toggleFavorite(listing.id);
@@ -117,7 +159,7 @@ export default function ListingCard({
         </Button>
 
         {/* Type Badge */}
-        <Badge className="absolute top-2 left-2 bg-background/90 text-foreground">
+        <Badge className="absolute top-2 left-2 bg-background/90 text-foreground z-10">
           {getTypeDisplayName(listing.type)}
         </Badge>
       </div>
