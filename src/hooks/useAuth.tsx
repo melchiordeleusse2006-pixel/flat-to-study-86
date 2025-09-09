@@ -122,6 +122,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       });
       
+      // If signup was successful and no error, automatically sign in the user
+      if (!error && data.user) {
+        // Sign in immediately to bypass email verification
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        
+        return { error: signInError };
+      }
+      
       return { error };
     } catch (error) {
       return { error };

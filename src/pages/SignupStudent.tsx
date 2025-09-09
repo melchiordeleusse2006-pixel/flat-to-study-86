@@ -94,8 +94,8 @@ export default function SignupStudent() {
       }
       setLoading(false);
     } else {
-      setSuccess(t('auth.accountCreated'));
-      setLoading(false);
+      // Navigate to home page immediately after successful signup
+      navigate('/');
     }
   };
 
