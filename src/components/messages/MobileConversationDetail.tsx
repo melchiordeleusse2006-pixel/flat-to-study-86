@@ -57,19 +57,30 @@ export function MobileConversationDetail({
         (payload) => {
           const newMessage = payload.new as Message;
           
-          // Filter messages for agency users
+          // For agency users, filter messages to only show messages in their specific conversation
           if (profile?.user_type === 'agency') {
             const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
             if (newMessage.sender_id !== studentId && newMessage.sender_id !== user?.id) {
-              return;
+              return; // Not part of this conversation
             }
+          } else {
+            // For students, include all messages for this listing (both their messages and agency replies)
+            // No additional filtering needed as the listing_id filter handles this
           }
           
           setMessages(prev => {
             const exists = prev.some(msg => msg.id === newMessage.id);
             if (exists) return prev;
-            return [...prev, newMessage];
+            const newMessages = [...prev, newMessage].sort((a, b) => 
+              new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+            );
+            return newMessages;
           });
+          
+          // Auto-scroll to new message
+          setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
           
           if (profile?.user_type === 'student' && newMessage.sender_id !== user?.id) {
             toast({
@@ -193,6 +204,23 @@ export function MobileConversationDetail({
         .single();
 
       if (error) throw error;
+
+      // Immediately add the message to the local state for instant feedback
+      if (insertedMessage) {
+        setMessages(prev => {
+          const exists = prev.some(msg => msg.id === insertedMessage.id);
+          if (exists) return prev;
+          const newMessages = [...prev, insertedMessage].sort((a, b) => 
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          );
+          return newMessages;
+        });
+        
+        // Scroll to the new message
+        setTimeout(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
 
       // Frontend fallback: trigger notification if message inserted successfully
       if (insertedMessage) {
