@@ -16,7 +16,7 @@ import { LanguageSelector } from '@/components/ui/language-selector';
 
 const Index = () => {
   const { user, profile } = useAuth();
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const unreadCount = useUnreadMessagesCount();
   const { activeListingsCount, uniqueInquiriesCount, loading: statsLoading } = useDashboardStats();
   const isMobile = useIsMobile();
@@ -41,8 +41,29 @@ const Index = () => {
         <div className="container mx-auto text-center relative z-10 px-4">
           {/* Mobile Language Selector - Only on homepage and mobile */}
           {isMobile && (
-            <div className="mb-6">
-              <LanguageSelector variant="mobile-icon" />
+            <div className="mb-6 flex justify-center">
+              <div className="bg-white/10 backdrop-blur-sm rounded-full p-1 flex items-center gap-1 border border-white/20">
+                <button
+                  onClick={() => setLanguage('en')}
+                  className={`px-3 py-1 text-sm font-medium rounded-full transition-all ${
+                    language === 'en' 
+                      ? 'bg-white text-primary' 
+                      : 'text-white hover:bg-white/10'
+                  }`}
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => setLanguage('it')}
+                  className={`px-3 py-1 text-sm font-medium rounded-full transition-all ${
+                    language === 'it' 
+                      ? 'bg-white text-primary' 
+                      : 'text-white hover:bg-white/10'
+                  }`}
+                >
+                  IT
+                </button>
+              </div>
             </div>
           )}
           
