@@ -148,18 +148,37 @@ export default function MyListings() {
       
       <main className="container max-w-6xl mx-auto py-8 pt-24">
         {/* Header */}
-        <div className="relative flex items-center justify-center mb-8">
-          <Link to="/" className="absolute left-0">
-            <Button variant="ghost" size="sm" className="text-sm text-muted-foreground hover:text-foreground">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('messages.backToHome')}
-            </Button>
-          </Link>
-          <div className="text-center">
-            <h1 className="text-3xl font-bold">{t('myListings.title')}</h1>
-            <p className="text-muted-foreground">
-              {t('myListings.subtitle')} ({listings.length} {t('myListings.totalCount')})
-            </p>
+        <div className="mb-8">
+          {/* Mobile: Stack vertically */}
+          <div className="block md:hidden">
+            <Link to="/" className="mb-4 inline-flex">
+              <Button variant="ghost" size="sm" className="text-sm text-muted-foreground hover:text-foreground">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                {t('messages.backToHome')}
+              </Button>
+            </Link>
+            <div className="text-center">
+              <h1 className="text-2xl font-bold">{t('myListings.title')}</h1>
+              <p className="text-muted-foreground">
+                {t('myListings.subtitle')} ({listings.length} {t('myListings.totalCount')})
+              </p>
+            </div>
+          </div>
+          
+          {/* Desktop: Use relative positioning */}
+          <div className="hidden md:block relative flex items-center justify-center">
+            <Link to="/" className="absolute left-0">
+              <Button variant="ghost" size="sm" className="text-sm text-muted-foreground hover:text-foreground">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                {t('messages.backToHome')}
+              </Button>
+            </Link>
+            <div className="text-center">
+              <h1 className="text-3xl font-bold">{t('myListings.title')}</h1>
+              <p className="text-muted-foreground">
+                {t('myListings.subtitle')} ({listings.length} {t('myListings.totalCount')})
+              </p>
+            </div>
           </div>
         </div>
 
