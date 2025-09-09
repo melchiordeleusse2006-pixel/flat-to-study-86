@@ -29,7 +29,8 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
 
   useEffect(() => {
     fetchMessages();
-    markMessagesAsRead();
+    // Mark messages as read immediately when conversation opens
+    setTimeout(() => markMessagesAsRead(), 500);
     
     // Fetch student profile details if agency is viewing
     if (profile?.user_type === 'agency') {
@@ -115,6 +116,13 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
     };
   }, [conversation, profile?.user_type, user?.id]);
 
+  // Separate effect to handle conversation changes and mark messages as read
+  useEffect(() => {
+    if (profile?.user_type === 'agency') {
+      setTimeout(() => markMessagesAsRead(), 100);
+    }
+  }, [conversation.listing.id, conversation.studentSenderId]);
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -185,7 +193,10 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
         .eq('agency_id', profile.id)
         .is('read_at', null);
       
-      if (!error) {
+      if (error) {
+        console.error('Error marking messages as read:', error);
+      } else {
+        console.log('Messages marked as read successfully');
         // Trigger refresh of conversations list to update unread counts
         onMessagesRead?.();
         // Also trigger unread count refresh in header
