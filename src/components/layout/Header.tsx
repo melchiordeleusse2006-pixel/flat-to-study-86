@@ -96,7 +96,7 @@ export default function Header() {
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className={`transition-colors duration-300 ${
+                  <Button variant="ghost" size="sm" className={`relative transition-colors duration-300 ${
                     shouldShowBackground 
                       ? 'text-foreground hover:text-foreground/80' 
                       : 'text-white hover:text-white/80 hover:bg-white/10'
@@ -111,6 +111,11 @@ export default function Header() {
                       <User className="h-4 w-4 mr-2" />
                     )}
                     <span className="hidden md:inline">{profile?.full_name || user.email?.split('@')[0] || t('header.account')}</span>
+                    {profile?.user_type === 'agency' && unreadCount > 0 && (
+                      <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-destructive hover:bg-destructive">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </Badge>
+                    )}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">

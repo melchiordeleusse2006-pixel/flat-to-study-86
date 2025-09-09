@@ -63,8 +63,16 @@ export function useUnreadMessagesCount() {
       )
       .subscribe();
 
+    // Listen for manual refresh events when messages are read
+    const handleUnreadRefresh = () => {
+      fetchUnreadCount();
+    };
+
+    window.addEventListener('unread-messages-refresh', handleUnreadRefresh);
+
     return () => {
       supabase.removeChannel(channel);
+      window.removeEventListener('unread-messages-refresh', handleUnreadRefresh);
     };
   }, [user, profile]);
 

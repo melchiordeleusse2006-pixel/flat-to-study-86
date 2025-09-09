@@ -188,6 +188,8 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
       if (!error) {
         // Trigger refresh of conversations list to update unread counts
         onMessagesRead?.();
+        // Also trigger unread count refresh in header
+        window.dispatchEvent(new CustomEvent('unread-messages-refresh'));
       }
     } catch (error) {
       console.error('Error marking messages as read:', error);
