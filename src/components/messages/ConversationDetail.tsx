@@ -20,7 +20,7 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Start with false for instant loading
   const [replyText, setReplyText] = useState('');
   const [sending, setSending] = useState(false);
   const [studentProfile, setStudentProfile] = useState<any>(null);
@@ -152,9 +152,8 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
       setMessages(data || []);
     } catch (error) {
       console.error('Error fetching messages:', error);
-    } finally {
-      setLoading(false);
     }
+    // Removed finally block to eliminate loading state change
   };
 
   const fetchStudentProfile = async () => {
@@ -317,11 +316,44 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
 
   if (loading) {
     return (
-      <Card className="h-full">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-      </Card>
+      <div className="h-full flex flex-col">
+        {/* Show the header immediately while messages load */}
+        <Card className="flex-shrink-0 mb-3">
+          <CardHeader className="pb-3 py-3">
+            <div className="flex gap-3 cursor-pointer hover:bg-muted/50 -m-3 p-3 rounded-lg transition-colors" onClick={() => window.open(`/listing/${conversation.listing.id}`, '_blank')}>
+              <img
+                src={listingImage}
+                alt={conversation.listing.title}
+                className="w-16 h-16 rounded-lg object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = '/placeholder.svg';
+                }}
+              />
+              <div className="flex-1">
+                <CardTitle className="text-base mb-1">{conversation.listing.title}</CardTitle>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground mb-1">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>{conversation.listing.address_line}, {conversation.listing.city}</span>
+                  </div>
+                  <Badge variant="secondary" className="text-xs">€{conversation.listing.rent_monthly_eur}/month</Badge>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+
+        {/* Show minimal loading in messages area */}
+        <Card className="flex-1 flex flex-col min-h-0">
+          <CardContent className="flex-1 flex flex-col min-h-0 p-6">
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center text-muted-foreground">
+                <div className="animate-pulse">Loading messages...</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
