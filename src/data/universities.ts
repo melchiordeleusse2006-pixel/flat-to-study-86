@@ -19,7 +19,7 @@ export const MILAN_UNIVERSITIES: University[] = [
     id: 'cattolica',
     name: 'Università Cattolica del Sacro Cuore',
     shortName: 'Cattolica',
-    lat: 45.4742,
+    lat: 45.4630,
     lng: 9.1827
   },
   {
