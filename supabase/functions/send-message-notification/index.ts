@@ -76,21 +76,21 @@ const handler = async (req: Request): Promise<Response> => {
     
     if (senderProfile?.user_type === 'agency') {
       // Agency sent message to student, notify the student
-      // Get the student who originally messaged about this listing
-      const { data: originalStudentMessages } = await supabase
+      // Find the most recent student message in this conversation thread
+      const { data: recentStudentMessages } = await supabase
         .from('messages')
         .select('sender_id')
         .eq('listing_id', messageData.listing_id)
         .neq('sender_id', messageData.sender_id)
-        .order('created_at', { ascending: true })
+        .order('created_at', { ascending: false })
         .limit(1);
         
-      if (originalStudentMessages && originalStudentMessages.length > 0) {
+      if (recentStudentMessages && recentStudentMessages.length > 0) {
         // Get the student profile
         const { data: studentProfile } = await supabase
           .from('profiles')
           .select('email, full_name, user_type')
-          .eq('user_id', originalStudentMessages[0].sender_id)
+          .eq('user_id', recentStudentMessages[0].sender_id)
           .eq('user_type', 'student')
           .single();
           
