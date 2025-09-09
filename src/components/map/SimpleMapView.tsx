@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import { Listing } from '@/types';
+import { MILAN_UNIVERSITIES } from '@/data/universities';
 import './map-styles.css';
 
 // Fix for default markers in react-leaflet
@@ -166,6 +167,55 @@ export default function SimpleMapView({
         }
         
         markers.push(marker);
+      });
+
+      // Add university markers
+      MILAN_UNIVERSITIES.forEach((university) => {
+        const universityIcon = L.divIcon({
+          html: `
+            <div style="
+              background-color: #dc2626;
+              border: 2px solid white;
+              border-radius: 50%;
+              width: 16px;
+              height: 16px;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            ">
+              <div style="
+                background-color: white;
+                border-radius: 50%;
+                width: 6px;
+                height: 6px;
+              "></div>
+            </div>
+          `,
+          className: 'university-marker',
+          iconSize: [16, 16],
+          iconAnchor: [8, 8],
+        });
+
+        const universityMarker = L.marker([university.lat, university.lng], { icon: universityIcon })
+          .addTo(map)
+          .bindTooltip(`
+            <div style="padding: 8px;">
+              <div style="font-weight: 600; font-size: 13px; color: #dc2626; margin-bottom: 4px;">
+                🎓 ${university.shortName}
+              </div>
+              <div style="font-size: 12px; color: #6b7280;">
+                ${university.name}
+              </div>
+            </div>
+          `, {
+            permanent: false,
+            direction: 'top',
+            offset: [0, -10],
+            className: 'university-tooltip'
+          });
+
+        markers.push(universityMarker);
       });
 
       // Only fit bounds on initial load, not on every update

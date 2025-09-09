@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Listing } from '@/types';
+import { MILAN_UNIVERSITIES } from '@/data/universities';
 
 // Fix for default markers in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -40,6 +41,35 @@ const createCustomIcon = (isHovered: boolean, isSelected: boolean) => {
     className: 'custom-marker',
     iconSize: [20, 20],
     iconAnchor: [10, 10],
+  });
+};
+
+// Custom marker icon for universities
+const createUniversityIcon = () => {
+  return L.divIcon({
+    html: `
+      <div style="
+        background-color: #dc2626;
+        border: 2px solid white;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+        <div style="
+          background-color: white;
+          border-radius: 50%;
+          width: 6px;
+          height: 6px;
+        "></div>
+      </div>
+    `,
+    className: 'university-marker',
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
   });
 };
 
@@ -99,6 +129,28 @@ export default function MapView({
         />
         
         <MapUpdater listings={listings} />
+        
+        {/* University Markers */}
+        {MILAN_UNIVERSITIES.map((university) => (
+          <Marker
+            key={university.id}
+            position={[university.lat, university.lng]}
+            icon={createUniversityIcon()}
+          >
+            <Popup>
+              <div className="w-48 p-2">
+                <div className="text-center">
+                  <h3 className="font-semibold text-sm text-red-600">
+                    🎓 {university.shortName}
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {university.name}
+                  </p>
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
         
         {listings.map((listing) => (
           <Marker
