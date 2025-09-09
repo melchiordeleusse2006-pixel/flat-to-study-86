@@ -11,12 +11,15 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUnreadMessagesCount } from '@/hooks/useUnreadMessagesCount';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { LanguageSelector } from '@/components/ui/language-selector';
 
 const Index = () => {
   const { user, profile } = useAuth();
   const { t } = useLanguage();
   const unreadCount = useUnreadMessagesCount();
   const { activeListingsCount, uniqueInquiriesCount, loading: statsLoading } = useDashboardStats();
+  const isMobile = useIsMobile();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
@@ -32,6 +35,13 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      
+      {/* Mobile Language Selector - Only on homepage and mobile */}
+      {isMobile && (
+        <div className="fixed top-4 right-4 z-50 bg-background/80 backdrop-blur-sm rounded-full p-2 border shadow-lg">
+          <LanguageSelector variant="mobile-icon" />
+        </div>
+      )}
       
       {/* Hero Section - Full viewport height */}
       <section className="relative h-screen flex items-center justify-center hero-gradient text-white overflow-hidden">
