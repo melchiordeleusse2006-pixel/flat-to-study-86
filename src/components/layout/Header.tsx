@@ -111,7 +111,7 @@ export default function Header() {
                       <User className="h-4 w-4 mr-2" />
                     )}
                     <span className="hidden md:inline">{profile?.full_name || user.email?.split('@')[0] || t('header.account')}</span>
-                    {profile?.user_type === 'agency' && unreadCount > 0 && (
+                    {unreadCount > 0 && (
                       <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-destructive hover:bg-destructive">
                         {unreadCount > 9 ? '9+' : unreadCount}
                       </Badge>
@@ -137,7 +137,7 @@ export default function Header() {
                     <Link to="/messages" className="flex items-center">
                       <MessageSquare className="h-4 w-4 mr-2" />
                       {t('header.messages')}
-                      {profile?.user_type === 'agency' && unreadCount > 0 && (
+                      {unreadCount > 0 && (
                         <Badge className="ml-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
                           {unreadCount}
                         </Badge>

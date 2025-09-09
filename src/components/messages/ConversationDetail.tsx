@@ -118,7 +118,7 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
 
   // Separate effect to handle conversation changes and mark messages as read
   useEffect(() => {
-    if (profile?.user_type === 'agency') {
+    if (user && profile) {
       setTimeout(() => markMessagesAsRead(), 100);
     }
   }, [conversation.listing.id, conversation.studentSenderId]);
@@ -180,28 +180,45 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
   };
 
   const markMessagesAsRead = async () => {
-    if (profile?.user_type !== 'agency') return;
+    if (!user || !profile) return;
 
     try {
-      // Mark all unread messages from students in this conversation as read
-      const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
-      const { error } = await supabase
-        .from('messages')
-        .update({ read_at: new Date().toISOString() })
-        .eq('listing_id', conversation.listing.id)
-        .eq('sender_id', studentId) // Only mark student messages as read
-        .eq('agency_id', profile.id)
-        .is('read_at', null);
-      
-      if (error) {
-        console.error('Error marking messages as read:', error);
-      } else {
-        console.log('Messages marked as read successfully');
-        // Trigger refresh of conversations list to update unread counts
-        onMessagesRead?.();
-        // Also trigger unread count refresh in header
-        window.dispatchEvent(new CustomEvent('unread-messages-refresh'));
+      if (profile.user_type === 'agency') {
+        // Mark all unread messages from students in this conversation as read
+        const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
+        const { error } = await supabase
+          .from('messages')
+          .update({ read_at: new Date().toISOString() })
+          .eq('listing_id', conversation.listing.id)
+          .eq('sender_id', studentId) // Only mark student messages as read
+          .eq('agency_id', profile.id)
+          .is('read_at', null);
+        
+        if (error) {
+          console.error('Error marking messages as read:', error);
+        } else {
+          console.log('Agency messages marked as read successfully');
+        }
+      } else if (profile.user_type === 'student') {
+        // Mark all unread agency messages in this conversation as read
+        const { error } = await supabase
+          .from('messages')
+          .update({ read_at: new Date().toISOString() })
+          .eq('listing_id', conversation.listing.id)
+          .neq('sender_id', user.id) // Only mark agency messages as read (not student's own messages)
+          .is('read_at', null);
+        
+        if (error) {
+          console.error('Error marking student messages as read:', error);
+        } else {
+          console.log('Student messages marked as read successfully');
+        }
       }
+
+      // Trigger refresh of conversations list to update unread counts
+      onMessagesRead?.();
+      // Also trigger unread count refresh in header
+      window.dispatchEvent(new CustomEvent('unread-messages-refresh'));
     } catch (error) {
       console.error('Error marking messages as read:', error);
     }

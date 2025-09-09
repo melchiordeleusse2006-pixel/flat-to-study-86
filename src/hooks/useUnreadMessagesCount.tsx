@@ -7,19 +7,51 @@ export function useUnreadMessagesCount() {
   const { user, profile } = useAuth();
 
   useEffect(() => {
-    if (!user || !profile || profile.user_type !== 'agency') {
+    if (!user || !profile) {
       setUnreadCount(0);
       return;
     }
 
     const fetchUnreadCount = async () => {
       try {
-        const { data, error } = await supabase
-          .from('messages')
-          .select('id')
-          .eq('agency_id', profile.id)
-          .neq('sender_id', user.id) // Only count messages not sent by the agency
-          .is('read_at', null);
+        let query = supabase.from('messages').select('id');
+
+        if (profile.user_type === 'agency') {
+          // For agencies: count unread messages TO them from students
+          query = query
+            .eq('agency_id', profile.id)
+            .neq('sender_id', user.id) // Only count messages not sent by the agency
+            .is('read_at', null);
+        } else if (profile.user_type === 'student') {
+          // For students: count unread messages FROM agencies to them
+          query = query
+            .eq('sender_id', user.id) // Messages sent by this student
+            .is('replied_at', null); // That haven't been replied to yet
+          
+          // Actually, let's count agency replies that the student hasn't seen
+          query = supabase
+            .from('messages')
+            .select('id')
+            .neq('sender_id', user.id) // Messages not sent by this student (i.e., from agencies)
+            .is('read_at', null); // That haven't been read by the student
+            
+          // Filter to only messages for listings the student has messaged about
+          const { data: studentMessages } = await supabase
+            .from('messages')
+            .select('listing_id')
+            .eq('sender_id', user.id);
+            
+          if (studentMessages && studentMessages.length > 0) {
+            const listingIds = [...new Set(studentMessages.map(m => m.listing_id))];
+            query = query.in('listing_id', listingIds);
+          } else {
+            // Student hasn't sent any messages, so no unread count
+            setUnreadCount(0);
+            return;
+          }
+        }
+
+        const { data, error } = await query;
 
         if (error) {
           console.error('Error fetching unread messages count:', error);
@@ -43,7 +75,9 @@ export function useUnreadMessagesCount() {
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `agency_id=eq.${profile.id}`
+          filter: profile.user_type === 'agency' 
+            ? `agency_id=eq.${profile.id}`
+            : `sender_id=neq.${user.id}` // For students, listen to messages not sent by them
         },
         () => {
           fetchUnreadCount();
@@ -55,7 +89,9 @@ export function useUnreadMessagesCount() {
           event: 'UPDATE',
           schema: 'public',
           table: 'messages',
-          filter: `agency_id=eq.${profile.id}`
+          filter: profile.user_type === 'agency' 
+            ? `agency_id=eq.${profile.id}`
+            : `sender_id=neq.${user.id}` // For students, listen to updates to messages not sent by them
         },
         () => {
           fetchUnreadCount();

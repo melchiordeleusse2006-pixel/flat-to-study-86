@@ -195,8 +195,6 @@ export function ConversationList({ onSelectConversation, selectedConversationId 
           const listing = message.listings;
           if (!listing) return;
 
-          // Include all messages for this listing (both sent and received by student)
-
           const key = listing.id;
 
           if (!conversationMap.has(key)) {
@@ -212,6 +210,12 @@ export function ConversationList({ onSelectConversation, selectedConversationId 
             if (new Date(message.created_at) > new Date(existing.lastMessage.created_at)) {
               existing.lastMessage = message;
             }
+          }
+
+          // Count unread messages from agencies to students
+          if (message.sender_id !== user.id && !message.read_at) {
+            const existing = conversationMap.get(key)!;
+            existing.unreadCount++;
           }
         });
       }
