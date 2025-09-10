@@ -40,7 +40,7 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
   const [showAllUsers, setShowAllUsers] = useState(false);
   const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
   const [userTypeFilter, setUserTypeFilter] = useState<string>('all');
-  const [emailDomainFilter, setEmailDomainFilter] = useState<string>('');
+  const [emailDomainFilter, setEmailDomainFilter] = useState<string>('all');
 
   useEffect(() => {
     fetchDashboardData();
@@ -110,7 +110,7 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
     }
     
     // Filter by email domain
-    if (emailDomainFilter.trim()) {
+    if (emailDomainFilter.trim() && emailDomainFilter !== 'all') {
       users = users.filter((user: any) => 
         user.email && user.email.toLowerCase().includes(emailDomainFilter.toLowerCase())
       );
@@ -263,7 +263,7 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
                       <SelectValue placeholder="All domains" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Domains</SelectItem>
+                      <SelectItem value="all">All Domains</SelectItem>
                       {uniqueEmailDomains.map((domain) => (
                         <SelectItem key={domain} value={domain}>
                           @{domain}
@@ -273,13 +273,13 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
                   </Select>
                 </div>
 
-                {(userTypeFilter !== 'all' || emailDomainFilter) && (
+                {(userTypeFilter !== 'all' || emailDomainFilter !== 'all') && (
                   <Button 
                     variant="ghost" 
                     size="sm"
                     onClick={() => {
                       setUserTypeFilter('all');
-                      setEmailDomainFilter('');
+                      setEmailDomainFilter('all');
                     }}
                   >
                     Clear Filters
