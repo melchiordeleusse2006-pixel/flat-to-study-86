@@ -35,6 +35,36 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_views: {
+        Row: {
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          listing_id: string
+          session_id: string | null
+          time_spent_seconds: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          listing_id: string
+          session_id?: string | null
+          time_spent_seconds?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          listing_id?: string
+          session_id?: string | null
+          time_spent_seconds?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       listings: {
         Row: {
           address_line: string
@@ -57,6 +87,7 @@ export type Database = {
           images: Json | null
           lat: number
           lng: number
+          price_history: Json | null
           published_at: string | null
           rent_monthly_eur: number
           size_sqm: number | null
@@ -87,6 +118,7 @@ export type Database = {
           images?: Json | null
           lat: number
           lng: number
+          price_history?: Json | null
           published_at?: string | null
           rent_monthly_eur: number
           size_sqm?: number | null
@@ -117,6 +149,7 @@ export type Database = {
           images?: Json | null
           lat?: number
           lng?: number
+          price_history?: Json | null
           published_at?: string | null
           rent_monthly_eur?: number
           size_sqm?: number | null
@@ -205,6 +238,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      page_views: {
+        Row: {
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          page_path: string
+          referrer: string | null
+          session_id: string | null
+          time_spent_seconds: number | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          page_path: string
+          referrer?: string | null
+          session_id?: string | null
+          time_spent_seconds?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          page_path?: string
+          referrer?: string | null
+          session_id?: string | null
+          time_spent_seconds?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
