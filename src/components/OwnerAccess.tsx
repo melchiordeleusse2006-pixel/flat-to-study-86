@@ -29,9 +29,9 @@ const OwnerAccess = ({ onAuthenticated }: OwnerAccessProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <button className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors">
-          •
-        </button>
+        <Button variant="ghost" size="sm" className="text-muted-foreground/60 hover:text-muted-foreground">
+          Owner Access
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit} className="space-y-4">

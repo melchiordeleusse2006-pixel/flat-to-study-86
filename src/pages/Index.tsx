@@ -541,10 +541,12 @@ const Index = () => {
         </>
       )}
       
-      {/* Discrete Owner Access at the bottom */}
-      <div className="fixed bottom-4 right-4">
-        <OwnerAccess onAuthenticated={() => setIsOwnerAuthenticated(true)} />
-      </div>
+      {/* Discrete Owner Access at the bottom of homepage */}
+      <footer className="py-8 text-center bg-muted/20">
+        <div className="container mx-auto">
+          <OwnerAccess onAuthenticated={() => setIsOwnerAuthenticated(true)} />
+        </div>
+      </footer>
     </div>
   );
 };
