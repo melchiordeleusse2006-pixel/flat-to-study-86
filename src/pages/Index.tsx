@@ -13,6 +13,9 @@ import { useUnreadMessagesCount } from '@/hooks/useUnreadMessagesCount';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { LanguageSelector } from '@/components/ui/language-selector';
+import OwnerAccess from '@/components/OwnerAccess';
+import OwnerDashboard from '@/pages/OwnerDashboard';
+import { useState } from 'react';
 
 const Index = () => {
   const { user, profile } = useAuth();
@@ -20,6 +23,7 @@ const Index = () => {
   const unreadCount = useUnreadMessagesCount();
   const { activeListingsCount, uniqueInquiriesCount, loading: statsLoading } = useDashboardStats();
   const isMobile = useIsMobile();
+  const [isOwnerAuthenticated, setIsOwnerAuthenticated] = useState(false);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
@@ -31,6 +35,10 @@ const Index = () => {
 
   const isStudent = profile?.user_type === 'student' || profile?.user_type === 'private';
   const isRealtor = profile?.user_type === 'agency';
+
+  if (isOwnerAuthenticated) {
+    return <OwnerDashboard onLogout={() => setIsOwnerAuthenticated(false)} />;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -532,6 +540,11 @@ const Index = () => {
           </section>
         </>
       )}
+      
+      {/* Discrete Owner Access at the bottom */}
+      <div className="fixed bottom-4 right-4">
+        <OwnerAccess onAuthenticated={() => setIsOwnerAuthenticated(true)} />
+      </div>
     </div>
   );
 };
