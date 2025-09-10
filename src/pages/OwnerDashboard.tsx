@@ -36,15 +36,18 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
     recentListings: [],
     recentMessages: []
   });
+  const [analytics, setAnalytics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showAllUsers, setShowAllUsers] = useState(false);
   const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
   const [userTypeFilter, setUserTypeFilter] = useState<string>('all');
   const [emailDomainFilter, setEmailDomainFilter] = useState<string>('all');
+  const [dateRange, setDateRange] = useState({ start: 30, end: 0 }); // last 30 days
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+    fetchAnalytics();
+  }, [dateRange]);
 
   const fetchDashboardData = async () => {
     try {
@@ -78,6 +81,28 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
       });
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+    }
+  };
+
+  const fetchAnalytics = async () => {
+    try {
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - dateRange.start);
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() - dateRange.end);
+
+      const { data, error } = await supabase.rpc('get_platform_analytics', {
+        start_date: startDate.toISOString().split('T')[0],
+        end_date: endDate.toISOString().split('T')[0]
+      });
+
+      if (error) {
+        console.error('Error fetching analytics:', error);
+      } else {
+        setAnalytics(data);
+      }
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
     } finally {
       setLoading(false);
     }
@@ -162,7 +187,94 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Stats Overview */}
+        {/* Analytics Time Range Selector */}
+        <div className="mb-6">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Analytics Time Range</h3>
+                <div className="flex gap-2">
+                  <Button 
+                    variant={dateRange.start === 7 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setDateRange({ start: 7, end: 0 })}
+                  >
+                    Last 7 days
+                  </Button>
+                  <Button 
+                    variant={dateRange.start === 30 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setDateRange({ start: 30, end: 0 })}
+                  >
+                    Last 30 days
+                  </Button>
+                  <Button 
+                    variant={dateRange.start === 90 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setDateRange({ start: 90, end: 0 })}
+                  >
+                    Last 3 months
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Website Analytics Stats */}
+        {analytics && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Page Views</p>
+                    <div className="text-2xl font-bold">{analytics.total_page_views}</div>
+                  </div>
+                  <Eye className="h-8 w-8 text-primary" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Unique Visitors</p>
+                    <div className="text-2xl font-bold">{analytics.unique_visitors}</div>
+                  </div>
+                  <Users className="h-8 w-8 text-primary" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Avg. Time on Page</p>
+                    <div className="text-2xl font-bold">{analytics.avg_time_per_page}s</div>
+                  </div>
+                  <Calendar className="h-8 w-8 text-primary" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Price Increases</p>
+                    <div className="text-2xl font-bold">{analytics.price_increases_count}</div>
+                  </div>
+                  <TrendingUp className="h-8 w-8 text-primary" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Platform Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
@@ -213,247 +325,307 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
           </Card>
         </div>
 
-        {/* Detailed Sections */}
-        <div className="grid grid-cols-1 gap-8">
-          {/* Customer Database */}
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center mb-4">
+        {/* Analytics Charts and Details */}
+        {analytics && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Most Viewed Listings */}
+            <Card>
+              <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
-                  Customer Database ({filteredUsers.length} of {stats.totalUsers} total)
+                  <Building className="h-5 w-5" />
+                  Most Viewed Properties
                 </CardTitle>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setShowAllUsers(!showAllUsers)}
-                >
-                  {showAllUsers ? 'Show Recent' : 'Show All'}
-                </Button>
-              </div>
-
-              {/* Filters */}
-              <div className="flex flex-wrap gap-4 mb-6 p-4 bg-muted/50 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4" />
-                  <span className="text-sm font-medium">Filters:</span>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <span className="text-sm">Type:</span>
-                  <Select value={userTypeFilter} onValueChange={setUserTypeFilter}>
-                    <SelectTrigger className="w-32">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      {uniqueUserTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type.charAt(0).toUpperCase() + type.slice(1)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-sm">Email Domain:</span>
-                  <Select value={emailDomainFilter} onValueChange={setEmailDomainFilter}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="All domains" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Domains</SelectItem>
-                      {uniqueEmailDomains.map((domain) => (
-                        <SelectItem key={domain} value={domain}>
-                          @{domain}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {(userTypeFilter !== 'all' || emailDomainFilter !== 'all') && (
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => {
-                      setUserTypeFilter('all');
-                      setEmailDomainFilter('all');
-                    }}
-                  >
-                    Clear Filters
-                  </Button>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {filteredUsers.map((user: any, index) => {
-                  const isExpanded = expandedUsers.has(user.id);
-                  return (
-                    <div key={index} className="border rounded-lg bg-card hover:bg-muted/50 transition-colors">
-                      {/* Compact Header - Always Visible */}
-                      <div 
-                        className="p-3 cursor-pointer flex items-center justify-between"
-                        onClick={() => toggleUserExpansion(user.id)}
-                      >
-                        <div className="flex items-center gap-3">
-                          {isExpanded ? (
-                            <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                          ) : (
-                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                          )}
-                          <span className="font-medium">
-                            {user.full_name || 'Anonymous User'}
-                          </span>
-                          <Badge variant={user.user_type === 'agency' ? 'default' : user.user_type === 'student' ? 'secondary' : 'outline'}>
-                            {user.user_type}
-                          </Badge>
-                          {user.email && (
-                            <span className="text-sm text-muted-foreground">
-                              @{user.email.split('@')[1]}
-                            </span>
-                          )}
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {analytics.most_viewed_listings && analytics.most_viewed_listings.length > 0 ? (
+                    analytics.most_viewed_listings.map((listing: any, index: number) => (
+                      <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex-1">
+                          <h4 className="font-medium line-clamp-1">{listing.title}</h4>
+                          <p className="text-sm text-muted-foreground">ID: {listing.listing_id}</p>
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                          {formatDate(user.created_at)}
-                        </div>
+                        <Badge variant="secondary">{listing.view_count} views</Badge>
                       </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-muted-foreground py-4">No property views tracked yet</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
 
-                      {/* Expanded Details - Show when clicked */}
-                      {isExpanded && (
-                        <div className="px-6 pb-4 border-t bg-muted/20">
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
-                            {/* Contact Info */}
-                            <div>
-                              <h5 className="font-medium mb-2 text-sm">Contact Information</h5>
-                              <div className="space-y-2 text-sm">
-                                {user.email && (
-                                  <div className="flex items-center gap-2">
-                                    <Mail className="h-4 w-4 text-muted-foreground" />
-                                    <span className="break-all">{user.email}</span>
-                                  </div>
-                                )}
-                                {user.phone && (
-                                  <div className="flex items-center gap-2">
-                                    <Phone className="h-4 w-4 text-muted-foreground" />
-                                    <span>{user.phone}</span>
-                                  </div>
-                                )}
-                                {!user.email && !user.phone && (
-                                  <span className="text-muted-foreground text-xs">No contact info</span>
-                                )}
-                              </div>
-                            </div>
+            {/* Popular Pages */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Eye className="h-5 w-5" />
+                  Popular Pages
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {analytics.popular_pages && analytics.popular_pages.length > 0 ? (
+                    analytics.popular_pages.map((page: any, index: number) => (
+                      <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex-1">
+                          <h4 className="font-medium">{page.page}</h4>
+                          <p className="text-sm text-muted-foreground">Avg. time: {page.avg_time}s</p>
+                        </div>
+                        <Badge variant="secondary">{page.views} views</Badge>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-muted-foreground py-4">No page views tracked yet</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
 
-                            {/* Additional Info */}
-                            <div>
-                              <h5 className="font-medium mb-2 text-sm">Additional Details</h5>
-                              <div className="space-y-2 text-sm text-muted-foreground">
-                                {user.university && (
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-medium">University:</span>
-                                    <span>{user.university}</span>
-                                  </div>
-                                )}
-                                {user.agency_name && (
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-medium">Agency:</span>
-                                    <span>{user.agency_name}</span>
-                                  </div>
-                                )}
-                                {user.company_size && (
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-medium">Company Size:</span>
-                                    <span>{user.company_size}</span>
-                                  </div>
-                                )}
-                                {user.description && (
-                                  <div>
-                                    <span className="font-medium">Description:</span>
-                                    <p className="mt-1 text-xs bg-muted/50 p-2 rounded">{user.description}</p>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
+            {/* Market Activity */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Market Activity
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 border rounded-lg">
+                    <span className="font-medium">Properties Taken Off Market</span>
+                    <Badge variant="destructive">{analytics.properties_taken_off_market}</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded-lg">
+                    <span className="font-medium">Price Increases</span>
+                    <Badge variant="default">{analytics.price_increases_count}</Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-                            {/* Account Info */}
-                            <div>
-                              <h5 className="font-medium mb-2 text-sm">Account Information</h5>
-                              <div className="space-y-2 text-sm text-muted-foreground">
+            {/* Listings Per Month */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Listings Added per Month
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {analytics.listings_per_month && analytics.listings_per_month.length > 0 ? (
+                    analytics.listings_per_month.map((month: any, index: number) => (
+                      <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                        <span className="font-medium">{month.month}</span>
+                        <Badge variant="outline">{month.count} listings</Badge>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-muted-foreground py-4">No listing data for this period</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Customer Database */}
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between items-center mb-4">
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Customer Database ({filteredUsers.length} of {stats.totalUsers} total)
+              </CardTitle>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowAllUsers(!showAllUsers)}
+              >
+                {showAllUsers ? 'Show Recent' : 'Show All'}
+              </Button>
+            </div>
+
+            {/* Filters */}
+            <div className="flex flex-wrap gap-4 mb-6 p-4 bg-muted/50 rounded-lg">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                <span className="text-sm font-medium">Filters:</span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <span className="text-sm">Type:</span>
+                <Select value={userTypeFilter} onValueChange={setUserTypeFilter}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
+                    {uniqueUserTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-sm">Email Domain:</span>
+                <Select value={emailDomainFilter} onValueChange={setEmailDomainFilter}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="All domains" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Domains</SelectItem>
+                    {uniqueEmailDomains.map((domain) => (
+                      <SelectItem key={domain} value={domain}>
+                        @{domain}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {(userTypeFilter !== 'all' || emailDomainFilter !== 'all') && (
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => {
+                    setUserTypeFilter('all');
+                    setEmailDomainFilter('all');
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          
+          <CardContent>
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {filteredUsers.map((user: any, index) => {
+                const isExpanded = expandedUsers.has(user.id);
+                return (
+                  <div key={index} className="border rounded-lg bg-card hover:bg-muted/50 transition-colors">
+                    {/* Compact Header - Always Visible */}
+                    <div 
+                      className="p-3 cursor-pointer flex items-center justify-between"
+                      onClick={() => toggleUserExpansion(user.id)}
+                    >
+                      <div className="flex items-center gap-3">
+                        {isExpanded ? (
+                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        )}
+                        <span className="font-medium">
+                          {user.full_name || 'Anonymous User'}
+                        </span>
+                        <Badge variant={user.user_type === 'agency' ? 'default' : user.user_type === 'student' ? 'secondary' : 'outline'}>
+                          {user.user_type}
+                        </Badge>
+                        {user.email && (
+                          <span className="text-sm text-muted-foreground">
+                            @{user.email.split('@')[1]}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {formatDate(user.created_at)}
+                      </div>
+                    </div>
+
+                    {/* Expanded Details - Show when clicked */}
+                    {isExpanded && (
+                      <div className="px-6 pb-4 border-t bg-muted/20">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
+                          {/* Contact Info */}
+                          <div>
+                            <h5 className="font-medium mb-2 text-sm">Contact Information</h5>
+                            <div className="space-y-2 text-sm">
+                              {user.email && (
                                 <div className="flex items-center gap-2">
-                                  <Calendar className="h-4 w-4" />
-                                  <span>Joined: {formatDate(user.created_at)}</span>
+                                  <Mail className="h-4 w-4 text-muted-foreground" />
+                                  <span className="break-all">{user.email}</span>
                                 </div>
+                              )}
+                              {user.phone && (
                                 <div className="flex items-center gap-2">
-                                  <Calendar className="h-4 w-4" />
-                                  <span>Updated: {formatDate(user.updated_at)}</span>
+                                  <Phone className="h-4 w-4 text-muted-foreground" />
+                                  <span>{user.phone}</span>
                                 </div>
-                                <div className="text-xs text-muted-foreground/70 font-mono">
-                                  ID: {user.id}
+                              )}
+                              {!user.email && !user.phone && (
+                                <span className="text-muted-foreground text-xs">No contact info</span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Additional Info */}
+                          <div>
+                            <h5 className="font-medium mb-2 text-sm">Additional Details</h5>
+                            <div className="space-y-2 text-sm text-muted-foreground">
+                              {user.university && (
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">University:</span>
+                                  <span>{user.university}</span>
                                 </div>
+                              )}
+                              {user.agency_name && (
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">Agency:</span>
+                                  <span>{user.agency_name}</span>
+                                </div>
+                              )}
+                              {user.company_size && (
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">Company Size:</span>
+                                  <span>{user.company_size}</span>
+                                </div>
+                              )}
+                              {user.description && (
+                                <div>
+                                  <span className="font-medium">Description:</span>
+                                  <p className="mt-1 text-xs bg-muted/50 p-2 rounded">{user.description}</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Account Info */}
+                          <div>
+                            <h5 className="font-medium mb-2 text-sm">Account Information</h5>
+                            <div className="space-y-2 text-sm text-muted-foreground">
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4" />
+                                <span>Joined: {formatDate(user.created_at)}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4" />
+                                <span>Updated: {formatDate(user.updated_at)}</span>
+                              </div>
+                              <div className="text-xs text-muted-foreground/70 font-mono">
+                                ID: {user.id}
                               </div>
                             </div>
                           </div>
                         </div>
-                      )}
-                    </div>
-                  );
-                })}
-                {filteredUsers.length === 0 && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                    <p>No users found</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Recent Listings and Messages in a grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-          {/* Recent Listings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building className="h-5 w-5" />
-                Recent Listings
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {stats.recentListings.map((listing: any, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-medium line-clamp-1">{listing.title}</span>
-                        <Badge variant={listing.status === 'PUBLISHED' ? 'default' : 'secondary'}>
-                          {listing.status}
-                        </Badge>
                       </div>
-                      <div className="text-sm text-muted-foreground space-y-1">
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
-                          {listing.city}, {listing.country}
-                        </div>
-                        <div className="font-medium text-foreground">
-                          €{listing.rent_monthly_eur}/month
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      <Calendar className="h-3 w-3 inline mr-1" />
-                      {formatDate(listing.created_at)}
-                    </div>
+                    )}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-          </div>
-        </div>
+                );
+              })}
+              {filteredUsers.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>No users found</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Recent Messages */}
         <Card className="mt-8">

@@ -410,6 +410,10 @@ export type Database = {
           video_url: string
         }[]
       }
+      get_platform_analytics: {
+        Args: { end_date?: string; start_date?: string }
+        Returns: Json
+      }
       get_user_profile_type: {
         Args: Record<PropertyKey, never>
         Returns: string
