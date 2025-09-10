@@ -20,6 +20,7 @@ import {
   Filter
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { OwnerConversations } from '@/components/owner/OwnerConversations';
 
 interface OwnerDashboardProps {
   onLogout: () => void;
@@ -43,6 +44,7 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
   const [userTypeFilter, setUserTypeFilter] = useState<string>('all');
   const [emailDomainFilter, setEmailDomainFilter] = useState<string>('all');
   const [dateRange, setDateRange] = useState({ start: 30, end: 0 }); // last 30 days
+  const [showConversations, setShowConversations] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -158,6 +160,28 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
     );
     return Array.from(domains).sort();
   }, [stats.allUsers]);
+
+  if (showConversations) {
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="border-b bg-card">
+          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div>
+              <h1 className="text-2xl font-bold">Flat2Study Owner Dashboard</h1>
+              <p className="text-muted-foreground">Platform overview and management</p>
+            </div>
+            <Button variant="outline" onClick={onLogout}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
+        </header>
+        <div className="container mx-auto px-4 py-6 h-[calc(100vh-80px)]">
+          <OwnerConversations onBack={() => setShowConversations(false)} />
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -300,12 +324,18 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card 
+            className="cursor-pointer hover:shadow-md transition-shadow" 
+            onClick={() => setShowConversations(true)}
+          >
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Total Messages</p>
                   <div className="text-2xl font-bold">{stats.totalMessages}</div>
+                  <Button variant="ghost" size="sm" className="mt-2 p-0 h-auto text-xs">
+                    View all conversations →
+                  </Button>
                 </div>
                 <MessageCircle className="h-8 w-8 text-primary" />
               </div>
