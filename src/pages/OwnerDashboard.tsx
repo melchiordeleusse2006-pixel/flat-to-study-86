@@ -27,10 +27,12 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
     totalMessages: 0,
     activeAgencies: 0,
     recentUsers: [],
+    allUsers: [],
     recentListings: [],
     recentMessages: []
   });
   const [loading, setLoading] = useState(true);
+  const [showAllUsers, setShowAllUsers] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -62,6 +64,7 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
         totalMessages: messages?.length || 0,
         activeAgencies,
         recentUsers: profiles?.slice(0, 5) || [],
+        allUsers: profiles || [],
         recentListings: listings?.slice(0, 5) || [],
         recentMessages: messages?.slice(0, 5) || []
       });
@@ -160,50 +163,116 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
         </div>
 
         {/* Detailed Sections */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Recent Users */}
+        <div className="grid grid-cols-1 gap-8">
+          {/* Customer Database */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Recent Users
-              </CardTitle>
+              <div className="flex justify-between items-center mb-4">
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Customer Database ({stats.totalUsers} total)
+                </CardTitle>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setShowAllUsers(!showAllUsers)}
+                >
+                  {showAllUsers ? 'Show Recent' : 'Show All'}
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {stats.recentUsers.map((user: any, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-medium">{user.full_name || 'Anonymous'}</span>
-                        <Badge variant={user.user_type === 'agency' ? 'default' : 'secondary'}>
-                          {user.user_type}
-                        </Badge>
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {(showAllUsers ? stats.allUsers : stats.recentUsers).map((user: any, index) => (
+                  <div key={index} className="p-4 border rounded-lg bg-card hover:bg-muted/50 transition-colors">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {/* Basic Info */}
+                      <div>
+                        <h4 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                          {user.full_name || 'Anonymous User'}
+                          <Badge variant={user.user_type === 'agency' ? 'default' : user.user_type === 'student' ? 'secondary' : 'outline'}>
+                            {user.user_type}
+                          </Badge>
+                        </h4>
+                        <div className="space-y-2 text-sm">
+                          {user.email && (
+                            <div className="flex items-center gap-2">
+                              <Mail className="h-4 w-4 text-muted-foreground" />
+                              <span className="break-all">{user.email}</span>
+                            </div>
+                          )}
+                          {user.phone && (
+                            <div className="flex items-center gap-2">
+                              <Phone className="h-4 w-4 text-muted-foreground" />
+                              <span>{user.phone}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground space-y-1">
-                        {user.email && (
-                          <div className="flex items-center gap-1">
-                            <Mail className="h-3 w-3" />
-                            {user.email}
-                          </div>
-                        )}
-                        {user.phone && (
-                          <div className="flex items-center gap-1">
-                            <Phone className="h-3 w-3" />
-                            {user.phone}
-                          </div>
-                        )}
+
+                      {/* Additional Info */}
+                      <div>
+                        <h5 className="font-medium mb-2">Additional Details</h5>
+                        <div className="space-y-2 text-sm text-muted-foreground">
+                          {user.university && (
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">University:</span>
+                              <span>{user.university}</span>
+                            </div>
+                          )}
+                          {user.agency_name && (
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">Agency:</span>
+                              <span>{user.agency_name}</span>
+                            </div>
+                          )}
+                          {user.company_size && (
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">Company Size:</span>
+                              <span>{user.company_size}</span>
+                            </div>
+                          )}
+                          {user.description && (
+                            <div>
+                              <span className="font-medium">Description:</span>
+                              <p className="mt-1 text-xs bg-muted/50 p-2 rounded">{user.description}</p>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      <Calendar className="h-3 w-3 inline mr-1" />
-                      {formatDate(user.created_at)}
+
+                      {/* Account Info */}
+                      <div>
+                        <h5 className="font-medium mb-2">Account Info</h5>
+                        <div className="space-y-2 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4" />
+                            <span>Joined: {formatDate(user.created_at)}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4" />
+                            <span>Updated: {formatDate(user.updated_at)}</span>
+                          </div>
+                          <div className="text-xs text-muted-foreground/70">
+                            ID: {user.id}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
+                {(showAllUsers ? stats.allUsers : stats.recentUsers).length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                    <p>No users found</p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
+
+          {/* Recent Listings and Messages in a grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
           {/* Recent Listings */}
           <Card>
@@ -243,6 +312,7 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
               </div>
             </CardContent>
           </Card>
+          </div>
         </div>
 
         {/* Recent Messages */}
