@@ -255,28 +255,46 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {stats.recentMessages.map((message: any, index) => (
-                <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-medium">{message.sender_name}</span>
-                      {message.sender_phone && (
-                        <span className="text-sm text-muted-foreground">({message.sender_phone})</span>
-                      )}
+              {stats.recentMessages.length > 0 ? (
+                stats.recentMessages.map((message: any, index) => (
+                  <div key={index} className="p-4 border rounded-lg bg-card hover:bg-muted/50 transition-colors">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-semibold text-foreground">{message.sender_name}</span>
+                          {message.sender_phone && (
+                            <Badge variant="outline" className="text-xs">
+                              {message.sender_phone}
+                            </Badge>
+                          )}
+                        </div>
+                        {message.sender_university && (
+                          <div className="text-sm text-muted-foreground mb-2">
+                            📚 {message.sender_university}
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {formatDate(message.created_at)}
+                      </div>
                     </div>
-                    <p className="text-sm line-clamp-2">{message.message}</p>
-                    {message.sender_university && (
-                      <div className="text-xs text-muted-foreground mt-1">
-                        University: {message.sender_university}
+                    <div className="bg-muted/30 rounded-md p-3">
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.message}</p>
+                    </div>
+                    {message.conversation_id && (
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        ID: {message.conversation_id}
                       </div>
                     )}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    <Calendar className="h-3 w-3 inline mr-1" />
-                    {formatDate(message.created_at)}
-                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <MessageCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>No messages yet</p>
                 </div>
-              ))}
+              )}
             </div>
           </CardContent>
         </Card>
