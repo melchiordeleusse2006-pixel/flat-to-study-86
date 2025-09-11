@@ -71,6 +71,7 @@ export type Database = {
           agency_fee: string | null
           agency_id: string
           amenities: Json | null
+          auto_repost: boolean | null
           availability_date: string
           bathrooms: number
           bedrooms: number
@@ -86,6 +87,7 @@ export type Database = {
           id: string
           images: Json | null
           lat: number
+          lease_end_date: string | null
           lng: number
           price_history: Json | null
           published_at: string | null
@@ -102,6 +104,7 @@ export type Database = {
           agency_fee?: string | null
           agency_id: string
           amenities?: Json | null
+          auto_repost?: boolean | null
           availability_date: string
           bathrooms: number
           bedrooms: number
@@ -117,6 +120,7 @@ export type Database = {
           id?: string
           images?: Json | null
           lat: number
+          lease_end_date?: string | null
           lng: number
           price_history?: Json | null
           published_at?: string | null
@@ -133,6 +137,7 @@ export type Database = {
           agency_fee?: string | null
           agency_id?: string
           amenities?: Json | null
+          auto_repost?: boolean | null
           availability_date?: string
           bathrooms?: number
           bedrooms?: number
@@ -148,6 +153,7 @@ export type Database = {
           id?: string
           images?: Json | null
           lat?: number
+          lease_end_date?: string | null
           lng?: number
           price_history?: Json | null
           published_at?: string | null
