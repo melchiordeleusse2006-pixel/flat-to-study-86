@@ -14,6 +14,108 @@ export type Database = {
   }
   public: {
     Tables: {
+      archives: {
+        Row: {
+          address_line: string
+          agency_contact: Json | null
+          agency_fee: string | null
+          agency_id: string
+          amenities: Json | null
+          archive_reason: string
+          archived_at: string
+          auto_repost: boolean | null
+          availability_date: string
+          bathrooms: number
+          bedrooms: number
+          bills_included: boolean | null
+          city: string
+          country: string
+          deposit_eur: number
+          description: string
+          floor: string | null
+          furnished: boolean | null
+          id: string
+          images: Json | null
+          lat: number
+          lease_end_date: string | null
+          lng: number
+          original_created_at: string | null
+          original_listing_id: string
+          original_published_at: string | null
+          rent_monthly_eur: number
+          size_sqm: number | null
+          title: string
+          type: string
+          video_url: string | null
+        }
+        Insert: {
+          address_line: string
+          agency_contact?: Json | null
+          agency_fee?: string | null
+          agency_id: string
+          amenities?: Json | null
+          archive_reason: string
+          archived_at?: string
+          auto_repost?: boolean | null
+          availability_date: string
+          bathrooms: number
+          bedrooms: number
+          bills_included?: boolean | null
+          city: string
+          country: string
+          deposit_eur: number
+          description: string
+          floor?: string | null
+          furnished?: boolean | null
+          id?: string
+          images?: Json | null
+          lat: number
+          lease_end_date?: string | null
+          lng: number
+          original_created_at?: string | null
+          original_listing_id: string
+          original_published_at?: string | null
+          rent_monthly_eur: number
+          size_sqm?: number | null
+          title: string
+          type: string
+          video_url?: string | null
+        }
+        Update: {
+          address_line?: string
+          agency_contact?: Json | null
+          agency_fee?: string | null
+          agency_id?: string
+          amenities?: Json | null
+          archive_reason?: string
+          archived_at?: string
+          auto_repost?: boolean | null
+          availability_date?: string
+          bathrooms?: number
+          bedrooms?: number
+          bills_included?: boolean | null
+          city?: string
+          country?: string
+          deposit_eur?: number
+          description?: string
+          floor?: string | null
+          furnished?: boolean | null
+          id?: string
+          images?: Json | null
+          lat?: number
+          lease_end_date?: string | null
+          lng?: number
+          original_created_at?: string | null
+          original_listing_id?: string
+          original_published_at?: string | null
+          rent_monthly_eur?: number
+          size_sqm?: number | null
+          title?: string
+          type?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           created_at: string

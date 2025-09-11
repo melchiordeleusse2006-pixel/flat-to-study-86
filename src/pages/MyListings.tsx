@@ -36,6 +36,7 @@ export default function MyListings() {
   const [showRentedDialog, setShowRentedDialog] = useState(false);
   const [showCongratsDialog, setShowCongratsDialog] = useState(false);
   const [showRepostDialog, setShowRepostDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [leaseEndDate, setLeaseEndDate] = useState('');
 
   // Redirect non-agency users
@@ -82,37 +83,6 @@ export default function MyListings() {
     }
   };
 
-  const handleDeleteListing = async (listingId: string) => {
-    if (!confirm(t('myListings.deleteConfirm'))) return;
-
-    try {
-      const { error } = await supabase
-        .from('listings')
-        .delete()
-        .eq('id', listingId);
-
-      if (error) {
-        toast({
-          title: "Error",
-          description: t('myListings.deleteError'),
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Success",
-          description: t('myListings.deleteSuccess'),
-        });
-        fetchListings(); // Refresh the list
-      }
-    } catch (error) {
-      console.error('Error deleting listing:', error);
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred",
-        variant: "destructive",
-      });
-    }
-  };
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
@@ -139,20 +109,94 @@ export default function MyListings() {
   };
 
   const handleRepostDecision = async (wantRepost: boolean) => {
-    try {
-      // Update listing status to rented and store lease info
-      const updateData: any = {
-        status: 'RENTED',
-        lease_end_date: leaseEndDate,
-        auto_repost: wantRepost
-      };
+    if (wantRepost) {
+      await markAsRented(true);
+    } else {
+      setShowRepostDialog(false);
+      setShowDeleteDialog(true);
+    }
+  };
 
-      const { error } = await supabase
+  const markAsRented = async (autoRepost: boolean) => {
+    try {
+      // Get the full listing details for archiving
+      const { data: listing, error: fetchError } = await supabase
         .from('listings')
-        .update(updateData)
+        .select('*')
+        .eq('id', selectedListing)
+        .single();
+
+      if (fetchError || !listing) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch listing details",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Get agency contact info
+      const { data: agencyData } = await supabase
+        .from('profiles')
+        .select('agency_name, phone, email')
+        .eq('id', listing.agency_id)
+        .single();
+
+      // Archive the listing
+      const { error: archiveError } = await supabase
+        .from('archives')
+        .insert({
+          original_listing_id: listing.id,
+          agency_id: listing.agency_id,
+          title: listing.title,
+          type: listing.type,
+          description: listing.description,
+          address_line: listing.address_line,
+          city: listing.city,
+          country: listing.country,
+          lat: listing.lat,
+          lng: listing.lng,
+          rent_monthly_eur: listing.rent_monthly_eur,
+          deposit_eur: listing.deposit_eur,
+          bills_included: listing.bills_included,
+          furnished: listing.furnished,
+          bedrooms: listing.bedrooms,
+          bathrooms: listing.bathrooms,
+          floor: listing.floor,
+          size_sqm: listing.size_sqm,
+          amenities: listing.amenities,
+          availability_date: listing.availability_date,
+          images: listing.images,
+          video_url: listing.video_url,
+          agency_fee: listing.agency_fee,
+          lease_end_date: leaseEndDate,
+          auto_repost: autoRepost,
+          archive_reason: 'RENTED',
+          original_created_at: listing.created_at,
+          original_published_at: listing.published_at,
+          agency_contact: agencyData || null
+        });
+
+      if (archiveError) {
+        toast({
+          title: "Error",
+          description: "Failed to archive listing",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Update listing status to rented
+      const { error: updateError } = await supabase
+        .from('listings')
+        .update({
+          status: 'RENTED',
+          lease_end_date: leaseEndDate,
+          auto_repost: autoRepost
+        })
         .eq('id', selectedListing);
 
-      if (error) {
+      if (updateError) {
         toast({
           title: "Error",
           description: "Failed to update listing status",
@@ -161,16 +205,121 @@ export default function MyListings() {
       } else {
         toast({
           title: "Success",
-          description: "Listing marked as rented successfully!",
+          description: "Listing marked as rented and archived successfully!",
         });
         fetchListings(); // Refresh the list
       }
     } catch (error) {
-      console.error('Error updating listing:', error);
+      console.error('Error processing rental:', error);
     }
     
     // Reset state
     setShowRepostDialog(false);
+    setSelectedListing(null);
+    setLeaseEndDate('');
+  };
+
+  const handleDeleteListing = async (listingId: string, fromDialog = false) => {
+    if (!fromDialog && !confirm(t('myListings.deleteConfirm'))) return;
+
+    try {
+      // Get the full listing details for archiving
+      const { data: listing, error: fetchError } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('id', listingId)
+        .single();
+
+      if (fetchError || !listing) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch listing details",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Get agency contact info
+      const { data: agencyData } = await supabase
+        .from('profiles')
+        .select('agency_name, phone, email')
+        .eq('id', listing.agency_id)
+        .single();
+
+      // Archive the listing before deleting
+      const { error: archiveError } = await supabase
+        .from('archives')
+        .insert({
+          original_listing_id: listing.id,
+          agency_id: listing.agency_id,
+          title: listing.title,
+          type: listing.type,
+          description: listing.description,
+          address_line: listing.address_line,
+          city: listing.city,
+          country: listing.country,
+          lat: listing.lat,
+          lng: listing.lng,
+          rent_monthly_eur: listing.rent_monthly_eur,
+          deposit_eur: listing.deposit_eur,
+          bills_included: listing.bills_included,
+          furnished: listing.furnished,
+          bedrooms: listing.bedrooms,
+          bathrooms: listing.bathrooms,
+          floor: listing.floor,
+          size_sqm: listing.size_sqm,
+          amenities: listing.amenities,
+          availability_date: listing.availability_date,
+          images: listing.images,
+          video_url: listing.video_url,
+          agency_fee: listing.agency_fee,
+          archive_reason: 'DELETED',
+          original_created_at: listing.created_at,
+          original_published_at: listing.published_at,
+          agency_contact: agencyData || null
+        });
+
+      if (archiveError) {
+        toast({
+          title: "Error",
+          description: "Failed to archive listing",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Delete the listing
+      const { error } = await supabase
+        .from('listings')
+        .delete()
+        .eq('id', listingId);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: t('myListings.deleteError'),
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Listing deleted and archived successfully!",
+        });
+        fetchListings(); // Refresh the list
+      }
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    setShowDeleteDialog(false);
+    handleDeleteListing(selectedListing!, true);
     setSelectedListing(null);
     setLeaseEndDate('');
   };
@@ -333,7 +482,7 @@ export default function MyListings() {
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => handleDeleteListing(listing.id)}
+                      onClick={() => handleDeleteListing(listing.id, false)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -410,6 +559,26 @@ export default function MyListings() {
               </Button>
               <Button variant="outline" onClick={() => handleRepostDecision(false)} className="flex-1">
                 No, thanks
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete Listing</DialogTitle>
+              <DialogDescription>
+                Then we will delete the listing. Are you sure you want to proceed?
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex gap-3 mt-4">
+              <Button onClick={handleConfirmDelete} variant="destructive" className="flex-1">
+                Confirm Delete
+              </Button>
+              <Button variant="outline" onClick={() => setShowDeleteDialog(false)} className="flex-1">
+                Go Back
               </Button>
             </div>
           </DialogContent>
