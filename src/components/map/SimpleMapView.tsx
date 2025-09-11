@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import { Listing } from '@/types';
 import { MILAN_UNIVERSITIES } from '@/data/universities';
+import { loadLeafletCSS } from './leaflet-loader';
 import './map-styles.css';
 
 // Fix for default markers in react-leaflet
@@ -42,6 +43,7 @@ export default function SimpleMapView({
   };
 
   useEffect(() => {
+    loadLeafletCSS();
     if (!mapRef.current) return;
 
     // Initialize map

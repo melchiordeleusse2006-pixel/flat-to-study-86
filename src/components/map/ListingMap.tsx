@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { loadLeafletCSS } from './leaflet-loader';
 import { supabase } from '@/integrations/supabase/client';
 import { AlertCircle } from 'lucide-react';
 
@@ -24,6 +24,10 @@ interface ListingMapProps {
 
 // OpenStreetMap fallback component
 const OpenStreetMapFallback = ({ lat, lng, address, className }: ListingMapProps) => {
+  useEffect(() => {
+    loadLeafletCSS();
+  }, []);
+
   return (
     <div className={`relative ${className || 'h-64'}`}>
       <div className="absolute top-2 left-2 z-[1000] bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs flex items-center">

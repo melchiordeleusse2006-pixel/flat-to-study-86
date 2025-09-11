@@ -127,43 +127,8 @@ All colors MUST be HSL.
   }
 }
 
-/* Leaflet CSS import */
-@import 'leaflet/dist/leaflet.css';
-
-/* Custom marketplace styles */
+/* Custom marketplace styles - only critical ones */
 @layer components {
-  .listing-card {
-    @apply bg-card border border-border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200;
-  }
-  
-  .listing-card:hover {
-    @apply scale-[1.02] border-primary/20;
-  }
-  
-  .price-badge {
-    @apply bg-price text-price-foreground px-3 py-1 rounded-full font-semibold text-sm;
-  }
-  
-  .status-badge {
-    @apply px-2 py-1 rounded-full text-xs font-medium;
-  }
-  
-  .status-available {
-    @apply bg-available/10 text-available;
-  }
-  
-  .status-pending {
-    @apply bg-warning/10 text-warning;
-  }
-  
-  .status-expired {
-    @apply bg-muted text-muted-foreground;
-  }
-  
-  .map-container {
-    @apply w-full h-full rounded-lg overflow-hidden shadow-lg;
-  }
-  
   .hero-gradient {
     background: var(--gradient-hero);
   }
@@ -172,12 +137,12 @@ All colors MUST be HSL.
     background: var(--gradient-card);
   }
   
-  /* Hide scrollbar for horizontal scroll */
+  /* Hide scrollbar for horizontal scroll - critical for mobile */
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
   .scrollbar-hide::-webkit-scrollbar { 
-    display: none;  /* Safari and Chrome */
+    display: none;
   }
 }

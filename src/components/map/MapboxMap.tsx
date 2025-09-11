@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { loadLeafletCSS } from './leaflet-loader';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -29,6 +29,10 @@ interface MapboxMapProps {
 // OpenStreetMap fallback component
 const OpenStreetMapFallback = ({ listings, className, onListingClick }: MapboxMapProps) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    loadLeafletCSS();
+  }, []);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {

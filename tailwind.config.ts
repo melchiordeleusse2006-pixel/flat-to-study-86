@@ -3,12 +3,26 @@ import type { Config } from "tailwindcss";
 export default {
 	darkMode: ["class"],
 	content: [
-		"./pages/**/*.{ts,tsx}",
-		"./components/**/*.{ts,tsx}",
-		"./app/**/*.{ts,tsx}",
 		"./src/**/*.{ts,tsx}",
+		"./index.html",
 	],
 	prefix: "",
+	safelist: [
+		// Critical UI patterns
+		'grid-cols-1', 'grid-cols-2', 'grid-cols-3', 'grid-cols-4',
+		'md:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-4',
+		// Essential responsive classes
+		'hidden', 'block', 'flex', 'inline-flex',
+		'sm:block', 'md:block', 'lg:block',
+		'sm:hidden', 'md:hidden', 'lg:hidden',
+		// Core layout classes
+		'w-full', 'h-full', 'min-h-screen',
+		// Essential spacing
+		'p-4', 'p-6', 'p-8', 'm-4', 'm-6', 'm-8',
+		'px-4', 'py-4', 'mx-4', 'my-4',
+		// Key component states
+		'hover:shadow-md', 'hover:scale-105', 'transition-all',
+	],
 	theme: {
 		container: {
 			center: true,
