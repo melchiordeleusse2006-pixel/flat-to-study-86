@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Home, Plus, Eye, Edit, Trash2, ArrowLeft } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Home, Plus, Eye, Edit, Trash2, ArrowLeft, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import { useAuth } from '@/hooks/useAuth';
@@ -29,6 +32,11 @@ export default function MyListings() {
   const navigate = useNavigate();
   const [listings, setListings] = useState<AgencyListing[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedListing, setSelectedListing] = useState<string | null>(null);
+  const [showRentedDialog, setShowRentedDialog] = useState(false);
+  const [showCongratsDialog, setShowCongratsDialog] = useState(false);
+  const [showRepostDialog, setShowRepostDialog] = useState(false);
+  const [leaseEndDate, setLeaseEndDate] = useState('');
 
   // Redirect non-agency users
   useEffect(() => {
@@ -114,12 +122,66 @@ export default function MyListings() {
     }).format(price);
   };
 
+  const handleMarkAsRented = (listingId: string) => {
+    setSelectedListing(listingId);
+    setShowRentedDialog(true);
+  };
+
+  const handleConfirmRented = () => {
+    setShowRentedDialog(false);
+    setShowCongratsDialog(true);
+  };
+
+  const handleLeaseSubmit = () => {
+    if (!leaseEndDate) return;
+    setShowCongratsDialog(false);
+    setShowRepostDialog(true);
+  };
+
+  const handleRepostDecision = async (wantRepost: boolean) => {
+    try {
+      // Update listing status to rented and store lease info
+      const updateData: any = {
+        status: 'RENTED',
+        lease_end_date: leaseEndDate,
+        auto_repost: wantRepost
+      };
+
+      const { error } = await supabase
+        .from('listings')
+        .update(updateData)
+        .eq('id', selectedListing);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to update listing status",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Listing marked as rented successfully!",
+        });
+        fetchListings(); // Refresh the list
+      }
+    } catch (error) {
+      console.error('Error updating listing:', error);
+    }
+    
+    // Reset state
+    setShowRepostDialog(false);
+    setSelectedListing(null);
+    setLeaseEndDate('');
+  };
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       'PUBLISHED': { variant: 'default' as const, label: t('myListings.status.published') },
       'DRAFT': { variant: 'secondary' as const, label: t('myListings.status.draft') },
       'EXPIRED': { variant: 'destructive' as const, label: t('myListings.status.expired') },
       'ARCHIVED': { variant: 'outline' as const, label: t('myListings.status.archived') },
+      'RENTED': { variant: 'secondary' as const, label: 'Rented' },
     };
     
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.DRAFT;
@@ -239,6 +301,20 @@ export default function MyListings() {
                     {listing.type.charAt(0).toUpperCase() + listing.type.slice(1)} in {listing.city}
                   </p>
 
+                  {/* Rented Button - Only show for published listings */}
+                  {listing.status === 'PUBLISHED' && (
+                    <div className="mb-3">
+                      <Button 
+                        onClick={() => handleMarkAsRented(listing.id)}
+                        className="w-full bg-green-600 hover:bg-green-700 text-white"
+                        size="sm"
+                      >
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        It's Rented!
+                      </Button>
+                    </div>
+                  )}
+
                   {/* Actions */}
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" className="flex-1">
@@ -267,6 +343,77 @@ export default function MyListings() {
             ))}
           </div>
         )}
+
+        {/* Rental Confirmation Dialog */}
+        <Dialog open={showRentedDialog} onOpenChange={setShowRentedDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Mark as Rented</DialogTitle>
+              <DialogDescription>
+                Did you rent your apartment?
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex gap-3 mt-4">
+              <Button onClick={handleConfirmRented} className="flex-1">
+                Yes
+              </Button>
+              <Button variant="outline" onClick={() => setShowRentedDialog(false)} className="flex-1">
+                Go Back
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Congratulations Dialog */}
+        <Dialog open={showCongratsDialog} onOpenChange={setShowCongratsDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Congratulations!</DialogTitle>
+              <DialogDescription>
+                How long are you renting it for?
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 mt-4">
+              <div>
+                <Label htmlFor="lease-end">Lease End Date</Label>
+                <Input 
+                  id="lease-end"
+                  type="date" 
+                  value={leaseEndDate}
+                  onChange={(e) => setLeaseEndDate(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              <Button 
+                onClick={handleLeaseSubmit} 
+                className="w-full"
+                disabled={!leaseEndDate}
+              >
+                Continue
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Repost Dialog */}
+        <Dialog open={showRepostDialog} onOpenChange={setShowRepostDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Auto-Repost Option</DialogTitle>
+              <DialogDescription>
+                Would you like us to post it back here one month before the lease will expire? That way, you will be able to rent it again as quickly as possible.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex gap-3 mt-4">
+              <Button onClick={() => handleRepostDecision(true)} className="flex-1">
+                Yes, auto-repost
+              </Button>
+              <Button variant="outline" onClick={() => handleRepostDecision(false)} className="flex-1">
+                No, thanks
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </main>
     </div>
   );
