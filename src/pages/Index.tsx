@@ -5,7 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { Search, Users, Shield, MapPin, Heart, MessageCircle, BarChart3, Plus, Eye, ChevronDown } from 'lucide-react';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
-import { universities, mockListings } from '@/data/mockData';
+import { universities } from '@/data/mockData';
+import { useFeaturedListings } from '@/hooks/useFeaturedListings';
 import { Logo } from '@/components/ui/logo';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -22,6 +23,7 @@ const Index = () => {
   const { t, language, setLanguage } = useLanguage();
   const unreadCount = useUnreadMessagesCount();
   const { activeListingsCount, uniqueInquiriesCount, loading: statsLoading } = useDashboardStats();
+  const { listings: featuredListings, loading: listingsLoading } = useFeaturedListings(6);
   const isMobile = useIsMobile();
   const [isOwnerAuthenticated, setIsOwnerAuthenticated] = useState(false);
 
@@ -168,38 +170,61 @@ const Index = () => {
                   </div>
                   
                   <div className="relative mb-8">
-                    <div className="flex gap-8 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
-                      {mockListings.slice(0, 6).map(listing => (
-                        <Card key={listing.id} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden hover:shadow-lg transition-shadow snap-start">
-                          <div className="relative h-48">
-                            <img 
-                              src={listing.images[0] || '/placeholder.svg'} 
-                              alt={listing.title} 
-                              className="w-full h-full object-cover" 
-                            />
-                            <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-                              {t('home.featured')}
-                            </Badge>
-                          </div>
-                          <CardContent className="p-6">
-                            <h3 className="font-semibold mb-2 line-clamp-2">{listing.title}</h3>
-                            <p className="text-muted-foreground text-sm mb-3 flex items-center">
-                              <MapPin className="h-4 w-4 mr-1" />
-                              {listing.addressLine}, {listing.city}
-                            </p>
-                            <div className="flex items-center justify-between">
-                              <span className="text-2xl font-bold text-price">
-                                {formatPrice(listing.rentMonthlyEUR)}
-                                <span className="text-sm text-muted-foreground font-normal">{t('home.month')}</span>
-                              </span>
-                              <Link to={`/listing/${listing.id}`}>
-                                <Button size="sm">{t('home.viewDetails')}</Button>
-                              </Link>
+                    {listingsLoading ? (
+                      <div className="flex gap-8 overflow-x-auto pb-4">
+                        {[...Array(6)].map((_, index) => (
+                          <Card key={index} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden">
+                            <div className="h-48 bg-muted animate-pulse"></div>
+                            <CardContent className="p-6">
+                              <div className="h-4 bg-muted animate-pulse rounded mb-2"></div>
+                              <div className="h-3 bg-muted animate-pulse rounded mb-3 w-3/4"></div>
+                              <div className="flex items-center justify-between">
+                                <div className="h-6 bg-muted animate-pulse rounded w-20"></div>
+                                <div className="h-8 bg-muted animate-pulse rounded w-16"></div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : featuredListings.length === 0 ? (
+                      <div className="text-center py-12">
+                        <p className="text-muted-foreground text-lg">{t('home.noListingsAvailable')}</p>
+                        <p className="text-muted-foreground text-sm mt-2">{t('home.checkBackLater')}</p>
+                      </div>
+                    ) : (
+                      <div className="flex gap-8 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+                        {featuredListings.map(listing => (
+                          <Card key={listing.id} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden hover:shadow-lg transition-shadow snap-start">
+                            <div className="relative h-48">
+                              <img 
+                                src={listing.images[0] || '/placeholder.svg'} 
+                                alt={listing.title} 
+                                className="w-full h-full object-cover" 
+                              />
+                              <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
+                                {t('home.featured')}
+                              </Badge>
                             </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
+                            <CardContent className="p-6">
+                              <h3 className="font-semibold mb-2 line-clamp-2">{listing.title}</h3>
+                              <p className="text-muted-foreground text-sm mb-3 flex items-center">
+                                <MapPin className="h-4 w-4 mr-1" />
+                                {listing.address_line && listing.city ? `${listing.address_line}, ${listing.city}` : listing.city || 'Location not specified'}
+                              </p>
+                              <div className="flex items-center justify-between">
+                                <span className="text-2xl font-bold text-price">
+                                  {formatPrice(listing.rent_monthly_eur)}
+                                  <span className="text-sm text-muted-foreground font-normal">{t('home.month')}</span>
+                                </span>
+                                <Link to={`/listing/${listing.id}`}>
+                                  <Button size="sm">{t('home.viewDetails')}</Button>
+                                </Link>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   
                   <div className="text-center">
@@ -446,38 +471,61 @@ const Index = () => {
               </div>
               
               <div className="relative mb-8">
-                <div className="flex gap-8 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
-                  {mockListings.slice(0, 6).map(listing => (
-                    <Card key={listing.id} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden hover:shadow-lg transition-shadow snap-start">
-                      <div className="relative h-48">
-                        <img 
-                          src={listing.images[0] || '/placeholder.svg'} 
-                          alt={listing.title} 
-                          className="w-full h-full object-cover" 
-                        />
-                        <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-                          {t('home.featured')}
-                        </Badge>
-                      </div>
-                      <CardContent className="p-6">
-                        <h3 className="font-semibold mb-2 line-clamp-2">{listing.title}</h3>
-                        <p className="text-muted-foreground text-sm mb-3 flex items-center">
-                          <MapPin className="h-4 w-4 mr-1" />
-                          {listing.addressLine}, {listing.city}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-2xl font-bold text-price">
-                            {formatPrice(listing.rentMonthlyEUR)}
-                            <span className="text-sm text-muted-foreground font-normal">{t('home.month')}</span>
-                          </span>
-                          <Link to={`/listing/${listing.id}`}>
-                            <Button size="sm">{t('home.viewDetails')}</Button>
-                          </Link>
+                {listingsLoading ? (
+                  <div className="flex gap-8 overflow-x-auto pb-4">
+                    {[...Array(6)].map((_, index) => (
+                      <Card key={index} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden">
+                        <div className="h-48 bg-muted animate-pulse"></div>
+                        <CardContent className="p-6">
+                          <div className="h-4 bg-muted animate-pulse rounded mb-2"></div>
+                          <div className="h-3 bg-muted animate-pulse rounded mb-3 w-3/4"></div>
+                          <div className="flex items-center justify-between">
+                            <div className="h-6 bg-muted animate-pulse rounded w-20"></div>
+                            <div className="h-8 bg-muted animate-pulse rounded w-16"></div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : featuredListings.length === 0 ? (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground text-lg">{t('home.noListingsAvailable')}</p>
+                    <p className="text-muted-foreground text-sm mt-2">{t('home.checkBackLater')}</p>
+                  </div>
+                ) : (
+                  <div className="flex gap-8 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+                    {featuredListings.map(listing => (
+                      <Card key={listing.id} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden hover:shadow-lg transition-shadow snap-start">
+                        <div className="relative h-48">
+                          <img 
+                            src={listing.images[0] || '/placeholder.svg'} 
+                            alt={listing.title} 
+                            className="w-full h-full object-cover" 
+                          />
+                          <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
+                            {t('home.featured')}
+                          </Badge>
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                        <CardContent className="p-6">
+                          <h3 className="font-semibold mb-2 line-clamp-2">{listing.title}</h3>
+                          <p className="text-muted-foreground text-sm mb-3 flex items-center">
+                            <MapPin className="h-4 w-4 mr-1" />
+                            {listing.address_line && listing.city ? `${listing.address_line}, ${listing.city}` : listing.city || 'Location not specified'}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-2xl font-bold text-price">
+                              {formatPrice(listing.rent_monthly_eur)}
+                              <span className="text-sm text-muted-foreground font-normal">{t('home.month')}</span>
+                            </span>
+                            <Link to={`/listing/${listing.id}`}>
+                              <Button size="sm">{t('home.viewDetails')}</Button>
+                            </Link>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </div>
               
               <div className="text-center">
