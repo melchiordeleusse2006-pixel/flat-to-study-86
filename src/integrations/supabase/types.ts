@@ -169,20 +169,20 @@ export type Database = {
       }
       listings: {
         Row: {
-          address_line: string
+          address_line: string | null
           agency_fee: string | null
           agency_id: string
           amenities: Json | null
           auto_repost: boolean | null
-          availability_date: string
-          bathrooms: number
-          bedrooms: number
+          availability_date: string | null
+          bathrooms: number | null
+          bedrooms: number | null
           bills_included: boolean | null
-          city: string
-          country: string
+          city: string | null
+          country: string | null
           created_at: string | null
-          deposit_eur: number
-          description: string
+          deposit_eur: number | null
+          description: string | null
           expires_at: string | null
           floor: string | null
           furnished: boolean | null
@@ -193,29 +193,29 @@ export type Database = {
           lng: number
           price_history: Json | null
           published_at: string | null
-          rent_monthly_eur: number
+          rent_monthly_eur: number | null
           size_sqm: number | null
           status: string | null
-          title: string
-          type: string
+          title: string | null
+          type: string | null
           updated_at: string | null
           video_url: string | null
         }
         Insert: {
-          address_line: string
+          address_line?: string | null
           agency_fee?: string | null
           agency_id: string
           amenities?: Json | null
           auto_repost?: boolean | null
-          availability_date: string
-          bathrooms: number
-          bedrooms: number
+          availability_date?: string | null
+          bathrooms?: number | null
+          bedrooms?: number | null
           bills_included?: boolean | null
-          city: string
-          country: string
+          city?: string | null
+          country?: string | null
           created_at?: string | null
-          deposit_eur: number
-          description: string
+          deposit_eur?: number | null
+          description?: string | null
           expires_at?: string | null
           floor?: string | null
           furnished?: boolean | null
@@ -226,29 +226,29 @@ export type Database = {
           lng: number
           price_history?: Json | null
           published_at?: string | null
-          rent_monthly_eur: number
+          rent_monthly_eur?: number | null
           size_sqm?: number | null
           status?: string | null
-          title: string
-          type: string
+          title?: string | null
+          type?: string | null
           updated_at?: string | null
           video_url?: string | null
         }
         Update: {
-          address_line?: string
+          address_line?: string | null
           agency_fee?: string | null
           agency_id?: string
           amenities?: Json | null
           auto_repost?: boolean | null
-          availability_date?: string
-          bathrooms?: number
-          bedrooms?: number
+          availability_date?: string | null
+          bathrooms?: number | null
+          bedrooms?: number | null
           bills_included?: boolean | null
-          city?: string
-          country?: string
+          city?: string | null
+          country?: string | null
           created_at?: string | null
-          deposit_eur?: number
-          description?: string
+          deposit_eur?: number | null
+          description?: string | null
           expires_at?: string | null
           floor?: string | null
           furnished?: boolean | null
@@ -259,11 +259,11 @@ export type Database = {
           lng?: number
           price_history?: Json | null
           published_at?: string | null
-          rent_monthly_eur?: number
+          rent_monthly_eur?: number | null
           size_sqm?: number | null
           status?: string | null
-          title?: string
-          type?: string
+          title?: string | null
+          type?: string | null
           updated_at?: string | null
           video_url?: string | null
         }
