@@ -385,11 +385,11 @@ const Index = () => {
                   <div className="text-center mb-12">
                     <h2 className="text-3xl font-bold mb-4">{t('home.dashboardStats')}</h2>
                     <p className="text-muted-foreground text-lg">
-                      {t('home.dashboardStatsDesc')}
+                      {t('home.dashboardStatsSubtitle')}
                     </p>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-md mx-auto">
                     <Card>
                       <CardContent className="p-6 text-center">
                         <div className="text-3xl font-bold text-primary mb-2">
@@ -398,7 +398,7 @@ const Index = () => {
                         <p className="text-muted-foreground">{t('home.activeListings')}</p>
                       </CardContent>
                     </Card>
-                    
+
                     <Card>
                       <CardContent className="p-6 text-center">
                         <div className="text-3xl font-bold text-primary mb-2">
@@ -410,30 +410,11 @@ const Index = () => {
                   </div>
                 </div>
               </section>
-
-              {/* Contact Us */}
-              <section className="py-16 px-4 bg-muted/30">
-                <div className="container mx-auto text-center">
-                  <h2 className="text-3xl font-bold mb-4">{t('home.needHelp')}</h2>
-                  <div className="max-w-2xl mx-auto text-lg space-y-4">
-                    <p className="font-medium">Contact us at melchior.deleusse@studbocconi.it</p>
-                    <p className="text-muted-foreground">
-                      {t('home.helpDesc')}
-                    </p>
-                  </div>
-                </div>
-                
-                {/* Scroll Indicator for Realtor Section */}
-                <div className="flex justify-center py-8">
-                  <ScrollIndicator className="text-muted-foreground" />
-                </div>
-              </section>
             </>
           ) : null}
         </>
       ) : (
         <>
-          {/* Default content for non-authenticated users */}
           {/* Universities Section */}
           <section className="py-16 px-4 bg-muted/30">
             <div className="container mx-auto">
@@ -542,42 +523,42 @@ const Index = () => {
           <section className="py-16 px-4 bg-muted/30">
             <div className="container mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold mb-4">{t('home.whyChooseTitle')}</h2>
-                <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                  {t('home.whyChooseSubtitle')}
+                <h2 className="text-3xl font-bold mb-4">{t('home.benefitsTitle')}</h2>
+                <p className="text-muted-foreground text-lg">
+                  {t('home.benefitsSubtitle')}
                 </p>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Shield className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3">{t('home.verifiedProperties')}</h3>
-                  <p className="text-muted-foreground">
-                    {t('home.verifiedPropertiesDesc')}
-                  </p>
-                </div>
-                
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Users className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3">{t('home.studentOnly')}</h3>
-                  <p className="text-muted-foreground">
-                    {t('home.studentOnlyDesc')}
-                  </p>
-                </div>
-                
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <MapPin className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3">{t('home.perfectLocations')}</h3>
-                  <p className="text-muted-foreground">
-                    {t('home.perfectLocationsDesc')}
-                  </p>
-                </div>
+                <Card className="text-center">
+                  <CardContent className="p-8">
+                    <Shield className="h-12 w-12 text-primary mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold mb-3">{t('home.verifiedProperties')}</h3>
+                    <p className="text-muted-foreground">
+                      {t('home.verifiedPropertiesDesc')}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className="text-center">
+                  <CardContent className="p-8">
+                    <Users className="h-12 w-12 text-primary mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold mb-3">{t('home.studentOnly')}</h3>
+                    <p className="text-muted-foreground">
+                      {t('home.studentOnlyDesc')}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className="text-center">
+                  <CardContent className="p-8">
+                    <MapPin className="h-12 w-12 text-primary mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold mb-3">{t('home.perfectLocations')}</h3>
+                    <p className="text-muted-foreground">
+                      {t('home.perfectLocationsDesc')}
+                    </p>
+                  </CardContent>
+                </Card>
               </div>
             </div>
             
