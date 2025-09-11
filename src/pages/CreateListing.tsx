@@ -125,17 +125,7 @@ export default function CreateListing() {
       return;
     }
 
-    // Validate required fields
-    if (!formData.title || !formData.type || !formData.description || !formData.addressLine || 
-        !formData.city || !formData.country || !formData.rentMonthlyEUR || !formData.depositEUR ||
-        !formData.bedrooms || !formData.bathrooms || !formData.availabilityDate) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      });
-      return;
-    }
+    // No field validation - allow publishing with any fields filled
 
     setIsSubmitting(true);
 
@@ -147,24 +137,24 @@ export default function CreateListing() {
 
       const listingData = {
         agency_id: profile.id,
-        title: formData.title,
-        type: formData.type,
-        description: formData.description,
-        address_line: formData.addressLine,
-        city: formData.city,
-        country: formData.country,
+        title: formData.title || null,
+        type: formData.type || null,
+        description: formData.description || null,
+        address_line: formData.addressLine || null,
+        city: formData.city || null,
+        country: formData.country || null,
         lat: defaultLat,
         lng: defaultLng,
-        rent_monthly_eur: parseInt(formData.rentMonthlyEUR),
-        deposit_eur: parseInt(formData.depositEUR),
+        rent_monthly_eur: formData.rentMonthlyEUR ? parseInt(formData.rentMonthlyEUR) : null,
+        deposit_eur: formData.depositEUR ? parseInt(formData.depositEUR) : null,
         bills_included: formData.billsIncluded,
         furnished: formData.furnished,
-        bedrooms: parseInt(formData.bedrooms),
-        bathrooms: parseInt(formData.bathrooms),
+        bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : null,
+        bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : null,
         floor: formData.floor || null,
         size_sqm: formData.sizeSqm ? parseInt(formData.sizeSqm) : null,
         amenities: formData.amenities,
-        availability_date: formData.availabilityDate,
+        availability_date: formData.availabilityDate || null,
         agency_fee: formData.agencyFee || null,
         images: uploadedImages,
         status: 'PUBLISHED'
