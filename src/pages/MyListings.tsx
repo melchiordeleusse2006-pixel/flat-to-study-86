@@ -16,10 +16,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AgencyListing {
   id: string;
-  title: string;
-  type: string;
-  city: string;
-  rent_monthly_eur: number;
+  title: string | null;
+  type: string | null;
+  city: string | null;
+  rent_monthly_eur: number | null;
   status: string;
   images: any; // Will be converted to string[]
   created_at: string;
@@ -84,7 +84,8 @@ export default function MyListings() {
   };
 
 
-  const formatPrice = (price: number) => {
+  const formatPrice = (price: number | null) => {
+    if (price === null) return 'Price not set';
     return new Intl.NumberFormat('en-EU', {
       style: 'currency',
       currency: 'EUR',
@@ -419,7 +420,7 @@ export default function MyListings() {
                   {listing.images.length > 0 ? (
                     <img 
                       src={listing.images[0]}
-                      alt={listing.title}
+                      alt={listing.title || 'Property image'}
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -436,7 +437,7 @@ export default function MyListings() {
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-semibold line-clamp-2 flex-1 mr-2">
-                      {listing.title}
+                      {listing.title || 'Untitled Property'}
                     </h3>
                     <div className="text-right flex-shrink-0">
                       <div className="font-bold text-lg text-price">
@@ -447,7 +448,8 @@ export default function MyListings() {
                   </div>
                   
                   <p className="text-sm text-muted-foreground mb-4">
-                    {listing.type.charAt(0).toUpperCase() + listing.type.slice(1)} in {listing.city}
+                    {listing.type ? (listing.type.charAt(0).toUpperCase() + listing.type.slice(1)) : 'Property type not set'} 
+                    {listing.city ? ` in ${listing.city}` : ''}
                   </p>
 
                   {/* Rented Button - Only show for published listings */}
