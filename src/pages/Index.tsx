@@ -525,7 +525,7 @@ const Index = () => {
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold mb-4">Why Choose Us</h2>
                 <p className="text-muted-foreground text-lg">
-                  {t('home.benefitsSubtitle')}
+                  Empowering students and trusted landlords with a safer, simpler rental experience.
                 </p>
               </div>
               
