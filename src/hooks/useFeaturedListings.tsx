@@ -40,7 +40,7 @@ export const useFeaturedListings = (limit: number = 6) => {
         if (data) {
           setListings(data.map((listing: any) => ({
             id: listing.id,
-            title: getLocalizedText(listing.title_multilingual, listing.title) || 'Property',
+            title: listing.title || 'Property',
             address_line: listing.address_line || '',
             city: listing.city || '',
             rent_monthly_eur: listing.rent_monthly_eur || 0,
