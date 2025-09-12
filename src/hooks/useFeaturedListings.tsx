@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useListingText } from './useListingText';
+
 
 interface FeaturedListing {
   id: string;
@@ -18,7 +18,7 @@ export const useFeaturedListings = (limit: number = 6) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { language } = useLanguage();
-  const { getLocalizedText } = useListingText();
+  
 
   useEffect(() => {
     const fetchFeaturedListings = async () => {
