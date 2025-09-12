@@ -311,11 +311,11 @@ export default function ListingDetails() {
                       {listing.images.length === 1 ? (
                         // Single image - no carousel needed
                         <div className="relative">
-                          <img 
-                            src={listing.images[0]}
-                            alt={listing.title}
-                            className="w-full h-64 md:h-96 object-cover rounded-lg"
-                          />
+                           <img 
+                             src={listing.images[0]}
+                             alt={listing.title}
+                             className="w-full aspect-square object-cover rounded-lg"
+                           />
                           <Badge className="absolute top-4 left-4 bg-background/90 text-foreground">
                             {getTypeDisplayName(listing.type)}
                           </Badge>
@@ -333,11 +333,11 @@ export default function ListingDetails() {
                             {listing.images.map((image, index) => (
                               <CarouselItem key={index}>
                                 <div className="relative">
-                                  <img 
-                                    src={image}
-                                    alt={`${listing.title} - Image ${index + 1}`}
-                                    className="w-full h-64 md:h-96 object-cover rounded-lg"
-                                  />
+                                   <img 
+                                     src={image}
+                                     alt={`${listing.title} - Image ${index + 1}`}
+                                     className="w-full aspect-square object-cover rounded-lg"
+                                   />
                                   <Badge className="absolute top-4 left-4 bg-background/90 text-foreground">
                                     {getTypeDisplayName(listing.type)}
                                   </Badge>
@@ -372,7 +372,7 @@ export default function ListingDetails() {
                       )}
                     </div>
                   ) : (
-                    <div className="w-full h-64 md:h-96 bg-muted rounded-lg flex items-center justify-center">
+                    <div className="w-full aspect-square bg-muted rounded-lg flex items-center justify-center">
                       <div className="text-muted-foreground">No images available</div>
                     </div>
                   )}
