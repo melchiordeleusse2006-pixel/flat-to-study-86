@@ -252,25 +252,37 @@ export default function SimpleMapView({
           </div>
         `;
 
-        groupMarker.bindTooltip(tooltipHtml, {
-          permanent: false,
-          direction: 'top',
+        // Use a popup for interactive preview so users can click inside without it disappearing
+        groupMarker.bindPopup(tooltipHtml, {
+          closeButton: true,
+          closeOnClick: false,
+          autoClose: true,
           offset: [0, -18],
-          className: 'group-tooltip',
-          opacity: 1
+          className: 'group-popup',
+          maxWidth: 360,
+          minWidth: 320
         });
 
-        // Delegate click events inside tooltip to open selected listing
+        // Open popup on click
+        groupMarker.on('click', () => {
+          groupMarker.openPopup();
+        });
+
+        // Delegate click events inside popup to open selected listing
         if (onListingClick) {
           const openHandler = () => {
-            const el = groupMarker.getTooltip()?.getElement();
+            const el = groupMarker.getPopup()?.getElement();
             if (!el) return;
             const items = el.querySelectorAll('[data-listing-id]');
             items.forEach((item) => {
               const handler = (e: Event) => {
                 e.stopPropagation();
                 const id = (item as HTMLElement).getAttribute('data-listing-id');
-                if (id) onListingClick(id);
+                if (id) {
+                  onListingClick(id);
+                  // Optionally close popup after selection
+                  groupMarker.closePopup();
+                }
               };
               (item as HTMLElement).addEventListener('click', handler);
               // Store handler on element for cleanup
@@ -278,7 +290,7 @@ export default function SimpleMapView({
             });
           };
           const closeHandler = () => {
-            const el = groupMarker.getTooltip()?.getElement();
+            const el = groupMarker.getPopup()?.getElement();
             if (!el) return;
             const items = el.querySelectorAll('[data-listing-id]');
             items.forEach((item) => {
@@ -286,8 +298,8 @@ export default function SimpleMapView({
               if (handler) (item as HTMLElement).removeEventListener('click', handler);
             });
           };
-          groupMarker.on('tooltipopen', openHandler);
-          groupMarker.on('tooltipclose', closeHandler);
+          groupMarker.on('popupopen', openHandler);
+          groupMarker.on('popupclose', closeHandler);
         }
 
         if (onListingHover) {
