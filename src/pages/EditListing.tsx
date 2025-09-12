@@ -166,26 +166,18 @@ export default function EditListing() {
       return;
     }
 
-    // Optional validation - only check if user wants to publish
-    if (formData.status === 'PUBLISHED' && (!formData.title || !formData.type)) {
-      toast({
-        title: "Missing Information",
-        description: "Title and property type are required for published listings",
-        variant: "destructive",
-      });
-      return;
-    }
+    // No validation required - allow saving with any fields empty
 
     setIsSubmitting(true);
 
     try {
       const listingData = {
-        title: formData.title,
-        type: formData.type,
-        description: formData.description,
-        address_line: formData.addressLine,
-        city: formData.city,
-        country: formData.country,
+        title: formData.title || null,
+        type: formData.type || null,
+        description: formData.description || null,
+        address_line: formData.addressLine || null,
+        city: formData.city || null,
+        country: formData.country || null,
         rent_monthly_eur: formData.rentMonthlyEUR ? parseInt(formData.rentMonthlyEUR) : null,
         deposit_eur: formData.depositEUR ? parseInt(formData.depositEUR) : null,
         bills_included: formData.billsIncluded,
@@ -195,7 +187,7 @@ export default function EditListing() {
         floor: formData.floor || null,
         size_sqm: formData.sizeSqm ? parseInt(formData.sizeSqm) : null,
         amenities: formData.amenities,
-        availability_date: formData.availabilityDate,
+        availability_date: formData.availabilityDate || null,
         agency_fee: formData.agencyFee || null,
         images: uploadedImages,
         status: formData.status,
