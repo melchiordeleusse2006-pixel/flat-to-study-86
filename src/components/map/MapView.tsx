@@ -138,12 +138,10 @@ export default function MapView({
     }).format(price);
   };
 
-  // Group listings by address
+  // Group listings by address (normalized), allowing slight coordinate differences
   const groupedListings = listings.reduce((acc, listing) => {
-    const key = `${listing.lat.toFixed(5)},${listing.lng.toFixed(5)}`;
-    if (!acc[key]) {
-      acc[key] = [];
-    }
+    const key = (listing.addressLine || `${listing.lat},${listing.lng}`).trim().toLowerCase();
+    if (!acc[key]) acc[key] = [];
     acc[key].push(listing);
     return acc;
   }, {} as Record<string, Listing[]>);
@@ -194,7 +192,8 @@ export default function MapView({
         ))}
         
         {Object.entries(groupedListings).map(([key, groupListings]) => {
-          const [lat, lng] = key.split(',').map(Number);
+          const avgLat = groupListings.reduce((sum, l) => sum + l.lat, 0) / groupListings.length;
+          const avgLng = groupListings.reduce((sum, l) => sum + l.lng, 0) / groupListings.length;
           const isGroupHovered = groupListings.some(listing => hoveredListingId === listing.id);
           const isGroupSelected = groupListings.some(listing => selectedListingId === listing.id);
           
@@ -249,7 +248,7 @@ export default function MapView({
           return (
             <Marker
               key={key}
-              position={[lat, lng]}
+              position={[avgLat, avgLng]}
               icon={createClusterIcon(groupListings.length, isGroupHovered)}
               eventHandlers={{
                 mouseover: () => {
