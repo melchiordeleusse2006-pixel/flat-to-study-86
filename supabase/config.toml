@@ -8,9 +8,3 @@ verify_jwt = false
 
 [functions.send-message-notification]
 verify_jwt = false
-
-[functions.create-credit-payment]
-verify_jwt = true
-
-[functions.process-credit-payment]
-verify_jwt = false

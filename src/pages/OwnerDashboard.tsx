@@ -21,16 +21,12 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { OwnerConversations } from '@/components/owner/OwnerConversations';
-import { useAuth } from '@/hooks/useAuth';
-import { CreditBalance } from '@/components/credits/CreditBalance';
-import { CreditPackages } from '@/components/credits/CreditPackages';
 
 interface OwnerDashboardProps {
   onLogout: () => void;
 }
 
 const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
-  const { profile } = useAuth();
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalListings: 0,
@@ -49,7 +45,6 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
   const [emailDomainFilter, setEmailDomainFilter] = useState<string>('all');
   const [dateRange, setDateRange] = useState({ start: 30, end: 0 }); // last 30 days
   const [showConversations, setShowConversations] = useState(false);
-  const [showCredits, setShowCredits] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -359,36 +354,6 @@ const OwnerDashboard = ({ onLogout }: OwnerDashboardProps) => {
             </CardContent>
           </Card>
         </div>
-
-        {/* Credit Management - Only for Agency Users */}
-        {profile?.user_type === 'agency' && (
-          <div className="mb-8">
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle>Credit Management</CardTitle>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowCredits(!showCredits)}
-                  >
-                    {showCredits ? 'Hide' : 'Buy Credits'}
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  <CreditBalance onBuyCredits={() => setShowCredits(true)} />
-                  {showCredits && (
-                    <div className="lg:col-span-2">
-                      <h3 className="text-lg font-semibold mb-4">Purchase Credit Packages</h3>
-                      <CreditPackages />
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
 
         {/* Analytics Charts and Details */}
         {analytics && (

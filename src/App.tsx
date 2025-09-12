@@ -20,7 +20,6 @@ import SignupRealtor from "./pages/SignupRealtor";
 import SignupPrivate from "./pages/SignupPrivate";
 import SignupStudent from "./pages/SignupStudent";
 import EditListing from "./pages/EditListing";
-import PaymentSuccess from "./pages/PaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -47,7 +46,6 @@ const App = () => (
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/listing/:id" element={<ListingDetails />} />
-          <Route path="/payment-success" element={<PaymentSuccess />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
