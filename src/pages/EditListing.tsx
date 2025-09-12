@@ -13,6 +13,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { ListingType } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { MultilingualInput } from '@/components/forms/MultilingualInput';
 
 export default function EditListing() {
   const { user, profile, loading } = useAuth();
@@ -20,9 +21,9 @@ export default function EditListing() {
   const { id } = useParams<{ id: string }>();
 
   const [formData, setFormData] = useState({
-    title: '',
+    title: { en: '', it: '' },
     type: '' as ListingType | '',
-    description: '',
+    description: { en: '', it: '' },
     addressLine: '',
     city: '',
     country: '',
@@ -63,7 +64,7 @@ export default function EditListing() {
     try {
       const { data, error } = await supabase
         .from('listings')
-        .select('*')
+        .select('*, title_multilingual, description_multilingual')
         .eq('id', id)
         .eq('agency_id', profile?.id)
         .single();
@@ -80,9 +81,9 @@ export default function EditListing() {
 
       // Populate form with existing data
       setFormData({
-        title: data.title || '',
+        title: (data.title_multilingual as { en: string; it: string }) || { en: data.title as string || '', it: data.title as string || '' },
         type: (data.type as ListingType) || '',
-        description: data.description || '',
+        description: (data.description_multilingual as { en: string; it: string }) || { en: data.description as string || '', it: data.description as string || '' },
         addressLine: data.address_line || '',
         city: data.city || '',
         country: data.country || '',
@@ -172,9 +173,11 @@ export default function EditListing() {
 
     try {
       const listingData = {
-        title: formData.title || null,
+        title_multilingual: formData.title,
+        title: formData.title.en || formData.title.it || null, // Keep backwards compatibility
         type: formData.type || null,
-        description: formData.description || null,
+        description_multilingual: formData.description,
+        description: formData.description.en || formData.description.it || null, // Keep backwards compatibility
         address_line: formData.addressLine || null,
         city: formData.city || null,
         country: formData.country || null,
@@ -304,15 +307,12 @@ export default function EditListing() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Property Title</Label>
-                  <Input
-                    id="title"
-                    placeholder="e.g., Cozy Studio Near University"
-                    value={formData.title}
-                    onChange={(e) => setFormData({...formData, title: e.target.value})}
-                  />
-                </div>
+                <MultilingualInput
+                  label="Property Title"
+                  value={formData.title}
+                  onChange={(value) => setFormData({...formData, title: value})}
+                  placeholder="e.g., Cozy Studio Near University"
+                />
                 <div className="space-y-2">
                   <Label htmlFor="type">Property Type</Label>
                   <Select value={formData.type} onValueChange={(value: ListingType) => setFormData({...formData, type: value})}>
@@ -328,16 +328,13 @@ export default function EditListing() {
                 </div>
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Describe your property..."
-                  rows={4}
-                  value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
-                />
-              </div>
+              <MultilingualInput
+                label="Description"
+                value={formData.description}
+                onChange={(value) => setFormData({...formData, description: value})}
+                type="textarea"
+                placeholder="Describe your property..."
+              />
             </CardContent>
           </Card>
 

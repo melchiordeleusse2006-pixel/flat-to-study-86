@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface FeaturedListing {
   id: string;
@@ -15,15 +16,17 @@ export const useFeaturedListings = (limit: number = 6) => {
   const [listings, setListings] = useState<FeaturedListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { language } = useLanguage();
 
   useEffect(() => {
     const fetchFeaturedListings = async () => {
       try {
         setLoading(true);
         const { data, error } = await supabase
-          .rpc('get_listings_with_agency', {
+          .rpc('get_listings_with_agency_multilingual', {
             p_limit: limit,
-            p_offset: 0
+            p_offset: 0,
+            p_language: language
           });
 
         if (error) {
@@ -52,7 +55,7 @@ export const useFeaturedListings = (limit: number = 6) => {
     };
 
     fetchFeaturedListings();
-  }, [limit]);
+  }, [limit, language]);
 
   return { listings, loading, error };
 };

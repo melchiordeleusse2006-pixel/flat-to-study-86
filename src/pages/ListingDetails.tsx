@@ -31,11 +31,19 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+// Helper function to get text in current language
+const getLocalizedText = (multilingualField: any, language: string, fallback: string = '') => {
+  if (!multilingualField || typeof multilingualField !== 'object') {
+    return fallback;
+  }
+  return multilingualField[language] || multilingualField['en'] || fallback;
+};
+
 export default function ListingDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, profile } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const isMobile = useIsMobile();
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
@@ -52,14 +60,14 @@ export default function ListingDetails() {
     if (id) {
       fetchListing();
     }
-  }, [id]);
+  }, [id, language]);
 
   const fetchListing = async () => {
     try {
       // First, get basic listing from direct query since we need all fields
       const { data: listingData, error: listingError } = await supabase
         .from('listings')
-        .select('*')
+        .select('*, title_multilingual, description_multilingual')
         .eq('id', id)
         .eq('status', 'PUBLISHED')
         .single();
@@ -81,9 +89,9 @@ export default function ListingDetails() {
       // Transform the data to match the Listing type
       const transformedListing: Listing = {
         id: listingData.id,
-        title: listingData.title,
+        title: getLocalizedText(listingData.title_multilingual, language, listingData.title),
         type: listingData.type as ListingType,
-        description: listingData.description,
+        description: getLocalizedText(listingData.description_multilingual, language, listingData.description),
         addressLine: listingData.address_line,
         city: listingData.city,
         country: listingData.country,

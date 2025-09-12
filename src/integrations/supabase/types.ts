@@ -616,6 +616,45 @@ export type Database = {
           video_url: string
         }[]
       }
+      get_listings_with_agency_multilingual: {
+        Args: {
+          p_city?: string
+          p_language?: string
+          p_limit?: number
+          p_listing_type?: string
+          p_max_price?: number
+          p_min_bedrooms?: number
+          p_min_price?: number
+          p_offset?: number
+        }
+        Returns: {
+          address_line: string
+          agency_name: string
+          amenities: Json
+          availability_date: string
+          bathrooms: number
+          bedrooms: number
+          bills_included: boolean
+          city: string
+          country: string
+          created_at: string
+          deposit_eur: number
+          description: string
+          floor: string
+          furnished: boolean
+          id: string
+          images: Json
+          lat: number
+          lng: number
+          published_at: string
+          rent_monthly_eur: number
+          size_sqm: number
+          status: string
+          title: string
+          type: string
+          video_url: string
+        }[]
+      }
       get_platform_analytics: {
         Args: { end_date?: string; start_date?: string }
         Returns: Json
