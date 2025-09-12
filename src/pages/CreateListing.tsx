@@ -10,6 +10,7 @@ import { ArrowLeft, MapPin, Euro, Home, Camera, Calendar } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import { useAuth } from '@/hooks/useAuth';
+import { useCredits } from '@/hooks/useCredits';
 import { ListingType } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -17,6 +18,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function CreateListing() {
   const { user, profile, loading } = useAuth();
+  const { hasCredits, refreshBalance } = useCredits();
   const { t } = useLanguage();
   const navigate = useNavigate();
 
@@ -125,6 +127,17 @@ export default function CreateListing() {
       return;
     }
 
+    // Check if agency has credits for listing
+    if (profile.user_type === 'agency' && !hasCredits(1)) {
+      toast({
+        title: "Insufficient Credits",
+        description: "You need at least 1 credit to create a listing. Please purchase credits first.",
+        variant: "destructive",
+      });
+      navigate('/owner-dashboard');
+      return;
+    }
+
     // No field validation - allow publishing with any fields filled
 
     setIsSubmitting(true);
@@ -163,9 +176,10 @@ export default function CreateListing() {
       console.log('Attempting to create listing with data:', listingData);
       console.log('Current user profile:', profile);
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('listings')
-        .insert([listingData]);
+        .insert([listingData])
+        .select();
 
       if (error) {
         console.error('Detailed error creating listing:', error);
@@ -175,6 +189,29 @@ export default function CreateListing() {
           variant: "destructive",
         });
         return;
+      }
+
+      // Deduct credit for agency users after successful listing creation
+      if (profile.user_type === 'agency' && data?.[0]) {
+        const { error: creditError } = await supabase.rpc('deduct_agency_credits', {
+          agency_profile_id: profile.id,
+          credits_amount: 1,
+          listing_id_param: data[0].id,
+          description_param: 'Credit used for listing creation'
+        });
+
+        if (creditError) {
+          console.error('Error deducting credits:', creditError);
+          // Note: We don't fail the listing creation if credit deduction fails
+          toast({
+            title: "Warning",
+            description: "Listing created but there was an issue with credit deduction. Please contact support.",
+            variant: "destructive",
+          });
+        } else {
+          // Refresh credit balance
+          refreshBalance();
+        }
       }
 
       toast({
