@@ -91,6 +91,42 @@ function MapUpdater({ listings }: { listings: Listing[] }) {
   return null;
 }
 
+// Function to offset markers with same coordinates
+const offsetListings = (listings: Listing[]) => {
+  const coordinateGroups: { [key: string]: Listing[] } = {};
+  
+  // Group listings by coordinates
+  listings.forEach(listing => {
+    const key = `${listing.lat}-${listing.lng}`;
+    if (!coordinateGroups[key]) {
+      coordinateGroups[key] = [];
+    }
+    coordinateGroups[key].push(listing);
+  });
+  
+  // Apply offset to grouped listings
+  return listings.map(listing => {
+    const key = `${listing.lat}-${listing.lng}`;
+    const group = coordinateGroups[key];
+    
+    if (group.length === 1) {
+      return listing; // No offset needed
+    }
+    
+    const index = group.findIndex(l => l.id === listing.id);
+    const offsetDistance = 0.0003; // Small offset in degrees
+    const angle = (index * 360) / group.length; // Distribute around circle
+    const offsetLat = Math.cos(angle * Math.PI / 180) * offsetDistance;
+    const offsetLng = Math.sin(angle * Math.PI / 180) * offsetDistance;
+    
+    return {
+      ...listing,
+      lat: listing.lat + offsetLat,
+      lng: listing.lng + offsetLng
+    };
+  });
+};
+
 export default function MapView({ 
   listings, 
   onListingHover, 
@@ -106,6 +142,8 @@ export default function MapView({
       maximumFractionDigits: 0,
     }).format(price);
   };
+
+  const offsettedListings = offsetListings(listings);
 
   if (!listings || listings.length === 0) {
     return (
@@ -152,7 +190,7 @@ export default function MapView({
           </Marker>
         ))}
         
-        {listings.map((listing) => (
+        {offsettedListings.map((listing) => (
           <Marker
             key={listing.id}
             position={[listing.lat, listing.lng]}
