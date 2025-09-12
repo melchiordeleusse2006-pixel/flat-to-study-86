@@ -95,14 +95,26 @@ export default function SimpleMapView({
       
       const markers: L.Marker[] = [];
       
-      // Group listings by normalized address to handle same-address cases
-      const groups = listings.reduce((acc, l) => {
-        const addressKey = (l.addressLine || `${l.lat},${l.lng}`)
-          .trim()
+      // Group listings by robust normalized address + rounded coordinates to handle same-address cases reliably
+      const normalizeAddress = (addr?: string) => {
+        if (!addr) return '';
+        return addr
           .toLowerCase()
-          .replace(/\s+/g, ' ');
-        if (!acc[addressKey]) acc[addressKey] = [];
-        acc[addressKey].push(l);
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // strip accents
+          .replace(/[,..;:]/g, ' ') // remove punctuation
+          .replace(/\b(it|italy|mi|milano)\b/g, '') // drop country/city suffixes if present
+          .replace(/\b(via|v\.|viale|piazza|p\.)\b/g, '') // drop common prefixes
+          .replace(/\s+/g, ' ')
+          .trim();
+      };
+      const round = (n: number, p = 6) => Math.round(n * Math.pow(10, p)) / Math.pow(10, p);
+
+      const groups = listings.reduce((acc, l) => {
+        const coordKey = `${round(l.lat, 6)},${round(l.lng, 6)}`;
+        const addressKey = normalizeAddress(l.addressLine);
+        const key = addressKey ? `${addressKey}|${coordKey}` : coordKey;
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(l);
         return acc;
       }, {} as Record<string, Listing[]>);
 
