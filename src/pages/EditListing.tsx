@@ -166,13 +166,11 @@ export default function EditListing() {
       return;
     }
 
-    // Validate required fields
-    if (!formData.title || !formData.type || !formData.description || !formData.addressLine || 
-        !formData.city || !formData.country || !formData.rentMonthlyEUR || !formData.depositEUR ||
-        !formData.bedrooms || !formData.bathrooms || !formData.availabilityDate) {
+    // Optional validation - only check if user wants to publish
+    if (formData.status === 'PUBLISHED' && (!formData.title || !formData.type)) {
       toast({
         title: "Missing Information",
-        description: "Please fill in all required fields",
+        description: "Title and property type are required for published listings",
         variant: "destructive",
       });
       return;
@@ -188,12 +186,12 @@ export default function EditListing() {
         address_line: formData.addressLine,
         city: formData.city,
         country: formData.country,
-        rent_monthly_eur: parseInt(formData.rentMonthlyEUR),
-        deposit_eur: parseInt(formData.depositEUR),
+        rent_monthly_eur: formData.rentMonthlyEUR ? parseInt(formData.rentMonthlyEUR) : null,
+        deposit_eur: formData.depositEUR ? parseInt(formData.depositEUR) : null,
         bills_included: formData.billsIncluded,
         furnished: formData.furnished,
-        bedrooms: parseInt(formData.bedrooms),
-        bathrooms: parseInt(formData.bathrooms),
+        bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : null,
+        bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : null,
         floor: formData.floor || null,
         size_sqm: formData.sizeSqm ? parseInt(formData.sizeSqm) : null,
         amenities: formData.amenities,
