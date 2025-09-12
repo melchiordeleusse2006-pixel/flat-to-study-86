@@ -140,9 +140,10 @@ export default function MapView({
 
   // Group listings by address (normalized), allowing slight coordinate differences
   const groupedListings = listings.reduce((acc, listing) => {
-    const key = (listing.addressLine || `${listing.lat},${listing.lng}`).trim().toLowerCase();
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(listing);
+    // Normalize address for grouping - remove extra spaces, convert to lowercase
+    const addressKey = listing.addressLine?.trim().toLowerCase().replace(/\s+/g, ' ') || `${listing.lat.toFixed(4)},${listing.lng.toFixed(4)}`;
+    if (!acc[addressKey]) acc[addressKey] = [];
+    acc[addressKey].push(listing);
     return acc;
   }, {} as Record<string, Listing[]>);
 
