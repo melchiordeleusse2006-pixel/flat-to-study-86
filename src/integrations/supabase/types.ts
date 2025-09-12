@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      agency_credits: {
+        Row: {
+          agency_id: string
+          created_at: string
+          credits_balance: number
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          credits_balance?: number
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          credits_balance?: number
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       archives: {
         Row: {
           address_line: string | null
@@ -116,6 +140,39 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_transactions: {
+        Row: {
+          agency_id: string
+          created_at: string
+          credits_amount: number
+          description: string | null
+          id: string
+          listing_id: string | null
+          stripe_payment_intent_id: string | null
+          transaction_type: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          credits_amount: number
+          description?: string | null
+          id?: string
+          listing_id?: string | null
+          stripe_payment_intent_id?: string | null
+          transaction_type: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          credits_amount?: number
+          description?: string | null
+          id?: string
+          listing_id?: string | null
+          stripe_payment_intent_id?: string | null
+          transaction_type?: string
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           created_at: string
@@ -181,6 +238,8 @@ export type Database = {
           city: string | null
           country: string | null
           created_at: string | null
+          credits_remaining: number | null
+          credits_used: number | null
           deposit_eur: number | null
           description: string | null
           expires_at: string | null
@@ -188,6 +247,7 @@ export type Database = {
           furnished: boolean | null
           id: string
           images: Json | null
+          last_credit_deducted_at: string | null
           lat: number
           lease_end_date: string | null
           lng: number
@@ -214,6 +274,8 @@ export type Database = {
           city?: string | null
           country?: string | null
           created_at?: string | null
+          credits_remaining?: number | null
+          credits_used?: number | null
           deposit_eur?: number | null
           description?: string | null
           expires_at?: string | null
@@ -221,6 +283,7 @@ export type Database = {
           furnished?: boolean | null
           id?: string
           images?: Json | null
+          last_credit_deducted_at?: string | null
           lat: number
           lease_end_date?: string | null
           lng: number
@@ -247,6 +310,8 @@ export type Database = {
           city?: string | null
           country?: string | null
           created_at?: string | null
+          credits_remaining?: number | null
+          credits_used?: number | null
           deposit_eur?: number | null
           description?: string | null
           expires_at?: string | null
@@ -254,6 +319,7 @@ export type Database = {
           furnished?: boolean | null
           id?: string
           images?: Json | null
+          last_credit_deducted_at?: string | null
           lat?: number
           lease_end_date?: string | null
           lng?: number
@@ -436,12 +502,34 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_agency_credits: {
+        Args: {
+          agency_profile_id: string
+          credits_amount: number
+          description_param?: string
+          stripe_payment_intent_id_param?: string
+        }
+        Returns: undefined
+      }
       admin_verify_user_email: {
         Args: { user_email: string }
         Returns: boolean
       }
+      agency_has_credits: {
+        Args: { agency_profile_id: string; required_credits?: number }
+        Returns: boolean
+      }
       agency_has_published_listings: {
         Args: { agency_profile_id: string }
+        Returns: boolean
+      }
+      deduct_agency_credits: {
+        Args: {
+          agency_profile_id: string
+          credits_amount: number
+          description_param?: string
+          listing_id_param?: string
+        }
         Returns: boolean
       }
       generate_conversation_id: {
