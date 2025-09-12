@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useListingText } from './useListingText';
 
 interface FeaturedListing {
   id: string;
@@ -17,6 +18,7 @@ export const useFeaturedListings = (limit: number = 6) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { language } = useLanguage();
+  const { getLocalizedText } = useListingText();
 
   useEffect(() => {
     const fetchFeaturedListings = async () => {
@@ -38,7 +40,7 @@ export const useFeaturedListings = (limit: number = 6) => {
         if (data) {
           setListings(data.map((listing: any) => ({
             id: listing.id,
-            title: listing.title || 'Untitled Property',
+            title: getLocalizedText(listing.title_multilingual, listing.title) || 'Property',
             address_line: listing.address_line || '',
             city: listing.city || '',
             rent_monthly_eur: listing.rent_monthly_eur || 0,
