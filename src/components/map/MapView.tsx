@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Listing } from '@/types';
 import { MILAN_UNIVERSITIES } from '@/data/universities';
@@ -259,7 +259,7 @@ export default function MapView({
                 mouseout: () => onListingHover?.(null),
               }}
             >
-              <Popup>
+              <Tooltip direction="top" offset={[0, -10]} opacity={1} interactive>
                 <div className="w-80 p-2">
                   <h3 className="font-semibold text-sm mb-3 text-center">
                     {groupListings.length} Properties at {groupListings[0].addressLine}
@@ -295,7 +295,7 @@ export default function MapView({
                     ))}
                   </div>
                 </div>
-              </Popup>
+              </Tooltip>
             </Marker>
           );
         })}
