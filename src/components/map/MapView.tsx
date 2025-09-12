@@ -21,7 +21,7 @@ interface MapViewProps {
   className?: string;
 }
 
-// Custom marker icon for listings
+// Custom marker icon for single listings
 const createCustomIcon = (isHovered: boolean, isSelected: boolean) => {
   const color = isSelected ? '#dc2626' : isHovered ? '#3b82f6' : '#059669';
   
@@ -41,6 +41,37 @@ const createCustomIcon = (isHovered: boolean, isSelected: boolean) => {
     className: 'custom-marker',
     iconSize: [20, 20],
     iconAnchor: [10, 10],
+  });
+};
+
+// Custom marker icon for grouped listings
+const createClusterIcon = (count: number, isHovered: boolean) => {
+  const color = isHovered ? '#3b82f6' : '#059669';
+  
+  return L.divIcon({
+    html: `
+      <div style="
+        background-color: ${color};
+        border: 2px solid white;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
+        color: white;
+        transform: ${isHovered ? 'scale(1.1)' : 'scale(1)'};
+        transition: transform 0.2s ease;
+      ">
+        ${count}🏠
+      </div>
+    `,
+    className: 'cluster-marker',
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
   });
 };
 
@@ -107,6 +138,16 @@ export default function MapView({
     }).format(price);
   };
 
+  // Group listings by address
+  const groupedListings = listings.reduce((acc, listing) => {
+    const key = `${listing.lat.toFixed(5)},${listing.lng.toFixed(5)}`;
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(listing);
+    return acc;
+  }, {} as Record<string, Listing[]>);
+
   if (!listings || listings.length === 0) {
     return (
       <div className={`map-container ${className} flex items-center justify-center bg-muted`}>
@@ -152,48 +193,112 @@ export default function MapView({
           </Marker>
         ))}
         
-        {listings.map((listing) => (
-          <Marker
-            key={listing.id}
-            position={[listing.lat, listing.lng]}
-            icon={createCustomIcon(
-              hoveredListingId === listing.id,
-              selectedListingId === listing.id
-            )}
-            eventHandlers={{
-              mouseover: () => onListingHover?.(listing.id),
-              mouseout: () => onListingHover?.(null),
-              click: () => onListingClick?.(listing.id)
-            }}
-          >
-            <Popup>
-              <div className="w-64 p-2">
-                <div className="flex items-start space-x-3">
-                  {listing.images && listing.images[0] && (
-                    <img 
-                      src={listing.images[0]}
-                      alt={listing.title}
-                      className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
-                    />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm line-clamp-2">
-                      {listing.title}
-                    </h3>
-                    <p className="text-xs text-gray-500 mt-1">
-                      📍 {listing.addressLine}
-                    </p>
-                    <div className="mt-2">
-                      <span className="font-bold text-sm text-green-600">
-                        {formatPrice(listing.rentMonthlyEUR)}/month
-                      </span>
+        {Object.entries(groupedListings).map(([key, groupListings]) => {
+          const [lat, lng] = key.split(',').map(Number);
+          const isGroupHovered = groupListings.some(listing => hoveredListingId === listing.id);
+          const isGroupSelected = groupListings.some(listing => selectedListingId === listing.id);
+          
+          if (groupListings.length === 1) {
+            // Single listing - use original marker
+            const listing = groupListings[0];
+            return (
+              <Marker
+                key={listing.id}
+                position={[listing.lat, listing.lng]}
+                icon={createCustomIcon(
+                  hoveredListingId === listing.id,
+                  selectedListingId === listing.id
+                )}
+                eventHandlers={{
+                  mouseover: () => onListingHover?.(listing.id),
+                  mouseout: () => onListingHover?.(null),
+                  click: () => onListingClick?.(listing.id)
+                }}
+              >
+                <Popup>
+                  <div className="w-64 p-2">
+                    <div className="flex items-start space-x-3">
+                      {listing.images && listing.images[0] && (
+                        <img 
+                          src={listing.images[0]}
+                          alt={listing.title}
+                          className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
+                        />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-sm line-clamp-2">
+                          {listing.title}
+                        </h3>
+                        <p className="text-xs text-gray-500 mt-1">
+                          📍 {listing.addressLine}
+                        </p>
+                        <div className="mt-2">
+                          <span className="font-bold text-sm text-green-600">
+                            {formatPrice(listing.rentMonthlyEUR)}/month
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                </Popup>
+              </Marker>
+            );
+          }
+          
+          // Multiple listings - use cluster marker
+          return (
+            <Marker
+              key={key}
+              position={[lat, lng]}
+              icon={createClusterIcon(groupListings.length, isGroupHovered)}
+              eventHandlers={{
+                mouseover: () => {
+                  // Hover on first listing for consistent behavior
+                  onListingHover?.(groupListings[0].id);
+                },
+                mouseout: () => onListingHover?.(null),
+              }}
+            >
+              <Popup>
+                <div className="w-80 p-2">
+                  <h3 className="font-semibold text-sm mb-3 text-center">
+                    {groupListings.length} Properties at {groupListings[0].addressLine}
+                  </h3>
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {groupListings.map((listing) => (
+                      <div 
+                        key={listing.id}
+                        className="flex items-start space-x-3 p-2 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                        onClick={() => onListingClick?.(listing.id)}
+                      >
+                        {listing.images && listing.images[0] && (
+                          <img 
+                            src={listing.images[0]}
+                            alt={listing.title}
+                            className="w-12 h-12 object-cover rounded flex-shrink-0"
+                          />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-xs line-clamp-1">
+                            {listing.title}
+                          </h4>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {listing.type} • {listing.bedrooms} bed{listing.bedrooms !== 1 ? 's' : ''}
+                          </p>
+                          <div className="mt-1">
+                            <span className="font-bold text-xs text-green-600">
+                              {formatPrice(listing.rentMonthlyEUR)}/month
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
     </div>
   );
