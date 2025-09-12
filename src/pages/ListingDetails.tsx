@@ -307,68 +307,82 @@ export default function ListingDetails() {
               <Card>
                 <CardContent className="p-0">
                   {listing.images.length > 0 ? (
-                    <div className="relative">
-                      {listing.images.length === 1 ? (
-                        // Single image - no carousel needed
-                        <div className="relative">
-                          <img 
-                            src={listing.images[0]}
-                            alt={listing.title}
-                            className="w-full h-64 md:h-96 object-cover rounded-lg"
-                          />
-                          <Badge className="absolute top-4 left-4 bg-background/90 text-foreground">
-                            {getTypeDisplayName(listing.type)}
-                          </Badge>
-                        </div>
-                      ) : (
-                        // Multiple images - use carousel with arrows and swipe
-                        <Carousel 
-                          className="w-full" 
-                          opts={{ 
-                            align: "start",
-                            loop: true 
+                    <div className="flex gap-2 h-64 md:h-96">
+                      {/* Main image - 2/3 width */}
+                      <div className="flex-[2] relative">
+                        <img 
+                          src={listing.images[currentImageIndex]}
+                          alt={listing.title}
+                          className="w-full h-full object-cover rounded-l-lg cursor-pointer"
+                          onClick={() => {
+                            setCurrentImageIndex((prev) => 
+                              prev === listing.images.length - 1 ? 0 : prev + 1
+                            );
                           }}
-                        >
-                          <CarouselContent>
-                            {listing.images.map((image, index) => (
-                              <CarouselItem key={index}>
-                                <div className="relative">
-                                  <img 
-                                    src={image}
-                                    alt={`${listing.title} - Image ${index + 1}`}
-                                    className="w-full h-64 md:h-96 object-cover rounded-lg"
-                                  />
-                                  <Badge className="absolute top-4 left-4 bg-background/90 text-foreground">
-                                    {getTypeDisplayName(listing.type)}
-                                  </Badge>
-                                  
-                                  {/* Image counter */}
-                                  <div className="absolute top-4 right-4 bg-black/50 text-white px-2 py-1 rounded text-sm">
-                                    {index + 1} / {listing.images.length}
-                                  </div>
-                                </div>
-                              </CarouselItem>
-                            ))}
-                          </CarouselContent>
-                          
-                          {/* Navigation arrows - hidden on mobile for better swipe experience */}
-                          {!isMobile && (
-                            <>
-                              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white border-none shadow-lg" />
-                              <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white border-none shadow-lg" />
-                            </>
-                          )}
-                          
-                          {/* Dots indicator */}
-                          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                            {listing.images.map((_, index) => (
-                              <div
-                                key={index}
-                                className="w-2 h-2 rounded-full bg-white/70"
+                        />
+                        <Badge className="absolute top-4 left-4 bg-background/90 text-foreground">
+                          {getTypeDisplayName(listing.type)}
+                        </Badge>
+                        
+                        {/* Image counter */}
+                        <div className="absolute top-4 right-4 bg-black/50 text-white px-2 py-1 rounded text-sm">
+                          {currentImageIndex + 1} / {listing.images.length}
+                        </div>
+
+                        {/* Navigation arrows on main image */}
+                        {listing.images.length > 1 && (
+                          <>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentImageIndex((prev) => 
+                                  prev === 0 ? listing.images.length - 1 : prev - 1
+                                );
+                              }}
+                              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-1 rounded-full shadow-lg transition-all"
+                            >
+                              <ChevronLeft className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentImageIndex((prev) => 
+                                  prev === listing.images.length - 1 ? 0 : prev + 1
+                                );
+                              }}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-1 rounded-full shadow-lg transition-all"
+                            >
+                              <ChevronRight className="h-4 w-4" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Image thumbnails - 1/3 width */}
+                      {listing.images.length > 1 && (
+                        <div className="flex-1 flex flex-col gap-2 overflow-hidden">
+                          {listing.images.slice(1, 4).map((image, index) => (
+                            <div 
+                              key={index + 1}
+                              className="relative flex-1 cursor-pointer overflow-hidden rounded-lg group"
+                              onClick={() => setCurrentImageIndex(index + 1)}
+                            >
+                              <img 
+                                src={image}
+                                alt={`${listing.title} - Thumbnail ${index + 2}`}
+                                className={`w-full h-full object-cover transition-all group-hover:brightness-110 ${
+                                  currentImageIndex === index + 1 ? 'ring-2 ring-primary' : ''
+                                }`}
                               />
-                            ))}
-                          </div>
-                        </Carousel>
+                              {/* Show +X more overlay on last thumbnail if there are more images */}
+                              {index === 2 && listing.images.length > 4 && (
+                                <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-semibold">
+                                  +{listing.images.length - 4} more
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       )}
                     </div>
                   ) : (
