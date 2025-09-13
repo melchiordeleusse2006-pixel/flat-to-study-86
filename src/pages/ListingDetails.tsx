@@ -60,7 +60,7 @@ export default function ListingDetails() {
 
   const fetchListing = async () => {
     try {
-      // First, get basic listing from direct query since we need all fields
+      // 1) Base listing: keep all structural fields and agency_id
       const { data: listingData, error: listingError } = await supabase
         .from('listings')
         .select('*, title_multilingual, description_multilingual')
@@ -70,7 +70,30 @@ export default function ListingDetails() {
 
       if (listingError) throw listingError;
 
-      // Get the agency profile information directly
+      // 2) Server-localized fields: prefer RPC translation for current language
+      const { data: localizedData, error: localizedError } = await supabase
+        .rpc('get_listings_with_agency_multilingual', {
+          p_limit: 100,
+          p_offset: 0,
+          p_language: language,
+        })
+        .eq('id', id);
+
+      if (localizedError) {
+        console.warn('Localized RPC error (fallback to multilingual JSON):', localizedError);
+      }
+
+      const localized = Array.isArray(localizedData) ? localizedData.find((l: any) => l.id === listingData.id) : undefined;
+
+      const title = (localized?.title && String(localized.title).trim().length > 0)
+        ? localized.title
+        : getLocalizedText(listingData.title_multilingual, listingData.title);
+
+      const description = (localized?.description && String(localized.description).trim().length > 0)
+        ? localized.description
+        : getLocalizedText(listingData.description_multilingual, listingData.description);
+
+      // 3) Agency profile for contact details
       const { data: agencyProfile, error: agencyError } = await supabase
         .from('profiles')
         .select('agency_name, phone, email')
@@ -82,12 +105,12 @@ export default function ListingDetails() {
         console.error('Error fetching agency profile:', agencyError);
       }
 
-      // Transform the data to match the Listing type
+      // 4) Transform final listing
       const transformedListing: Listing = {
         id: listingData.id,
-        title: getLocalizedText(listingData.title_multilingual, listingData.title),
+        title,
         type: listingData.type as ListingType,
-        description: getLocalizedText(listingData.description_multilingual, listingData.description),
+        description,
         addressLine: listingData.address_line,
         city: listingData.city,
         country: listingData.country,
@@ -102,9 +125,9 @@ export default function ListingDetails() {
         bathrooms: listingData.bathrooms,
         floor: listingData.floor,
         sizeSqm: listingData.size_sqm,
-        amenities: Array.isArray(listingData.amenities) ? listingData.amenities.map(item => String(item)) : [],
+        amenities: Array.isArray(listingData.amenities) ? listingData.amenities.map((item: any) => String(item)) : [],
         availabilityDate: listingData.availability_date,
-        images: Array.isArray(listingData.images) ? listingData.images.map(item => String(item)) : [],
+        images: Array.isArray(listingData.images) ? listingData.images.map((item: any) => String(item)) : [],
         videoUrl: listingData.video_url,
         createdAt: listingData.created_at,
         publishedAt: listingData.published_at,
@@ -112,7 +135,7 @@ export default function ListingDetails() {
         expiresAt: listingData.expires_at,
         agency: {
           id: listingData.agency_id,
-          name: agencyProfile?.agency_name || 'Agency',
+          name: localized?.agency_name || agencyProfile?.agency_name || 'Agency',
           phone: agencyProfile?.phone || '',
           logoUrl: undefined,
           ownerUserId: '',
@@ -128,7 +151,7 @@ export default function ListingDetails() {
       toast({
         title: t('listing.error'),
         description: t('listing.loadingDetails'),
-        variant: "destructive"
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
