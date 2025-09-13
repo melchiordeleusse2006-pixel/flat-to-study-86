@@ -18,6 +18,7 @@ interface ListingCardProps {
   onClick?: (listingId: string) => void;
   isHovered?: boolean;
   className?: string;
+  showTranslateButton?: boolean;
 }
 
 export default function ListingCard({ 
@@ -25,7 +26,8 @@ export default function ListingCard({
   onHover, 
   onClick, 
   isHovered, 
-  className 
+  className,
+  showTranslateButton = true
 }: ListingCardProps) {
   const { isFavorited, toggleFavorite } = useFavorites();
   const { language } = useLanguage();
@@ -192,7 +194,7 @@ export default function ListingCard({
             <h3 className="font-semibold text-foreground line-clamp-2 text-sm leading-5">
               {isTitleTranslated ? translatedTitle : listing.title}
             </h3>
-            {listing.title && (
+            {listing.title && showTranslateButton && (
               <TranslateButton
                 text={listing.title}
                 onTranslated={(translated) => {

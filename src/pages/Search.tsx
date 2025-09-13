@@ -412,6 +412,7 @@ export default function Search() {
                         listing={listing}
                         onClick={() => handleListingClick(listing.id)}
                         className="cursor-pointer"
+                        showTranslateButton={false}
                       />
                     </div>
                   ))}
@@ -449,6 +450,7 @@ export default function Search() {
                 listing={listing}
                 onClick={() => handleListingClick(listing.id)}
                 className="cursor-pointer"
+                showTranslateButton={false}
               />
             ))}
           
