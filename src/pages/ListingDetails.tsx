@@ -504,7 +504,7 @@ export default function ListingDetails() {
                   <div className="p-6">
                     <SimpleMapView 
                       listings={[listing]}
-                      className="h-80 w-full overflow-hidden rounded-lg"
+                      className="h-80 w-full overflow-hidden rounded-lg relative z-0"
                     />
                   </div>
                 </CardContent>
