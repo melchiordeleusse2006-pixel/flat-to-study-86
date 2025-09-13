@@ -34,6 +34,15 @@ export default function SimpleMapView({
   const mapInstanceRef = useRef<L.Map | null>(null);
   const initialBoundsSet = useRef(false);
 
+  // Stable callback refs to avoid re-rendering markers on every parent re-render
+  const onListingClickRef = useRef(onListingClick);
+  const onListingHoverRef = useRef(onListingHover);
+  const onBoundsChangeRef = useRef(onBoundsChange);
+
+  useEffect(() => { onListingClickRef.current = onListingClick; }, [onListingClick]);
+  useEffect(() => { onListingHoverRef.current = onListingHover; }, [onListingHover]);
+  useEffect(() => { onBoundsChangeRef.current = onBoundsChange; }, [onBoundsChange]);
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
       style: 'currency',
@@ -61,18 +70,16 @@ export default function SimpleMapView({
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(mapInstanceRef.current);
 
-      // Add bounds change listener
-      if (onBoundsChange) {
-        mapInstanceRef.current.on('moveend', () => {
-          const bounds = mapInstanceRef.current!.getBounds();
-          onBoundsChange({
-            north: bounds.getNorth(),
-            south: bounds.getSouth(),
-            east: bounds.getEast(),
-            west: bounds.getWest()
-          });
+      // Add bounds change listener (using ref to avoid effect re-runs)
+      mapInstanceRef.current.on('moveend', () => {
+        const bounds = mapInstanceRef.current!.getBounds();
+        onBoundsChangeRef.current?.({
+          north: bounds.getNorth(),
+          south: bounds.getSouth(),
+          east: bounds.getEast(),
+          west: bounds.getWest()
         });
-      }
+      });
     }
 
     const map = mapInstanceRef.current;
@@ -85,13 +92,9 @@ export default function SimpleMapView({
     });
 
     if (listings && listings.length > 0) {
-      console.log('Placing markers for listings:', listings.map(l => ({
-        id: l.id,
-        title: l.title,
-        address: l.addressLine,
-        lat: l.lat,
-        lng: l.lng
-      })));
+      // Debug: marker placement (disabled to reduce console overhead)
+      // console.debug('Placing markers for listings:', listings.map(l => ({ id: l.id, title: l.title, address: l.addressLine, lat: l.lat, lng: l.lng })));
+
       
       const markers: L.Marker[] = [];
       
@@ -175,20 +178,16 @@ export default function SimpleMapView({
               className: 'custom-tooltip'
             });
 
-          if (onListingClick) {
-            marker.on('click', () => onListingClick(listing.id));
-          }
+          marker.on('click', () => onListingClickRef.current?.(listing.id));
 
-          if (onListingHover) {
-            marker.on('mouseover', (e) => {
-              onListingHover(listing.id);
-              e.originalEvent?.stopPropagation();
-            });
-            marker.on('mouseout', (e) => {
-              onListingHover(null);
-              e.originalEvent?.stopPropagation();
-            });
-          }
+          marker.on('mouseover', (e) => {
+            onListingHoverRef.current?.(listing.id);
+            e.originalEvent?.stopPropagation();
+          });
+          marker.on('mouseout', (e) => {
+            onListingHoverRef.current?.(null);
+            e.originalEvent?.stopPropagation();
+          });
 
           markers.push(marker);
           return;
@@ -298,14 +297,14 @@ export default function SimpleMapView({
           });
           
           // Delegate click events inside popup to open selected listing
-          if (onListingClick) {
+          if (onListingClickRef.current) {
             const items = popupEl.querySelectorAll('[data-listing-id]');
             items.forEach((item) => {
               const handler = (e: Event) => {
                 e.stopPropagation();
                 const id = (item as HTMLElement).getAttribute('data-listing-id');
                 if (id) {
-                  onListingClick(id);
+                  onListingClickRef.current?.(id);
                   groupMarker.closePopup();
                 }
               };
@@ -327,9 +326,7 @@ export default function SimpleMapView({
             if (handler) (item as HTMLElement).removeEventListener('click', handler);
           });
           // Clear hover state when popup fully closes
-          if (onListingHover) {
-            onListingHover(null);
-          }
+          onListingHoverRef.current?.(null);
         });
 
         // Close popup when mouse leaves marker (with 3s delay)
@@ -353,14 +350,12 @@ export default function SimpleMapView({
           }
         });
 
-        if (onListingHover) {
-          groupMarker.on('mouseover', (e) => {
-            onListingHover(group[0].id);
-            e.originalEvent?.stopPropagation();
-          });
-          // Do not clear hover on marker mouseout; we'll clear when the popup actually closes to allow
-          // cursor travel from the marker to the popup without flicker.
-        }
+        groupMarker.on('mouseover', (e) => {
+          onListingHoverRef.current?.(group[0].id);
+          e.originalEvent?.stopPropagation();
+        });
+        // Do not clear hover on marker mouseout; we'll clear when the popup actually closes to allow
+        // cursor travel from the marker to the popup without flicker.
 
         markers.push(groupMarker);
       });
@@ -426,7 +421,7 @@ export default function SimpleMapView({
     return () => {
       // Markers will be cleared by the forEach loop above
     };
-  }, [listings, onListingClick, onListingHover, onBoundsChange]);
+  }, [listings]);
 
   // Cleanup map on unmount
   useEffect(() => {
