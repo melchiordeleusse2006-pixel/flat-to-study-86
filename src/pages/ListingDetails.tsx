@@ -307,13 +307,13 @@ export default function ListingDetails() {
               <Card>
                 <CardContent className="p-0">
                   {listing.images.length > 0 ? (
-                    <div className="flex gap-2 h-64 md:h-96">
-                      {/* Main image - 2/3 width */}
-                      <div className="flex-[2] relative">
+                    isMobile ? (
+                      // Mobile: Simple single image with navigation
+                      <div className="relative h-64">
                         <img 
                           src={listing.images[currentImageIndex]}
                           alt={listing.title}
-                          className="w-full h-full object-cover rounded-l-lg cursor-pointer"
+                          className="w-full h-full object-cover rounded-lg cursor-pointer"
                           onClick={() => {
                             setCurrentImageIndex((prev) => 
                               prev === listing.images.length - 1 ? 0 : prev + 1
@@ -329,7 +329,7 @@ export default function ListingDetails() {
                           {currentImageIndex + 1} / {listing.images.length}
                         </div>
 
-                        {/* Navigation arrows on main image */}
+                        {/* Navigation arrows */}
                         {listing.images.length > 1 && (
                           <>
                             <button
@@ -339,9 +339,9 @@ export default function ListingDetails() {
                                   prev === 0 ? listing.images.length - 1 : prev - 1
                                 );
                               }}
-                              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-1 rounded-full shadow-lg transition-all"
+                              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all"
                             >
-                              <ChevronLeft className="h-4 w-4" />
+                              <ChevronLeft className="h-5 w-5" />
                             </button>
                             <button
                               onClick={(e) => {
@@ -350,41 +350,94 @@ export default function ListingDetails() {
                                   prev === listing.images.length - 1 ? 0 : prev + 1
                                 );
                               }}
-                              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-1 rounded-full shadow-lg transition-all"
+                              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all"
                             >
-                              <ChevronRight className="h-4 w-4" />
+                              <ChevronRight className="h-5 w-5" />
                             </button>
                           </>
                         )}
                       </div>
+                    ) : (
+                      // Desktop: 2/3 - 1/3 layout
+                      <div className="flex gap-2 h-64 md:h-96">
+                        {/* Main image - 2/3 width */}
+                        <div className="flex-[2] relative">
+                          <img 
+                            src={listing.images[currentImageIndex]}
+                            alt={listing.title}
+                            className="w-full h-full object-cover rounded-l-lg cursor-pointer"
+                            onClick={() => {
+                              setCurrentImageIndex((prev) => 
+                                prev === listing.images.length - 1 ? 0 : prev + 1
+                              );
+                            }}
+                          />
+                          <Badge className="absolute top-4 left-4 bg-background/90 text-foreground">
+                            {getTypeDisplayName(listing.type)}
+                          </Badge>
+                          
+                          {/* Image counter */}
+                          <div className="absolute top-4 right-4 bg-black/50 text-white px-2 py-1 rounded text-sm">
+                            {currentImageIndex + 1} / {listing.images.length}
+                          </div>
 
-                      {/* Image thumbnails - 1/3 width */}
-                      {listing.images.length > 1 && (
-                        <div className="flex-1 flex flex-col gap-2 overflow-hidden">
-                          {listing.images.slice(1, 4).map((image, index) => (
-                            <div 
-                              key={index + 1}
-                              className="relative flex-1 cursor-pointer overflow-hidden rounded-lg group"
-                              onClick={() => setCurrentImageIndex(index + 1)}
-                            >
-                              <img 
-                                src={image}
-                                alt={`${listing.title} - Thumbnail ${index + 2}`}
-                                className={`w-full h-full object-cover transition-all group-hover:brightness-110 ${
-                                  currentImageIndex === index + 1 ? 'ring-2 ring-primary' : ''
-                                }`}
-                              />
-                              {/* Show +X more overlay on last thumbnail if there are more images */}
-                              {index === 2 && listing.images.length > 4 && (
-                                <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-semibold">
-                                  +{listing.images.length - 4} more
-                                </div>
-                              )}
-                            </div>
-                          ))}
+                          {/* Navigation arrows on main image */}
+                          {listing.images.length > 1 && (
+                            <>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setCurrentImageIndex((prev) => 
+                                    prev === 0 ? listing.images.length - 1 : prev - 1
+                                  );
+                                }}
+                                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-1 rounded-full shadow-lg transition-all"
+                              >
+                                <ChevronLeft className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setCurrentImageIndex((prev) => 
+                                    prev === listing.images.length - 1 ? 0 : prev + 1
+                                  );
+                                }}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-1 rounded-full shadow-lg transition-all"
+                              >
+                                <ChevronRight className="h-4 w-4" />
+                              </button>
+                            </>
+                          )}
                         </div>
-                      )}
-                    </div>
+
+                        {/* Image thumbnails - 1/3 width */}
+                        {listing.images.length > 1 && (
+                          <div className="flex-1 flex flex-col gap-2 overflow-hidden">
+                            {listing.images.slice(1, 4).map((image, index) => (
+                              <div 
+                                key={index + 1}
+                                className="relative flex-1 cursor-pointer overflow-hidden rounded-lg group"
+                                onClick={() => setCurrentImageIndex(index + 1)}
+                              >
+                                <img 
+                                  src={image}
+                                  alt={`${listing.title} - Thumbnail ${index + 2}`}
+                                  className={`w-full h-full object-cover transition-all group-hover:brightness-110 ${
+                                    currentImageIndex === index + 1 ? 'ring-2 ring-primary' : ''
+                                  }`}
+                                />
+                                {/* Show +X more overlay on last thumbnail if there are more images */}
+                                {index === 2 && listing.images.length > 4 && (
+                                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-semibold">
+                                    +{listing.images.length - 4} more
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )
                   ) : (
                     <div className="w-full h-64 md:h-96 bg-muted rounded-lg flex items-center justify-center">
                       <div className="text-muted-foreground">No images available</div>
