@@ -31,6 +31,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TranslateButton from '@/components/listings/TranslateButton';
+import { transformSupabaseImage, buildSrcSet } from '@/utils/image';
 
 // Helper function to get text in current language
 const getLocalizedText = (multilingualField: any, language: string, fallback: string = '') => {
@@ -314,10 +315,13 @@ export default function ListingDetails() {
                       // Mobile: Simple single image with navigation
                       <div className="relative h-64">
                         <img 
-                          src={listing.images[currentImageIndex]}
+                          src={transformSupabaseImage(listing.images[currentImageIndex], { width: 1080, quality: 70 })}
+                          srcSet={buildSrcSet(listing.images[currentImageIndex], [375, 640, 828, 1080, 1280], 70)}
+                          sizes="100vw"
                           alt={listing.title}
                           className="w-full h-full object-cover rounded-lg cursor-pointer"
-                          loading="lazy"
+                          loading="eager"
+                          fetchPriority="high"
                           decoding="async"
                           onClick={() => {
                             setCurrentImageIndex((prev) => 
@@ -368,10 +372,13 @@ export default function ListingDetails() {
                         {/* Main image - 2/3 width */}
                         <div className="flex-[2] relative">
                           <img 
-                            src={listing.images[currentImageIndex]}
+                            src={transformSupabaseImage(listing.images[currentImageIndex], { width: 1280, quality: 70 })}
+                            srcSet={buildSrcSet(listing.images[currentImageIndex], [640, 960, 1280, 1600], 70)}
+                            sizes="(max-width: 1024px) 100vw, 66vw"
                             alt={listing.title}
                             className="w-full h-full object-cover rounded-l-lg cursor-pointer"
-                            loading="lazy"
+                            loading="eager"
+                            fetchPriority="high"
                             decoding="async"
                             onClick={() => {
                               setCurrentImageIndex((prev) => 
@@ -427,7 +434,9 @@ export default function ListingDetails() {
                                 onClick={() => setCurrentImageIndex(index + 1)}
                               >
                                 <img 
-                                  src={image}
+                                  src={transformSupabaseImage(image, { width: 320, quality: 65 })}
+                                  srcSet={buildSrcSet(image, [160, 240, 320], 65)}
+                                  sizes="(max-width: 1024px) 25vw, 20vw"
                                   alt={`${listing.title} - Thumbnail ${index + 2}`}
                                   className={`w-full h-full object-cover transition-all group-hover:brightness-110 ${
                                     currentImageIndex === index + 1 ? 'ring-2 ring-primary' : ''

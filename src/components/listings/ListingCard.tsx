@@ -10,6 +10,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLanguage } from '@/contexts/LanguageContext';
 import TranslateButton from './TranslateButton';
+import { transformSupabaseImage, buildSrcSet } from '@/utils/image';
 
 interface ListingCardProps {
   listing: Listing;
@@ -85,7 +86,9 @@ export default function ListingCard({
               // Single image - no carousel needed
               <div className="relative h-full">
                 <img 
-                  src={listing.images[0]}
+                  src={transformSupabaseImage(listing.images[0], { width: 768, quality: 70 })}
+                  srcSet={buildSrcSet(listing.images[0], [320, 480, 640, 768, 1024], 70)}
+                  sizes="(max-width: 640px) 100vw, 384px"
                   alt={listing.title}
                   className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                   loading="lazy"
@@ -96,7 +99,9 @@ export default function ListingCard({
               // Multiple images - simple manual navigation
               <div className="relative h-full">
                 <img 
-                  src={listing.images[currentImageIndex]}
+                  src={transformSupabaseImage(listing.images[currentImageIndex], { width: 768, quality: 70 })}
+                  srcSet={buildSrcSet(listing.images[currentImageIndex], [320, 480, 640, 768, 1024], 70)}
+                  sizes="(max-width: 640px) 100vw, 384px"
                   alt={`${listing.title} - Image ${currentImageIndex + 1}`}
                   className="w-full h-full object-cover object-center"
                   draggable={false}
@@ -278,9 +283,13 @@ export default function ListingCard({
           <div className="flex items-center space-x-2">
             {listing.agency.logoUrl && (
               <img 
-                src={listing.agency.logoUrl} 
+                src={transformSupabaseImage(listing.agency.logoUrl, { width: 48, quality: 70 })}
+                srcSet={buildSrcSet(listing.agency.logoUrl, [32, 48, 64], 70)}
+                sizes="32px"
                 alt={listing.agency.name}
                 className="w-6 h-6 rounded object-cover"
+                loading="lazy"
+                decoding="async"
               />
             )}
             <span className="text-sm text-muted-foreground">{listing.agency.name}</span>
