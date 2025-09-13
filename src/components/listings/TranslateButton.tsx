@@ -18,41 +18,66 @@ export default function TranslateButton({
 }: TranslateButtonProps) {
   const [isTranslating, setIsTranslating] = useState(false);
 
+  const splitIntoChunks = (input: string, maxLen = 480) => {
+    const words = input.split(/(\s+)/); // keep spaces
+    const chunks: string[] = [];
+    let current = '';
+    for (const part of words) {
+      if ((current + part).length > maxLen) {
+        if (current.trim()) chunks.push(current);
+        // If a single word is longer than maxLen, hard split it
+        if (part.length > maxLen) {
+          for (let i = 0; i < part.length; i += maxLen) {
+            chunks.push(part.slice(i, i + maxLen));
+          }
+          current = '';
+        } else {
+          current = part;
+        }
+      } else {
+        current += part;
+      }
+    }
+    if (current.trim()) chunks.push(current);
+    return chunks;
+  };
+
+  const translateChunk = async (chunk: string) => {
+    const res = await fetch(
+      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=auto|en`
+    );
+    if (!res.ok) throw new Error('Translation service unavailable');
+    const data = await res.json();
+    const status = typeof data.responseStatus === 'string' ? parseInt(data.responseStatus, 10) : data.responseStatus;
+    if (status === 200 && data.responseData?.translatedText) {
+      return data.responseData.translatedText as string;
+    }
+    throw new Error(data.responseDetails || 'Translation failed');
+  };
+
   const translateText = async () => {
     if (isTranslated) {
-      // If already translated, switch back to original
       onTranslated(originalText);
       return;
     }
 
     setIsTranslating(true);
     try {
-      // Use Google Translate API via a free service
-      const response = await fetch(
-        `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=it|en`
-      );
-      
-      if (!response.ok) {
-        throw new Error('Translation service unavailable');
+      const chunks = splitIntoChunks(text);
+      const translatedParts: string[] = [];
+      for (const chunk of chunks) {
+        const translated = await translateChunk(chunk);
+        translatedParts.push(translated);
       }
-      
-      const data = await response.json();
-      
-      if (data.responseStatus === 200 && data.responseData?.translatedText) {
-        onTranslated(data.responseData.translatedText);
-        toast({
-          title: "Translation completed",
-          description: "Description translated to English"
-        });
-      } else {
-        throw new Error('Translation failed');
-      }
-    } catch (error) {
+      const finalText = translatedParts.join('');
+      onTranslated(finalText);
+      toast({ title: 'Translation completed', description: 'Description translated to English' });
+    } catch (error: any) {
       console.error('Translation error:', error);
       toast({
-        title: "Translation failed", 
-        description: "Unable to translate text. Please try again.",
-        variant: "destructive"
+        title: 'Translation failed',
+        description: error?.message || 'Unable to translate text. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsTranslating(false);
