@@ -236,7 +236,7 @@ export default function SimpleMapView({
                   ? `<img src="${listing.images[0]}" alt="${listing.title}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; flex-shrink: 0;" />`
                   : '<div style="width: 48px; height: 48px; background: #f3f4f6; border-radius: 6px; flex-shrink: 0;"></div>';
                 return `
-                  <div data-listing-id="${listing.id}" style="display: flex; align-items: start; gap: 8px; padding: 8px; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; background: white;">
+                  <div data-listing-id="${listing.id}" style="display: flex; align-items: start; gap: 8px; padding: 8px; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; background: white; transition: all 0.2s ease;">
                     ${img}
                     <div style="flex: 1; min-width: 0;">
                       <div style="display:flex; align-items:center; justify-content:space-between; gap: 8px;">
@@ -252,55 +252,82 @@ export default function SimpleMapView({
           </div>
         `;
 
-        // Use a popup for interactive preview so users can click inside without it disappearing
-        groupMarker.bindPopup(tooltipHtml, {
-          closeButton: true,
-          closeOnClick: false,
-          autoClose: true,
+        // Use a tooltip for hover preview that allows clicking on apartments
+        groupMarker.bindTooltip(tooltipHtml, {
+          permanent: false,
+          direction: 'top',
           offset: [0, -18],
-          className: 'group-popup',
-          maxWidth: 360,
-          minWidth: 320
+          className: 'group-hover-preview',
+          interactive: true, // This allows clicking inside the tooltip
+          opacity: 1
         });
 
-        // Open popup on click
-        groupMarker.on('click', () => {
-          groupMarker.openPopup();
+        // Show tooltip on hover
+        groupMarker.on('mouseover', () => {
+          groupMarker.openTooltip();
         });
 
-        // Delegate click events inside popup to open selected listing
-        if (onListingClick) {
-          const openHandler = () => {
-            const el = groupMarker.getPopup()?.getElement();
-            if (!el) return;
-            const items = el.querySelectorAll('[data-listing-id]');
+        // Keep tooltip open when hovering over the tooltip itself
+        groupMarker.on('tooltipopen', () => {
+          const tooltipEl = groupMarker.getTooltip()?.getElement();
+          if (!tooltipEl) return;
+          
+          // Add event listeners to keep tooltip open when hovering over it
+          tooltipEl.addEventListener('mouseenter', () => {
+            groupMarker.openTooltip();
+          });
+          
+          // Close tooltip when mouse leaves the tooltip area
+          tooltipEl.addEventListener('mouseleave', () => {
+            groupMarker.closeTooltip();
+          });
+          
+          // Delegate click events inside tooltip to open selected listing
+          if (onListingClick) {
+            const items = tooltipEl.querySelectorAll('[data-listing-id]');
             items.forEach((item) => {
               const handler = (e: Event) => {
                 e.stopPropagation();
                 const id = (item as HTMLElement).getAttribute('data-listing-id');
                 if (id) {
                   onListingClick(id);
-                  // Optionally close popup after selection
-                  groupMarker.closePopup();
+                  groupMarker.closeTooltip();
                 }
               };
               (item as HTMLElement).addEventListener('click', handler);
               // Store handler on element for cleanup
               (item as any).__handler = handler;
             });
-          };
-          const closeHandler = () => {
-            const el = groupMarker.getPopup()?.getElement();
-            if (!el) return;
-            const items = el.querySelectorAll('[data-listing-id]');
-            items.forEach((item) => {
-              const handler = (item as any).__handler;
-              if (handler) (item as HTMLElement).removeEventListener('click', handler);
-            });
-          };
-          groupMarker.on('popupopen', openHandler);
-          groupMarker.on('popupclose', closeHandler);
-        }
+          }
+        });
+
+        // Clean up event handlers when tooltip closes
+        groupMarker.on('tooltipclose', () => {
+          const tooltipEl = groupMarker.getTooltip()?.getElement();
+          if (!tooltipEl) return;
+          
+          const items = tooltipEl.querySelectorAll('[data-listing-id]');
+          items.forEach((item) => {
+            const handler = (item as any).__handler;
+            if (handler) (item as HTMLElement).removeEventListener('click', handler);
+          });
+        });
+
+        // Close tooltip when mouse leaves marker (with small delay)
+        let closeTimeout: NodeJS.Timeout;
+        groupMarker.on('mouseout', () => {
+          closeTimeout = setTimeout(() => {
+            const tooltipEl = groupMarker.getTooltip()?.getElement();
+            if (tooltipEl && !tooltipEl.matches(':hover')) {
+              groupMarker.closeTooltip();
+            }
+          }, 100);
+        });
+
+        // Cancel close timeout if mouse re-enters marker
+        groupMarker.on('mouseover', () => {
+          if (closeTimeout) clearTimeout(closeTimeout);
+        });
 
         if (onListingHover) {
           groupMarker.on('mouseover', (e) => {
