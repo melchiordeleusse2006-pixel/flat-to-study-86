@@ -281,7 +281,7 @@ export default function Search() {
       <Header />
       
       {/* Search Section */}
-      <div className="sticky top-16 z-40 bg-background/95 backdrop-blur">
+      <div className="sticky top-16 z-40 bg-background/95 backdrop-blur border-b">
         {/* Search Bar */}
         <div className="container py-4 pb-2">
           {isMobile ? (
@@ -313,7 +313,7 @@ export default function Search() {
                   <SelectTrigger className="w-44">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="z-50 bg-popover border shadow-lg">
+                  <SelectContent className="z-[70] bg-popover border shadow-lg">
                     <SelectItem value="relevance">{t('search.relevance')}</SelectItem>
                     <SelectItem value="price-low">{t('search.priceLowHigh')}</SelectItem>
                     <SelectItem value="price-high">{t('search.priceHighLow')}</SelectItem>
@@ -374,9 +374,9 @@ export default function Search() {
           <span className="ml-2 text-muted-foreground">{t('search.loading')}</span>
         </div>
       ) : viewMode === 'map' ? (
-        /* Map View - Use absolute positioning to fill remaining space */
+        /* Map View - Use full height for mobile */
         isMobile ? (
-          <div className="absolute top-[var(--header-height)] left-0 right-0 bottom-0" style={{"--header-height": "200px"} as any}>
+          <div className="h-[calc(100vh-64px-120px)] w-full">
             <SimpleMapView 
               listings={listings}
               onListingClick={handleListingClick}
