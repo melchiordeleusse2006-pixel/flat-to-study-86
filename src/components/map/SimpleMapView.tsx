@@ -224,7 +224,9 @@ export default function SimpleMapView({
         });
 
         const groupMarker = L.marker([avgLat, avgLng], { icon: clusterIcon }).addTo(map);
-
+        // Shared timeout to control closing delay between marker and tooltip
+        let hoverCloseTimeout: ReturnType<typeof setTimeout> | null = null;
+        
         // Build interactive tooltip content listing all group items
         const tooltipHtml = `
           <div style="width: 320px; max-height: 260px; overflow-y: auto; padding: 8px;">
@@ -274,12 +276,25 @@ export default function SimpleMapView({
           
           // Add event listeners to keep tooltip open when hovering over it
           tooltipEl.addEventListener('mouseenter', () => {
+            // cancel any pending close
+            if (hoverCloseTimeout) {
+              clearTimeout(hoverCloseTimeout);
+              hoverCloseTimeout = null;
+            }
             groupMarker.openTooltip();
           });
           
-          // Close tooltip when mouse leaves the tooltip area
+          // Delay close when mouse leaves the tooltip area (3s grace)
           tooltipEl.addEventListener('mouseleave', () => {
-            groupMarker.closeTooltip();
+            if (hoverCloseTimeout) clearTimeout(hoverCloseTimeout);
+            hoverCloseTimeout = setTimeout(() => {
+              const el = groupMarker.getTooltip()?.getElement();
+              const markerEl = (groupMarker as any)._icon as HTMLElement | undefined;
+              const isHovering = (!!el && el.matches(':hover')) || (!!markerEl && markerEl.matches(':hover'));
+              if (!isHovering) {
+                groupMarker.closeTooltip();
+              }
+            }, 3000);
           });
           
           // Delegate click events inside tooltip to open selected listing
@@ -313,20 +328,25 @@ export default function SimpleMapView({
           });
         });
 
-        // Close tooltip when mouse leaves marker (with small delay)
-        let closeTimeout: NodeJS.Timeout;
+        // Close tooltip when mouse leaves marker (with 3s delay)
         groupMarker.on('mouseout', () => {
-          closeTimeout = setTimeout(() => {
+          if (hoverCloseTimeout) clearTimeout(hoverCloseTimeout);
+          hoverCloseTimeout = setTimeout(() => {
             const tooltipEl = groupMarker.getTooltip()?.getElement();
-            if (tooltipEl && !tooltipEl.matches(':hover')) {
+            const markerEl = (groupMarker as any)._icon as HTMLElement | undefined;
+            const isHovering = (!!tooltipEl && tooltipEl.matches(':hover')) || (!!markerEl && markerEl.matches(':hover'));
+            if (!isHovering) {
               groupMarker.closeTooltip();
             }
-          }, 100);
+          }, 3000);
         });
-
+        
         // Cancel close timeout if mouse re-enters marker
         groupMarker.on('mouseover', () => {
-          if (closeTimeout) clearTimeout(closeTimeout);
+          if (hoverCloseTimeout) {
+            clearTimeout(hoverCloseTimeout);
+            hoverCloseTimeout = null;
+          }
         });
 
         if (onListingHover) {
