@@ -37,3 +37,24 @@
   transform: translateY(-1px);
   transition: all 0.2s ease !important;
 }
+
+/* Popup styling for hover preview */
+.group-hover-preview .leaflet-popup-content-wrapper {
+  background: white !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+  pointer-events: auto !important;
+}
+.group-hover-preview .leaflet-popup-content {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.group-hover-preview .leaflet-popup-tip {
+  background: white !important;
+  border: 1px solid #e5e7eb !important;
+}
+.group-hover-preview {
+  pointer-events: auto !important;
+  z-index: 1000 !important;
+}
