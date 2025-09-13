@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import ListingCard from '@/components/listings/ListingCard';
 import SearchFilters from '@/components/search/SearchFilters';
@@ -18,6 +19,7 @@ import { toast } from '@/hooks/use-toast';
 type ViewMode = 'grid' | 'map';
 
 export default function Search() {
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { t } = useLanguage();
   const [listings, setListings] = useState<Listing[]>([]);
@@ -191,9 +193,7 @@ export default function Search() {
   }, [searchQuery, filters, sortBy, allListings, viewMode]);
 
   const handleListingClick = (listingId: string) => {
-    // In a real app, this would navigate to the listing detail page
-    console.log('Opening listing:', listingId);
-    window.open(`/listing/${listingId}`, '_blank');
+    navigate(`/listing/${listingId}`);
   };
 
   const handleGeocodeAll = async () => {
