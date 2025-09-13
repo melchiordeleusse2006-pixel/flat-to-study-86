@@ -88,6 +88,8 @@ export default function ListingCard({
                   src={listing.images[0]}
                   alt={listing.title}
                   className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             ) : (
@@ -98,6 +100,8 @@ export default function ListingCard({
                   alt={`${listing.title} - Image ${currentImageIndex + 1}`}
                   className="w-full h-full object-cover object-center"
                   draggable={false}
+                  loading="lazy"
+                  decoding="async"
                 />
                 
                 {/* Image counter */}

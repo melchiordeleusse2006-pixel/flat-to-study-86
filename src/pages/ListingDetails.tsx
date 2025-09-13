@@ -317,6 +317,8 @@ export default function ListingDetails() {
                           src={listing.images[currentImageIndex]}
                           alt={listing.title}
                           className="w-full h-full object-cover rounded-lg cursor-pointer"
+                          loading="lazy"
+                          decoding="async"
                           onClick={() => {
                             setCurrentImageIndex((prev) => 
                               prev === listing.images.length - 1 ? 0 : prev + 1
@@ -369,6 +371,8 @@ export default function ListingDetails() {
                             src={listing.images[currentImageIndex]}
                             alt={listing.title}
                             className="w-full h-full object-cover rounded-l-lg cursor-pointer"
+                            loading="lazy"
+                            decoding="async"
                             onClick={() => {
                               setCurrentImageIndex((prev) => 
                                 prev === listing.images.length - 1 ? 0 : prev + 1
@@ -428,6 +432,8 @@ export default function ListingDetails() {
                                   className={`w-full h-full object-cover transition-all group-hover:brightness-110 ${
                                     currentImageIndex === index + 1 ? 'ring-2 ring-primary' : ''
                                   }`}
+                                  loading="lazy"
+                                  decoding="async"
                                 />
                                 {/* Show +X more overlay on last thumbnail if there are more images */}
                                 {index === 2 && listing.images.length > 4 && (
