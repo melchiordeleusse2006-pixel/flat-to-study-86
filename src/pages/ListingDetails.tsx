@@ -30,14 +30,9 @@ import SimpleMapView from '@/components/map/SimpleMapView';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useListingText } from '@/hooks/useListingText';
 
-// Helper function to get text in current language
-const getLocalizedText = (multilingualField: any, language: string, fallback: string = '') => {
-  if (!multilingualField || typeof multilingualField !== 'object') {
-    return fallback;
-  }
-  return multilingualField[language] || multilingualField['en'] || fallback;
-};
+// Using useListingText hook for localization
 
 export default function ListingDetails() {
   const { id } = useParams<{ id: string }>();
@@ -45,6 +40,7 @@ export default function ListingDetails() {
   const { user, profile } = useAuth();
   const { t, language } = useLanguage();
   const isMobile = useIsMobile();
+  const { getLocalizedText } = useListingText();
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -89,9 +85,9 @@ export default function ListingDetails() {
       // Transform the data to match the Listing type
       const transformedListing: Listing = {
         id: listingData.id,
-        title: getLocalizedText(listingData.title_multilingual, language, listingData.title),
+        title: getLocalizedText(listingData.title_multilingual, listingData.title),
         type: listingData.type as ListingType,
-        description: getLocalizedText(listingData.description_multilingual, language, listingData.description),
+        description: getLocalizedText(listingData.description_multilingual, listingData.description),
         addressLine: listingData.address_line,
         city: listingData.city,
         country: listingData.country,
