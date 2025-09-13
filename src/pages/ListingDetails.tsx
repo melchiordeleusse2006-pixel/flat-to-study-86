@@ -542,7 +542,7 @@ export default function ListingDetails() {
                   <div>
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="font-semibold">Description</h3>
-                      {listing.description && language !== 'en' && (
+                      {listing.description && (
                         <TranslateButton
                           text={listing.description}
                           onTranslated={(translated) => {

@@ -59,8 +59,8 @@ export default function TranslateButton({
     }
   };
 
-  // Don't show translate button if text is already in English or empty
-  if (!text || text.trim().length < 10) {
+  // Show translate button for non-empty text
+  if (!text || text.trim().length < 3) {
     return null;
   }
 
@@ -70,7 +70,7 @@ export default function TranslateButton({
       size="sm"
       onClick={translateText}
       disabled={isTranslating}
-      className="ml-2"
+      className="flex items-center gap-2 text-xs"
     >
       {isTranslating ? (
         <Loader2 className="h-4 w-4 animate-spin mr-2" />

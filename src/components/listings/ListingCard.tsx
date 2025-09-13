@@ -183,7 +183,7 @@ export default function ListingCard({
             <h3 className="font-semibold text-foreground line-clamp-2 text-sm leading-5">
               {isTitleTranslated ? translatedTitle : listing.title}
             </h3>
-            {listing.title && language !== 'en' && (
+            {listing.title && (
               <TranslateButton
                 text={listing.title}
                 onTranslated={(translated) => {
