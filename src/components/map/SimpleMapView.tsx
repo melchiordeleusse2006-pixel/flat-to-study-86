@@ -326,6 +326,10 @@ export default function SimpleMapView({
             const handler = (item as any).__handler;
             if (handler) (item as HTMLElement).removeEventListener('click', handler);
           });
+          // Clear hover state when popup fully closes
+          if (onListingHover) {
+            onListingHover(null);
+          }
         });
 
         // Close popup when mouse leaves marker (with 3s delay)
@@ -354,10 +358,8 @@ export default function SimpleMapView({
             onListingHover(group[0].id);
             e.originalEvent?.stopPropagation();
           });
-          groupMarker.on('mouseout', (e) => {
-            onListingHover(null);
-            e.originalEvent?.stopPropagation();
-          });
+          // Do not clear hover on marker mouseout; we'll clear when the popup actually closes to allow
+          // cursor travel from the marker to the popup without flicker.
         }
 
         markers.push(groupMarker);
@@ -424,7 +426,7 @@ export default function SimpleMapView({
     return () => {
       // Markers will be cleared by the forEach loop above
     };
-  }, [listings, onListingClick, onListingHover, hoveredListingId, onBoundsChange]);
+  }, [listings, onListingClick, onListingHover, onBoundsChange]);
 
   // Cleanup map on unmount
   useEffect(() => {
