@@ -21,7 +21,7 @@ type ViewMode = 'grid' | 'map';
 export default function Search() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [listings, setListings] = useState<Listing[]>([]);
   const [allListings, setAllListings] = useState<Listing[]>([]);
   const [filters, setFilters] = useState<SearchFiltersType>({});
@@ -46,10 +46,11 @@ export default function Search() {
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        // Use the secure function to get listings with agency names only
-        const { data, error } = await supabase.rpc('get_listings_with_agency', {
+        // Use multilingual function to get localized fields
+        const { data, error } = await supabase.rpc('get_listings_with_agency_multilingual', {
           p_limit: 100,
-          p_offset: 0
+          p_offset: 0,
+          p_language: language
         });
 
         if (error) {
@@ -107,7 +108,7 @@ export default function Search() {
     };
 
     fetchListings();
-  }, []);
+  }, [language]);
 
   // Filter listings based on search criteria
   useEffect(() => {
@@ -215,9 +216,10 @@ export default function Search() {
 
   const fetchListings = async () => {
     try {
-      const { data, error } = await supabase.rpc('get_listings_with_agency', {
+      const { data, error } = await supabase.rpc('get_listings_with_agency_multilingual', {
         p_limit: 100,
-        p_offset: 0
+        p_offset: 0,
+        p_language: language
       });
 
       if (error) {
