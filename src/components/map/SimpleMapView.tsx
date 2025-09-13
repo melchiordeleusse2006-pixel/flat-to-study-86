@@ -296,22 +296,43 @@ export default function SimpleMapView({
             }, 3000);
           });
           
-          // Delegate click events inside popup to open selected listing
+          // Delegate click and touch events inside popup to open selected listing (robust for nested elements)
           if (onListingClickRef.current) {
-            const items = popupEl.querySelectorAll('[data-listing-id]');
-            items.forEach((item) => {
-              const handler = (e: Event) => {
-                e.stopPropagation();
-                const id = (item as HTMLElement).getAttribute('data-listing-id');
-                if (id) {
-                  onListingClickRef.current?.(id);
-                  groupMarker.closePopup();
-                }
-              };
-              (item as HTMLElement).addEventListener('click', handler);
-              // Store handler on element for cleanup
-              (item as any).__handler = handler;
-            });
+            const delegatedHandler = (e: Event) => {
+              const target = e.target as HTMLElement;
+              const itemEl = target?.closest('[data-listing-id]') as HTMLElement | null;
+              if (!itemEl) return;
+              e.stopPropagation();
+              e.preventDefault();
+              const id = itemEl.getAttribute('data-listing-id');
+              if (id) {
+                console.debug('Map preview selecting listing:', id);
+                onListingClickRef.current?.(id);
+                groupMarker.closePopup();
+              }
+            };
+
+            // Attach delegated listeners
+            popupEl.addEventListener('click', delegatedHandler);
+            popupEl.addEventListener('touchstart', delegatedHandler as EventListener, { passive: false } as any);
+
+            // Keyboard accessibility
+            const keyHandler = (e: KeyboardEvent) => {
+              const target = e.target as HTMLElement;
+              const itemEl = target?.closest('[data-listing-id]') as HTMLElement | null;
+              if (e.key === 'Enter' && itemEl) {
+                delegatedHandler(e);
+              }
+            };
+            popupEl.addEventListener('keydown', keyHandler as EventListener);
+
+            // Prevent the map from swallowing events
+            L.DomEvent.disableClickPropagation(popupEl);
+            L.DomEvent.disableScrollPropagation(popupEl);
+
+            // Store handlers for cleanup
+            (popupEl as any).__delegatedHandler = delegatedHandler;
+            (popupEl as any).__keyHandler = keyHandler;
           }
         });
 
@@ -319,12 +340,16 @@ export default function SimpleMapView({
         groupMarker.on('popupclose', () => {
           const popupEl = groupMarker.getPopup()?.getElement();
           if (!popupEl) return;
-          
-          const items = popupEl.querySelectorAll('[data-listing-id]');
-          items.forEach((item) => {
-            const handler = (item as any).__handler;
-            if (handler) (item as HTMLElement).removeEventListener('click', handler);
-          });
+
+          const delegated = (popupEl as any).__delegatedHandler as EventListener | undefined;
+          const keyHandler = (popupEl as any).__keyHandler as EventListener | undefined;
+          if (delegated) {
+            popupEl.removeEventListener('click', delegated);
+            popupEl.removeEventListener('touchstart', delegated);
+          }
+          if (keyHandler) {
+            popupEl.removeEventListener('keydown', keyHandler);
+          }
           // Clear hover state when popup fully closes
           onListingHoverRef.current?.(null);
         });
