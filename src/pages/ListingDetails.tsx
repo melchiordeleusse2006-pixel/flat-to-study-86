@@ -30,6 +30,7 @@ import SimpleMapView from '@/components/map/SimpleMapView';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useIsMobile } from '@/hooks/use-mobile';
+import TranslateButton from '@/components/listings/TranslateButton';
 
 // Helper function to get text in current language
 const getLocalizedText = (multilingualField: any, language: string, fallback: string = '') => {
@@ -50,6 +51,8 @@ export default function ListingDetails() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [message, setMessage] = useState('');
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [translatedDescription, setTranslatedDescription] = useState('');
+  const [isDescriptionTranslated, setIsDescriptionTranslated] = useState(false);
 
   // Set default message when language changes
   useEffect(() => {
@@ -537,8 +540,23 @@ export default function ListingDetails() {
 
                   {/* Description */}
                   <div>
-                    <h3 className="font-semibold mb-3">Description</h3>
-                    <p className="text-muted-foreground leading-relaxed">{listing.description}</p>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-semibold">Description</h3>
+                      {listing.description && language !== 'en' && (
+                        <TranslateButton
+                          text={listing.description}
+                          onTranslated={(translated) => {
+                            setTranslatedDescription(translated);
+                            setIsDescriptionTranslated(!isDescriptionTranslated);
+                          }}
+                          isTranslated={isDescriptionTranslated}
+                          originalText={listing.description}
+                        />
+                      )}
+                    </div>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {isDescriptionTranslated ? translatedDescription : listing.description}
+                    </p>
                   </div>
                 </CardContent>
               </Card>

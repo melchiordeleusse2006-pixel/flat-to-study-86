@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Listing } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Heart, MapPin, Bed, Bath, Calendar, Wifi, Car, Users, Map } from 'lucide-react';
+import { Heart, MapPin, Bed, Bath, Calendar, Wifi, Car, Users, Map, Languages } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ListingMap from '@/components/map/ListingMap';
 import { useFavorites } from '@/hooks/useFavorites';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/LanguageContext';
+import TranslateButton from './TranslateButton';
 
 interface ListingCardProps {
   listing: Listing;
@@ -25,9 +27,12 @@ export default function ListingCard({
   className 
 }: ListingCardProps) {
   const { isFavorited, toggleFavorite } = useFavorites();
+  const { language } = useLanguage();
   const isMobile = useIsMobile();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showMap, setShowMap] = useState(false);
+  const [translatedTitle, setTranslatedTitle] = useState('');
+  const [isTitleTranslated, setIsTitleTranslated] = useState(false);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
@@ -174,9 +179,22 @@ export default function ListingCard({
       <div className="p-4">
         {/* Title and Price */}
         <div className="flex items-start justify-between mb-2">
-          <h3 className="font-semibold text-foreground line-clamp-2 text-sm leading-5 flex-1 mr-2">
-            {listing.title}
-          </h3>
+          <div className="flex-1 mr-2">
+            <h3 className="font-semibold text-foreground line-clamp-2 text-sm leading-5">
+              {isTitleTranslated ? translatedTitle : listing.title}
+            </h3>
+            {listing.title && language !== 'en' && (
+              <TranslateButton
+                text={listing.title}
+                onTranslated={(translated) => {
+                  setTranslatedTitle(translated);
+                  setIsTitleTranslated(!isTitleTranslated);
+                }}
+                isTranslated={isTitleTranslated}
+                originalText={listing.title}
+              />
+            )}
+          </div>
           <div className="text-right flex-shrink-0">
             <div className="font-bold text-lg text-price">
               {formatPrice(listing.rentMonthlyEUR)}
