@@ -44,7 +44,7 @@ export default function TranslateButton({
 
   const translateChunk = async (chunk: string) => {
     const res = await fetch(
-      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=auto|en`
+      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=it|en`
     );
     if (!res.ok) throw new Error('Translation service unavailable');
     const data = await res.json();
