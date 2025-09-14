@@ -101,7 +101,7 @@ export default function ListingCard({
                 <img 
                   src={transformSupabaseImage(listing.images[currentImageIndex], { width: 1080, quality: 70 })}
                   alt={`${listing.title} - Image ${currentImageIndex + 1}`}
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-cover"
                   draggable={false}
                   loading="lazy"
                   decoding="async"
