@@ -10,7 +10,8 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLanguage } from '@/contexts/LanguageContext';
 import TranslateButton from './TranslateButton';
-import { transformSupabaseImage, buildSrcSet } from '@/utils/image';
+import { cachedTransformSupabaseImage, buildCardSrcSet } from '@/utils/image';
+import { useOptimizedImages } from '@/hooks/useOptimizedImages';
 
 interface ListingCardProps {
   listing: Listing;
@@ -36,6 +37,9 @@ export default function ListingCard({
   const [showMap, setShowMap] = useState(false);
   const [translatedTitle, setTranslatedTitle] = useState('');
   const [isTitleTranslated, setIsTitleTranslated] = useState(false);
+  
+  // Optimized image loading
+  const { imgRef, isVisible } = useOptimizedImages();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-EU', {
@@ -88,11 +92,12 @@ export default function ListingCard({
               // Single image - no carousel needed
               <div className="relative h-full">
                 <img 
-                  src={transformSupabaseImage(listing.images[0], { width: 768, quality: 70 })}
-                  srcSet={buildSrcSet(listing.images[0], [320, 480, 640, 768, 1024], 70)}
-                  sizes="(max-width: 640px) 100vw, 384px"
+                  ref={imgRef}
+                  src={isVisible ? cachedTransformSupabaseImage(listing.images[0], { width: 768, quality: 70 }) : ''}
+                  srcSet={isVisible ? buildCardSrcSet(listing.images[0], 70) : ''}
+                  sizes="(max-width: 768px) 100vw, 384px"
                   alt={listing.title}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105 bg-muted"
                   loading="lazy"
                   decoding="async"
                 />
@@ -101,11 +106,11 @@ export default function ListingCard({
               // Multiple images - simple manual navigation
               <div className="relative h-full">
                 <img 
-                  src={transformSupabaseImage(listing.images[currentImageIndex], { width: 768, quality: 70 })}
-                  srcSet={buildSrcSet(listing.images[currentImageIndex], [320, 480, 640, 768, 1024], 70)}
-                  sizes="(max-width: 640px) 100vw, 384px"
+                  src={isVisible ? cachedTransformSupabaseImage(listing.images[currentImageIndex], { width: 768, quality: 70 }) : ''}
+                  srcSet={isVisible ? buildCardSrcSet(listing.images[currentImageIndex], 70) : ''}
+                  sizes="(max-width: 768px) 100vw, 384px"
                   alt={`${listing.title} - Image ${currentImageIndex + 1}`}
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-cover object-center bg-muted"
                   draggable={false}
                   loading="lazy"
                   decoding="async"
@@ -285,11 +290,9 @@ export default function ListingCard({
           <div className="flex items-center space-x-2">
             {listing.agency.logoUrl && (
               <img 
-                src={transformSupabaseImage(listing.agency.logoUrl, { width: 48, quality: 70 })}
-                srcSet={buildSrcSet(listing.agency.logoUrl, [32, 48, 64], 70)}
-                sizes="32px"
+                src={cachedTransformSupabaseImage(listing.agency.logoUrl, { width: 48, quality: 70 })}
                 alt={listing.agency.name}
-                className="w-6 h-6 rounded object-cover"
+                className="w-6 h-6 rounded object-cover bg-muted"
                 loading="lazy"
                 decoding="async"
               />
