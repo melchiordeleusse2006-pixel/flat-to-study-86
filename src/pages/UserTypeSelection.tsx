@@ -28,27 +28,6 @@ export default function UserTypeSelection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-auto md:h-96 max-w-2xl mx-auto">
-          {/* For Realtors */}
-          <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 group flex flex-col">
-            <Link to="/signup/realtor" className="flex flex-col h-full">
-              <CardHeader className="text-center pb-4 flex-1">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-                  <Building className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="text-xl">For Realtors</CardTitle>
-                <CardDescription>
-                  Real estate professionals managing multiple properties
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="text-center pt-0">
-                <p className="text-sm text-muted-foreground mb-4">
-                  List and manage properties, connect with potential tenants, track inquiries
-                </p>
-                <Button className="w-full">Get Started</Button>
-              </CardContent>
-            </Link>
-          </Card>
-
           {/* For Apartment Seekers */}
           <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 group flex flex-col">
             <Link to="/signup/student" className="flex flex-col h-full">
@@ -64,6 +43,27 @@ export default function UserTypeSelection() {
               <CardContent className="text-center pt-0">
                 <p className="text-sm text-muted-foreground mb-4">
                   Search properties, save favorites, request viewings, connect with landlords
+                </p>
+                <Button className="w-full">Get Started</Button>
+              </CardContent>
+            </Link>
+          </Card>
+
+          {/* For Realtors */}
+          <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 group flex flex-col">
+            <Link to="/signup/realtor" className="flex flex-col h-full">
+              <CardHeader className="text-center pb-4 flex-1">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                  <Building className="h-8 w-8 text-primary" />
+                </div>
+                <CardTitle className="text-xl">For Realtors</CardTitle>
+                <CardDescription>
+                  Real estate professionals managing multiple properties
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="text-center pt-0">
+                <p className="text-sm text-muted-foreground mb-4">
+                  List and manage properties, connect with potential tenants, track inquiries
                 </p>
                 <Button className="w-full">Get Started</Button>
               </CardContent>
