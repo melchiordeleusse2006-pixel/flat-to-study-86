@@ -31,7 +31,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TranslateButton from '@/components/listings/TranslateButton';
-import { transformSupabaseImage, buildSrcSet } from '@/utils/image';
+
 import { ImageLightbox } from '@/components/ui/image-lightbox';
 
 // Helper function to get text in current language
@@ -322,7 +322,7 @@ export default function ListingDetails() {
                           title={listing.title}
                         >
                           <img 
-                            src={transformSupabaseImage(listing.images[currentImageIndex], { width: 1080, quality: 70 })}
+                            src={listing.images[currentImageIndex]}
                             alt={listing.title}
                             className="w-full h-full object-cover rounded-lg cursor-pointer"
                             loading="eager"
@@ -379,7 +379,7 @@ export default function ListingDetails() {
                             title={listing.title}
                           >
                             <img 
-                              src={transformSupabaseImage(listing.images[currentImageIndex], { width: 1080, quality: 70 })}
+                              src={listing.images[currentImageIndex]}
                               alt={listing.title}
                               className="w-full h-full object-cover rounded-l-lg cursor-pointer"
                               loading="eager"
@@ -441,7 +441,7 @@ export default function ListingDetails() {
                                   onClick={() => setCurrentImageIndex(index + 1)}
                                 >
                                   <img 
-                                    src={transformSupabaseImage(image, { width: 1080, quality: 70 })}
+                                    src={image}
                                     alt={`${listing.title} - Thumbnail ${index + 2}`}
                                     className={`w-full h-full object-cover transition-all group-hover:brightness-110 ${
                                       currentImageIndex === index + 1 ? 'ring-2 ring-primary' : ''
