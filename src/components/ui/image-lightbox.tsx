@@ -60,8 +60,8 @@ export function ImageLightbox({
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 bg-black/95 border-none">
-        <div className="relative w-full h-full flex items-center justify-center">
+      <DialogContent className="max-w-[95vw] max-h-[95vh] w-[95vw] h-[95vh] p-0 bg-black/95 border-none">
+        <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
           {/* Close button */}
           <Button
             variant="ghost"
