@@ -127,6 +127,20 @@ const translations = {
     'auth.resetFailed': 'Failed to send reset email',
     'auth.resetSuccess': 'Password reset email sent! Check your inbox and follow the instructions.',
     
+    // User Type Selection
+    'userType.backToHome': 'Back to Home',
+    'userType.title': 'Get Started with Flat2Study',
+    'userType.description': 'Choose your profile type to create an account',
+    'userType.realtorTitle': 'For Realtors',
+    'userType.realtorDescription': 'Real estate professionals managing multiple properties',
+    'userType.realtorFeatures': 'List and manage properties, connect with potential tenants, track inquiries',
+    'userType.studentTitle': 'For Apartment Seekers',
+    'userType.studentDescription': 'Students looking for accommodation',
+    'userType.studentFeatures': 'Search properties, save favorites, request viewings, connect with landlords',
+    'userType.getStarted': 'Get Started',
+    'userType.alreadyAccount': 'Already have an account?',
+    'userType.logInHere': 'Log in here',
+    
     // Signup Student
     'signup.student.backToSelection': 'Back to Selection',
     'signup.student.title': 'Student Registration',
@@ -517,6 +531,20 @@ const translations = {
     'auth.loginFailed': 'Impossibile effettuare l\'accesso',
     'auth.resetFailed': 'Impossibile inviare l\'email di reset',
     'auth.resetSuccess': 'Email di reset password inviata! Controlla la tua casella e segui le istruzioni.',
+    
+    // User Type Selection
+    'userType.backToHome': 'Torna alla Home',
+    'userType.title': 'Inizia con Flat2Study',
+    'userType.description': 'Scegli il tipo di profilo per creare un account',
+    'userType.realtorTitle': 'Per Agenti Immobiliari',
+    'userType.realtorDescription': 'Professionisti del settore immobiliare che gestiscono più proprietà',
+    'userType.realtorFeatures': 'Elenca e gestisci proprietà, connettiti con potenziali inquilini, monitora le richieste',
+    'userType.studentTitle': 'Per Chi Cerca Casa',
+    'userType.studentDescription': 'Studenti alla ricerca di un alloggio',
+    'userType.studentFeatures': 'Cerca proprietà, salva i preferiti, richiedi visite, connettiti con i proprietari',
+    'userType.getStarted': 'Inizia',
+    'userType.alreadyAccount': 'Hai già un account?',
+    'userType.logInHere': 'Accedi qui',
     
     // Signup Student
     'signup.student.backToSelection': 'Torna alla Selezione',

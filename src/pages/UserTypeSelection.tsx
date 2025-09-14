@@ -2,9 +2,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Building, Home, GraduationCap } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function UserTypeSelection() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -16,14 +18,14 @@ export default function UserTypeSelection() {
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Home
+            {t('userType.backToHome')}
           </Button>
         </div>
 
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-4">Get Started with Flat2Study</h1>
+          <h1 className="text-3xl font-bold mb-4">{t('userType.title')}</h1>
           <p className="text-muted-foreground text-lg">
-            Choose your profile type to create an account
+            {t('userType.description')}
           </p>
         </div>
 
@@ -35,16 +37,16 @@ export default function UserTypeSelection() {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
                   <GraduationCap className="h-8 w-8 text-primary" />
                 </div>
-                <CardTitle className="text-xl">For Apartment Seekers</CardTitle>
+                <CardTitle className="text-xl">{t('userType.studentTitle')}</CardTitle>
                 <CardDescription>
-                  Students looking for accommodation
+                  {t('userType.studentDescription')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center pt-0">
                 <p className="text-sm text-muted-foreground mb-4">
-                  Search properties, save favorites, request viewings, connect with landlords
+                  {t('userType.studentFeatures')}
                 </p>
-                <Button className="w-full">Get Started</Button>
+                <Button className="w-full">{t('userType.getStarted')}</Button>
               </CardContent>
             </Link>
           </Card>
@@ -56,16 +58,16 @@ export default function UserTypeSelection() {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
                   <Building className="h-8 w-8 text-primary" />
                 </div>
-                <CardTitle className="text-xl">For Realtors</CardTitle>
+                <CardTitle className="text-xl">{t('userType.realtorTitle')}</CardTitle>
                 <CardDescription>
-                  Real estate professionals managing multiple properties
+                  {t('userType.realtorDescription')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center pt-0">
                 <p className="text-sm text-muted-foreground mb-4">
-                  List and manage properties, connect with potential tenants, track inquiries
+                  {t('userType.realtorFeatures')}
                 </p>
-                <Button className="w-full">Get Started</Button>
+                <Button className="w-full">{t('userType.getStarted')}</Button>
               </CardContent>
             </Link>
           </Card>
@@ -73,9 +75,9 @@ export default function UserTypeSelection() {
 
         <div className="text-center mt-8">
           <p className="text-sm text-muted-foreground">
-            Already have an account?{' '}
+            {t('userType.alreadyAccount')}{' '}
             <Link to="/auth" className="text-primary hover:underline font-medium">
-              Log in here
+              {t('userType.logInHere')}
             </Link>
           </p>
         </div>
