@@ -88,9 +88,9 @@ export default function ListingCard({
               // Single image - no carousel needed
               <div className="relative h-full">
                 <img 
-                  src={transformSupabaseImage(listing.images[0], { width: 1080, quality: 70 })}
+                  src={listing.images[0]}
                   alt={listing.title}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  className="w-full h-full object-cover"
                   loading="lazy"
                   decoding="async"
                 />
@@ -99,7 +99,7 @@ export default function ListingCard({
               // Multiple images - simple manual navigation
               <div className="relative h-full">
                 <img 
-                  src={transformSupabaseImage(listing.images[currentImageIndex], { width: 1080, quality: 70 })}
+                  src={listing.images[currentImageIndex]}
                   alt={`${listing.title} - Image ${currentImageIndex + 1}`}
                   className="w-full h-full object-cover"
                   draggable={false}
@@ -281,7 +281,7 @@ export default function ListingCard({
           <div className="flex items-center space-x-2">
             {listing.agency.logoUrl && (
               <img 
-                src={transformSupabaseImage(listing.agency.logoUrl, { width: 48, quality: 70 })}
+                src={listing.agency.logoUrl}
                 alt={listing.agency.name}
                 className="w-6 h-6 rounded object-cover"
                 loading="lazy"
