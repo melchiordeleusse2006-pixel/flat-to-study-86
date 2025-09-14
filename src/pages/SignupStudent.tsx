@@ -11,6 +11,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Loader2, ArrowLeft, Upload, User, Check, ChevronsUpDown } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { countries, getPriorityCountries, getOtherCountries } from '@/data/countries';
 
 export default function SignupStudent() {
   const { t } = useLanguage();
@@ -216,302 +217,42 @@ export default function SignupStudent() {
                         <CommandEmpty>No country found.</CommandEmpty>
                         <CommandList>
                           <CommandGroup heading="Priority Countries">
-                            <CommandItem
-                              value="+33 France"
-                              onSelect={() => {
-                                setCountryCode("+33");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+33" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇫🇷 +33 France
-                            </CommandItem>
-                            <CommandItem
-                              value="+39 Italy"
-                              onSelect={() => {
-                                setCountryCode("+39");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+39" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇮🇹 +39 Italy
-                            </CommandItem>
-                            <CommandItem
-                              value="+40 Romania"
-                              onSelect={() => {
-                                setCountryCode("+40");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+40" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇷🇴 +40 Romania
-                            </CommandItem>
-                            <CommandItem
-                              value="+90 Turkey"
-                              onSelect={() => {
-                                setCountryCode("+90");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+90" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇹🇷 +90 Turkey
-                            </CommandItem>
+                            {getPriorityCountries().map((country) => (
+                              <CommandItem
+                                key={country.code}
+                                value={`${country.dialCode} ${country.name}`}
+                                onSelect={() => {
+                                  setCountryCode(country.dialCode);
+                                  setCountryCodeOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={`mr-2 h-4 w-4 ${
+                                    countryCode === country.dialCode ? "opacity-100" : "opacity-0"
+                                  }`}
+                                />
+                                {country.flag} {country.dialCode} {country.name}
+                              </CommandItem>
+                            ))}
                           </CommandGroup>
-                          <CommandGroup heading="Other Countries">
-                            <CommandItem
-                              value="+1 United States"
-                              onSelect={() => {
-                                setCountryCode("+1");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+1" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇺🇸 +1 United States
-                            </CommandItem>
-                            <CommandItem
-                              value="+44 United Kingdom"
-                              onSelect={() => {
-                                setCountryCode("+44");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+44" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇬🇧 +44 United Kingdom
-                            </CommandItem>
-                            <CommandItem
-                              value="+49 Germany"
-                              onSelect={() => {
-                                setCountryCode("+49");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+49" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇩🇪 +49 Germany
-                            </CommandItem>
-                            <CommandItem
-                              value="+34 Spain"
-                              onSelect={() => {
-                                setCountryCode("+34");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+34" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇪🇸 +34 Spain
-                            </CommandItem>
-                            <CommandItem
-                              value="+31 Netherlands"
-                              onSelect={() => {
-                                setCountryCode("+31");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+31" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇳🇱 +31 Netherlands
-                            </CommandItem>
-                            <CommandItem
-                              value="+32 Belgium"
-                              onSelect={() => {
-                                setCountryCode("+32");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+32" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇧🇪 +32 Belgium
-                            </CommandItem>
-                            <CommandItem
-                              value="+41 Switzerland"
-                              onSelect={() => {
-                                setCountryCode("+41");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+41" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇨🇭 +41 Switzerland
-                            </CommandItem>
-                            <CommandItem
-                              value="+43 Austria"
-                              onSelect={() => {
-                                setCountryCode("+43");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+43" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇦🇹 +43 Austria
-                            </CommandItem>
-                            <CommandItem
-                              value="+351 Portugal"
-                              onSelect={() => {
-                                setCountryCode("+351");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+351" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇵🇹 +351 Portugal
-                            </CommandItem>
-                            <CommandItem
-                              value="+30 Greece"
-                              onSelect={() => {
-                                setCountryCode("+30");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+30" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇬🇷 +30 Greece
-                            </CommandItem>
-                            <CommandItem
-                              value="+7 Russia"
-                              onSelect={() => {
-                                setCountryCode("+7");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+7" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇷🇺 +7 Russia
-                            </CommandItem>
-                            <CommandItem
-                              value="+91 India"
-                              onSelect={() => {
-                                setCountryCode("+91");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+91" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇮🇳 +91 India
-                            </CommandItem>
-                            <CommandItem
-                              value="+86 China"
-                              onSelect={() => {
-                                setCountryCode("+86");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+86" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇨🇳 +86 China
-                            </CommandItem>
-                            <CommandItem
-                              value="+81 Japan"
-                              onSelect={() => {
-                                setCountryCode("+81");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+81" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇯🇵 +81 Japan
-                            </CommandItem>
-                            <CommandItem
-                              value="+82 South Korea"
-                              onSelect={() => {
-                                setCountryCode("+82");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+82" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇰🇷 +82 South Korea
-                            </CommandItem>
-                            <CommandItem
-                              value="+55 Brazil"
-                              onSelect={() => {
-                                setCountryCode("+55");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+55" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇧🇷 +55 Brazil
-                            </CommandItem>
-                            <CommandItem
-                              value="+61 Australia"
-                              onSelect={() => {
-                                setCountryCode("+61");
-                                setCountryCodeOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  countryCode === "+61" ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              🇦🇺 +61 Australia
-                            </CommandItem>
+                          <CommandGroup heading="All Countries">
+                            {getOtherCountries().map((country) => (
+                              <CommandItem
+                                key={country.code}
+                                value={`${country.dialCode} ${country.name}`}
+                                onSelect={() => {
+                                  setCountryCode(country.dialCode);
+                                  setCountryCodeOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={`mr-2 h-4 w-4 ${
+                                    countryCode === country.dialCode ? "opacity-100" : "opacity-0"
+                                  }`}
+                                />
+                                {country.flag} {country.dialCode} {country.name}
+                              </CommandItem>
+                            ))}
                           </CommandGroup>
                         </CommandList>
                       </Command>
@@ -530,6 +271,18 @@ export default function SignupStudent() {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="email">{t('signup.student.email')}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder={t('auth.emailPlaceholder')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="university">{t('signup.student.university')}</Label>
                 <Select value={university} onValueChange={setUniversity} required>
                   <SelectTrigger>
@@ -545,16 +298,28 @@ export default function SignupStudent() {
                 </Select>
               </div>
 
+              {/* Proof of Enrollment */}
               <div className="space-y-2">
-                <Label htmlFor="email">{t('signup.student.email')}</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder={t('auth.emailPlaceholder')}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+                <Label>{t('signup.student.proofOfEnrollment')}</Label>
+                <div className="flex items-center space-x-4">
+                  <div className="flex-1">
+                    <Input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={handleProofOfEnrollmentChange}
+                      className="hidden"
+                      id="proof-of-enrollment"
+                    />
+                    <Label htmlFor="proof-of-enrollment" className="cursor-pointer">
+                      <Button type="button" variant="outline" size="sm" asChild>
+                        <span>
+                          <Upload className="h-4 w-4 mr-2" />
+                          {proofOfEnrollment ? proofOfEnrollment.name : t('signup.student.uploadDocument')}
+                        </span>
+                      </Button>
+                    </Label>
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-2">
