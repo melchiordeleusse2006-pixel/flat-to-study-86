@@ -31,7 +31,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TranslateButton from '@/components/listings/TranslateButton';
-import { transformSupabaseImage, buildSrcSet } from '@/utils/image';
+import { cachedTransformSupabaseImage, buildHeroSrcSet, buildCardSrcSet } from '@/utils/image';
+import { useOptimizedImages } from '@/hooks/useOptimizedImages';
 
 // Helper function to get text in current language
 const getLocalizedText = (multilingualField: any, language: string, fallback: string = '') => {
@@ -54,6 +55,10 @@ export default function ListingDetails() {
   const [sendingMessage, setSendingMessage] = useState(false);
   const [translatedDescription, setTranslatedDescription] = useState('');
   const [isDescriptionTranslated, setIsDescriptionTranslated] = useState(false);
+  
+  // Optimized image loading for hero
+  const { imgRef: heroImgRef, isVisible: heroVisible } = useOptimizedImages();
+  const { imgRef: thumbImgRef, isVisible: thumbsVisible } = useOptimizedImages();
 
   // Set default message when language changes
   useEffect(() => {
@@ -315,9 +320,12 @@ export default function ListingDetails() {
                       // Mobile: Simple single image with navigation
                       <div className="relative h-64">
                         <img 
-                          src={transformSupabaseImage(listing.images[currentImageIndex], { width: 768, quality: 70 })}
+                          ref={heroImgRef}
+                          src={heroVisible ? cachedTransformSupabaseImage(listing.images[currentImageIndex], { width: 1080, quality: 75 }) : ''}
+                          srcSet={heroVisible ? buildHeroSrcSet(listing.images[currentImageIndex], 75) : ''}
+                          sizes="100vw"
                           alt={listing.title}
-                          className="w-full h-full object-cover rounded-lg cursor-pointer"
+                          className="w-full h-full object-cover rounded-lg cursor-pointer bg-muted"
                           loading="eager"
                           fetchPriority="high"
                           decoding="async"
@@ -370,9 +378,11 @@ export default function ListingDetails() {
                         {/* Main image - 2/3 width */}
                         <div className="flex-[2] relative">
                           <img 
-                            src={transformSupabaseImage(listing.images[currentImageIndex], { width: 768, quality: 70 })}
+                            src={heroVisible ? cachedTransformSupabaseImage(listing.images[currentImageIndex], { width: 1280, quality: 75 }) : ''}
+                            srcSet={heroVisible ? buildHeroSrcSet(listing.images[currentImageIndex], 75) : ''}
+                            sizes="(max-width: 1024px) 100vw, 66vw"
                             alt={listing.title}
-                            className="w-full h-full object-cover rounded-l-lg cursor-pointer"
+                            className="w-full h-full object-cover rounded-l-lg cursor-pointer bg-muted"
                             loading="eager"
                             fetchPriority="high"
                             decoding="async"
@@ -430,9 +440,10 @@ export default function ListingDetails() {
                                 onClick={() => setCurrentImageIndex(index + 1)}
                               >
                                 <img 
-                                  src={transformSupabaseImage(image, { width: 320, quality: 65 })}
+                                  ref={index === 0 ? thumbImgRef : undefined}
+                                  src={thumbsVisible ? cachedTransformSupabaseImage(image, { width: 320, quality: 65 }) : ''}
                                   alt={`${listing.title} - Thumbnail ${index + 2}`}
-                                  className={`w-full h-full object-cover transition-all group-hover:brightness-110 ${
+                                  className={`w-full h-full object-cover transition-all group-hover:brightness-110 bg-muted ${
                                     currentImageIndex === index + 1 ? 'ring-2 ring-primary' : ''
                                   }`}
                                   loading="lazy"
