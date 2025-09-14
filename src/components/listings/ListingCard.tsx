@@ -81,7 +81,7 @@ export default function ListingCard({
       onClick={() => onClick?.(listing.id)}
     >
       {/* Image Gallery */}
-      <div className="relative h-48 overflow-hidden">
+      <div className="relative h-64 md:h-96 overflow-hidden">
         {listing.images.length > 0 && (
           <>
             {listing.images.length === 1 ? (
