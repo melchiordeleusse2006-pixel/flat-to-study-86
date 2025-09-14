@@ -315,9 +315,7 @@ export default function ListingDetails() {
                       // Mobile: Simple single image with navigation
                       <div className="relative h-64">
                         <img 
-                          src={transformSupabaseImage(listing.images[currentImageIndex], { width: 1080, quality: 70 })}
-                          srcSet={buildSrcSet(listing.images[currentImageIndex], [375, 640, 828, 1080, 1280], 70)}
-                          sizes="100vw"
+                          src={transformSupabaseImage(listing.images[currentImageIndex], { width: 768, quality: 70 })}
                           alt={listing.title}
                           className="w-full h-full object-cover rounded-lg cursor-pointer"
                           loading="eager"
@@ -372,9 +370,7 @@ export default function ListingDetails() {
                         {/* Main image - 2/3 width */}
                         <div className="flex-[2] relative">
                           <img 
-                            src={transformSupabaseImage(listing.images[currentImageIndex], { width: 1280, quality: 70 })}
-                            srcSet={buildSrcSet(listing.images[currentImageIndex], [640, 960, 1280, 1600], 70)}
-                            sizes="(max-width: 1024px) 100vw, 66vw"
+                            src={transformSupabaseImage(listing.images[currentImageIndex], { width: 768, quality: 70 })}
                             alt={listing.title}
                             className="w-full h-full object-cover rounded-l-lg cursor-pointer"
                             loading="eager"
@@ -435,8 +431,6 @@ export default function ListingDetails() {
                               >
                                 <img 
                                   src={transformSupabaseImage(image, { width: 320, quality: 65 })}
-                                  srcSet={buildSrcSet(image, [160, 240, 320], 65)}
-                                  sizes="(max-width: 1024px) 25vw, 20vw"
                                   alt={`${listing.title} - Thumbnail ${index + 2}`}
                                   className={`w-full h-full object-cover transition-all group-hover:brightness-110 ${
                                     currentImageIndex === index + 1 ? 'ring-2 ring-primary' : ''
