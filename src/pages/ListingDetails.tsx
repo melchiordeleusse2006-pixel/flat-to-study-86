@@ -32,6 +32,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { useIsMobile } from '@/hooks/use-mobile';
 import TranslateButton from '@/components/listings/TranslateButton';
 import { transformSupabaseImage, buildSrcSet } from '@/utils/image';
+import { ImageLightbox } from '@/components/ui/image-lightbox';
 
 // Helper function to get text in current language
 const getLocalizedText = (multilingualField: any, language: string, fallback: string = '') => {
@@ -314,19 +315,21 @@ export default function ListingDetails() {
                     isMobile ? (
                       // Mobile: Simple single image with navigation
                       <div className="relative h-64">
-                        <img 
-                          src={transformSupabaseImage(listing.images[currentImageIndex], { width: 1080, quality: 70 })}
-                          alt={listing.title}
-                          className="w-full h-full object-cover rounded-lg cursor-pointer"
-                          loading="eager"
-                          fetchPriority="high"
-                          decoding="async"
-                          onClick={() => {
-                            setCurrentImageIndex((prev) => 
-                              prev === listing.images.length - 1 ? 0 : prev + 1
-                            );
-                          }}
-                        />
+                        <ImageLightbox
+                          images={listing.images}
+                          currentIndex={currentImageIndex}
+                          onIndexChange={setCurrentImageIndex}
+                          title={listing.title}
+                        >
+                          <img 
+                            src={transformSupabaseImage(listing.images[currentImageIndex], { width: 1080, quality: 70 })}
+                            alt={listing.title}
+                            className="w-full h-full object-cover rounded-lg cursor-pointer"
+                            loading="eager"
+                            fetchPriority="high"
+                            decoding="async"
+                          />
+                        </ImageLightbox>
                         <Badge className="absolute top-4 left-4 bg-background/90 text-foreground">
                           {getTypeDisplayName(listing.type)}
                         </Badge>
@@ -369,19 +372,21 @@ export default function ListingDetails() {
                       <div className="flex gap-2 h-64 md:h-96">
                         {/* Main image - 2/3 width */}
                         <div className="flex-[2] relative">
-                          <img 
-                            src={transformSupabaseImage(listing.images[currentImageIndex], { width: 1080, quality: 70 })}
-                            alt={listing.title}
-                            className="w-full h-full object-cover rounded-l-lg cursor-pointer"
-                            loading="eager"
-                            fetchPriority="high"
-                            decoding="async"
-                            onClick={() => {
-                              setCurrentImageIndex((prev) => 
-                                prev === listing.images.length - 1 ? 0 : prev + 1
-                              );
-                            }}
-                          />
+                          <ImageLightbox
+                            images={listing.images}
+                            currentIndex={currentImageIndex}
+                            onIndexChange={setCurrentImageIndex}
+                            title={listing.title}
+                          >
+                            <img 
+                              src={transformSupabaseImage(listing.images[currentImageIndex], { width: 1080, quality: 70 })}
+                              alt={listing.title}
+                              className="w-full h-full object-cover rounded-l-lg cursor-pointer"
+                              loading="eager"
+                              fetchPriority="high"
+                              decoding="async"
+                            />
+                          </ImageLightbox>
                           <Badge className="absolute top-4 left-4 bg-background/90 text-foreground">
                             {getTypeDisplayName(listing.type)}
                           </Badge>
@@ -424,27 +429,34 @@ export default function ListingDetails() {
                         {listing.images.length > 1 && (
                           <div className="flex-1 flex flex-col gap-2 overflow-hidden">
                             {listing.images.slice(1, 4).map((image, index) => (
-                              <div 
-                                key={index + 1}
-                                className="relative flex-1 cursor-pointer overflow-hidden rounded-lg group"
-                                onClick={() => setCurrentImageIndex(index + 1)}
+                              <ImageLightbox
+                                images={listing.images}
+                                currentIndex={currentImageIndex}
+                                onIndexChange={setCurrentImageIndex}
+                                title={listing.title}
                               >
-                                <img 
-                                  src={transformSupabaseImage(image, { width: 1080, quality: 70 })}
-                                  alt={`${listing.title} - Thumbnail ${index + 2}`}
-                                  className={`w-full h-full object-cover transition-all group-hover:brightness-110 ${
-                                    currentImageIndex === index + 1 ? 'ring-2 ring-primary' : ''
-                                  }`}
-                                  loading="lazy"
-                                  decoding="async"
-                                />
-                                {/* Show +X more overlay on last thumbnail if there are more images */}
-                                {index === 2 && listing.images.length > 4 && (
-                                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-semibold">
-                                    +{listing.images.length - 4} more
-                                  </div>
-                                )}
-                              </div>
+                                <div 
+                                  key={index + 1}
+                                  className="relative flex-1 cursor-pointer overflow-hidden rounded-lg group"
+                                  onClick={() => setCurrentImageIndex(index + 1)}
+                                >
+                                  <img 
+                                    src={transformSupabaseImage(image, { width: 1080, quality: 70 })}
+                                    alt={`${listing.title} - Thumbnail ${index + 2}`}
+                                    className={`w-full h-full object-cover transition-all group-hover:brightness-110 ${
+                                      currentImageIndex === index + 1 ? 'ring-2 ring-primary' : ''
+                                    }`}
+                                    loading="lazy"
+                                    decoding="async"
+                                  />
+                                  {/* Show +X more overlay on last thumbnail if there are more images */}
+                                  {index === 2 && listing.images.length > 4 && (
+                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-semibold">
+                                      +{listing.images.length - 4} more
+                                    </div>
+                                  )}
+                                </div>
+                              </ImageLightbox>
                             ))}
                           </div>
                         )}
