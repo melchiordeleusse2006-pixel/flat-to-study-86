@@ -16,34 +16,8 @@ export function transformSupabaseImage(url: string, opts: { width?: number; qual
   }
 }
 
-// Optimized srcset with only 3 breakpoints to reduce transformations by 50%
-export function buildSrcSet(url: string, widths: number[] = [480, 768, 1024], quality: number = 70) {
+export function buildSrcSet(url: string, widths: number[] = [320, 480, 640, 768, 1024, 1280], quality: number = 70) {
   return widths
     .map((w) => `${transformSupabaseImage(url, { width: w, quality })} ${w}w`)
     .join(', ');
-}
-
-// Cache for transformed URLs to avoid repeated transformations
-const transformCache = new Map<string, string>();
-
-export function cachedTransformSupabaseImage(url: string, opts: { width?: number; quality?: number } = {}) {
-  const cacheKey = `${url}-${opts.width || 'auto'}-${opts.quality || 70}`;
-  
-  if (transformCache.has(cacheKey)) {
-    return transformCache.get(cacheKey)!;
-  }
-  
-  const transformed = transformSupabaseImage(url, opts);
-  transformCache.set(cacheKey, transformed);
-  return transformed;
-}
-
-// Optimized srcset for cards - minimal transformations
-export function buildCardSrcSet(url: string, quality: number = 70) {
-  return buildSrcSet(url, [480, 768], quality);
-}
-
-// Optimized srcset for hero images - focus on key breakpoints
-export function buildHeroSrcSet(url: string, quality: number = 75) {
-  return buildSrcSet(url, [768, 1024, 1280], quality);
 }
