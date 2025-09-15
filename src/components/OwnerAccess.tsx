@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Eye, EyeOff } from 'lucide-react';
 
 interface OwnerAccessProps {
@@ -34,11 +34,11 @@ const OwnerAccess = ({ onAuthenticated }: OwnerAccessProps) => {
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
+        <DialogTitle className="text-lg font-semibold text-center">Owner Access</DialogTitle>
+        <DialogDescription className="text-sm text-muted-foreground text-center mb-6">
+          Enter credentials to access owner dashboard
+        </DialogDescription>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="text-center mb-6">
-            <h3 className="text-lg font-semibold">Owner Access</h3>
-            <p className="text-sm text-muted-foreground">Enter credentials to access owner dashboard</p>
-          </div>
           
           <div className="space-y-3">
             <div>

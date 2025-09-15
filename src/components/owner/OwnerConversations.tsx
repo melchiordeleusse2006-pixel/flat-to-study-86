@@ -25,80 +25,51 @@ export function OwnerConversations({ onBack }: OwnerConversationsProps) {
 
   const fetchAllConversations = async () => {
     try {
-      // Fetch all messages with related listing and profile data
-      const { data: allMessages, error } = await supabase
-        .from('messages')
-        .select(`
-          *,
-          listings:listing_id (
-            id,
-            title,
-            images,
-            rent_monthly_eur,
-            city,
-            address_line
-          ),
-          profiles:agency_id (
-            id,
-            agency_name,
-            phone,
-            email
-          )
-        `)
-        .order('created_at', { ascending: false });
+      console.log('Fetching conversations for owner dashboard...');
+      
+      // Use the special owner function that bypasses RLS
+      const { data: conversationData, error } = await supabase
+        .rpc('get_all_conversations_for_owner');
 
       if (error) {
-        console.error('Error fetching messages:', error);
+        console.error('Error fetching conversations:', error);
         return;
       }
 
-      // Group messages by conversation (listing + student)
-      const conversationMap = new Map<string, Conversation>();
+      console.log('Raw conversation data:', conversationData);
 
-      allMessages?.forEach((message: any) => {
-        const listing = message.listings;
-        if (!listing) return;
+      // Transform the data into the expected format
+      const conversations: Conversation[] = conversationData?.map((row: any) => ({
+        listing: {
+          id: row.listing_id,
+          title: row.listing_title || 'Untitled Property',
+          images: row.listing_images || [],
+          rent_monthly_eur: row.listing_rent_monthly_eur || 0,
+          city: row.listing_city || '',
+          address_line: row.listing_address_line || ''
+        },
+        agency: row.agency_id ? {
+          id: row.agency_id,
+          agency_name: row.agency_name || 'Unknown Agency',
+          phone: row.agency_phone,
+          email: row.agency_email
+        } : undefined,
+        lastMessage: {
+          id: row.last_message_id,
+          message: row.last_message_content || '',
+          sender_name: row.student_name || 'Unknown Student',
+          created_at: row.last_message_created_at,
+          listing_id: row.listing_id,
+          agency_id: row.agency_id,
+          sender_id: row.student_sender_id
+        },
+        unreadCount: 0,
+        studentName: row.student_name,
+        studentSenderId: row.student_sender_id
+      })) || [];
 
-        // Find the agency profile
-        const agency = message.profiles;
-        
-        // Create conversation key: listing + student
-        const conversationKey = `${listing.id}-${message.sender_id}`;
-        
-        // Determine if this is a student message or agency reply
-        const isStudentMessage = !agency || message.sender_id !== agency.user_id;
-        
-        if (!conversationMap.has(conversationKey)) {
-          conversationMap.set(conversationKey, {
-            listing,
-            agency: agency || undefined,
-            lastMessage: message,
-            unreadCount: 0,
-            studentName: isStudentMessage ? message.sender_name : undefined,
-            studentSenderId: isStudentMessage ? message.sender_id : undefined
-          });
-        } else {
-          const existing = conversationMap.get(conversationKey)!;
-          
-          // Update last message if this one is newer
-          if (new Date(message.created_at) > new Date(existing.lastMessage.created_at)) {
-            existing.lastMessage = message;
-          }
-          
-          // Update student info if we don't have it yet
-          if (!existing.studentName && isStudentMessage) {
-            existing.studentName = message.sender_name;
-            existing.studentSenderId = message.sender_id;
-          }
-          
-          // Update agency info if we don't have it yet
-          if (!existing.agency && agency) {
-            existing.agency = agency;
-          }
-        }
-      });
-
-      setConversations(Array.from(conversationMap.values()));
+      console.log('Processed conversations:', conversations);
+      setConversations(conversations);
     } catch (error) {
       console.error('Error fetching conversations:', error);
     } finally {
@@ -109,25 +80,22 @@ export function OwnerConversations({ onBack }: OwnerConversationsProps) {
   const fetchConversationMessages = async (conversation: Conversation) => {
     setMessagesLoading(true);
     try {
+      console.log('Fetching messages for conversation:', conversation.listing.id, conversation.studentSenderId);
+      
+      // Use the special owner function that bypasses RLS
       const { data, error } = await supabase
-        .from('messages')
-        .select('*')
-        .eq('listing_id', conversation.listing.id)
-        .order('created_at', { ascending: true });
+        .rpc('get_conversation_messages_for_owner', {
+          p_listing_id: conversation.listing.id,
+          p_student_sender_id: conversation.studentSenderId
+        });
 
       if (error) {
         console.error('Error fetching messages:', error);
         return;
       }
 
-      // Filter messages for this specific conversation (listing + student)
-      const conversationMessages = data?.filter(msg => 
-        msg.listing_id === conversation.listing.id &&
-        (msg.sender_id === conversation.studentSenderId || 
-         msg.agency_id === conversation.agency?.id)
-      ) || [];
-
-      setMessages(conversationMessages);
+      console.log('Fetched messages:', data);
+      setMessages(data || []);
     } catch (error) {
       console.error('Error fetching messages:', error);
     } finally {

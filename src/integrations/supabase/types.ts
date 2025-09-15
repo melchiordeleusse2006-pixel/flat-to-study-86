@@ -556,6 +556,42 @@ export type Database = {
           agency_phone: string
         }[]
       }
+      get_all_conversations_for_owner: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          agency_email: string
+          agency_id: string
+          agency_name: string
+          agency_phone: string
+          last_message_content: string
+          last_message_created_at: string
+          last_message_id: string
+          listing_address_line: string
+          listing_city: string
+          listing_id: string
+          listing_images: Json
+          listing_rent_monthly_eur: number
+          listing_title: string
+          message_count: number
+          student_name: string
+          student_sender_id: string
+        }[]
+      }
+      get_conversation_messages_for_owner: {
+        Args: { p_listing_id: string; p_student_sender_id: string }
+        Returns: {
+          agency_id: string
+          created_at: string
+          id: string
+          listing_id: string
+          message: string
+          read_at: string
+          sender_id: string
+          sender_name: string
+          sender_phone: string
+          sender_university: string
+        }[]
+      }
       get_current_user_profile: {
         Args: Record<PropertyKey, never>
         Returns: {
