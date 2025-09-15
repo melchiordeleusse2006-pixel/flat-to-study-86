@@ -171,11 +171,11 @@ const Index = () => {
                   
                   <div className="relative mb-8">
                     {listingsLoading ? (
-                      <div className="flex gap-8 overflow-x-auto pb-4">
+                      <div className="flex gap-4 overflow-x-auto pb-4">
                         {[...Array(6)].map((_, index) => (
-                          <Card key={index} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden">
-                            <div className="h-48 bg-muted animate-pulse"></div>
-                            <CardContent className="p-6">
+                          <Card key={index} className="min-w-[220px] w-[220px] flex-shrink-0 overflow-hidden">
+                            <div className="h-32 bg-muted animate-pulse"></div>
+                            <CardContent className="p-4">
                               <div className="h-4 bg-muted animate-pulse rounded mb-2"></div>
                               <div className="h-3 bg-muted animate-pulse rounded mb-3 w-3/4"></div>
                               <div className="flex items-center justify-between">
@@ -192,12 +192,12 @@ const Index = () => {
                         <p className="text-muted-foreground text-sm mt-2">{t('home.checkBackLater')}</p>
                       </div>
                     ) : (
-                      <div className="flex gap-8 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+                      <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
                         {featuredListings.map(listing => (
-                          <Card key={listing.id} className="min-w-[300px] md:min-w-[350px] flex-shrink-0 overflow-hidden hover:shadow-lg transition-shadow snap-start">
-                            <div className="relative h-48">
+                          <Card key={listing.id} className="min-w-[220px] w-[220px] flex-shrink-0 overflow-hidden hover:shadow-lg transition-shadow snap-start">
+                            <div className="relative h-32">
                               <img 
-                                src={listing.images[0] || '/placeholder.svg'} 
+                                src={listing.images[0] || '/placeholder.svg'}
                                 alt={listing.title} 
                                 className="w-full h-full object-cover" 
                               />
@@ -205,22 +205,22 @@ const Index = () => {
                                 {t('home.featured')}
                               </Badge>
                             </div>
-                            <CardContent className="p-6">
-                              <h3 className="font-semibold mb-2 line-clamp-2">{listing.title}</h3>
-                              <p className="text-muted-foreground text-sm mb-3 flex items-center">
-                                <MapPin className="h-4 w-4 mr-1" />
-                                {listing.address_line && listing.city ? `${listing.address_line}, ${listing.city}` : listing.city || 'Location not specified'}
-                              </p>
-                              <div className="flex items-center justify-between">
-                                <span className="text-2xl font-bold text-price">
-                                  {formatPrice(listing.rent_monthly_eur)}
-                                  <span className="text-sm text-muted-foreground font-normal">{t('home.month')}</span>
-                                </span>
-                                <Link to={`/listing/${listing.id}`}>
-                                  <Button size="sm">{t('home.viewDetails')}</Button>
-                                </Link>
-                              </div>
-                            </CardContent>
+                             <CardContent className="p-4">
+                               <h3 className="font-semibold mb-2 line-clamp-2 text-sm">{listing.title}</h3>
+                               <p className="text-muted-foreground text-xs mb-2 flex items-center">
+                                 <MapPin className="h-3 w-3 mr-1" />
+                                 {listing.address_line && listing.city ? `${listing.address_line}, ${listing.city}` : listing.city || 'Location not specified'}
+                               </p>
+                               <div className="flex items-center justify-between">
+                                 <span className="text-lg font-bold text-price">
+                                   {formatPrice(listing.rent_monthly_eur)}
+                                   <span className="text-xs text-muted-foreground font-normal block">{t('home.month')}</span>
+                                 </span>
+                                 <Link to={`/listing/${listing.id}`}>
+                                   <Button size="sm" className="text-xs px-2 py-1 h-7">{t('home.viewDetails')}</Button>
+                                 </Link>
+                               </div>
+                             </CardContent>
                           </Card>
                         ))}
                       </div>
