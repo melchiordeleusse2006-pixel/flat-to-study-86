@@ -35,8 +35,8 @@ const Index = () => {
     }).format(price);
   };
 
-  const isStudent = profile?.user_type === 'student' || profile?.user_type === 'private';
-  const isRealtor = profile?.user_type === 'agency';
+  const isStudent = profile?.user_type === 'student';
+  const isRealtor = profile?.user_type === 'agency' || profile?.user_type === 'private';
 
   if (isOwnerAuthenticated) {
     return <OwnerDashboard onLogout={() => setIsOwnerAuthenticated(false)} />;

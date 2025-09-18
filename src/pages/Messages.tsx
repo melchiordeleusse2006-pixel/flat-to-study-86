@@ -76,10 +76,10 @@ export default function Messages() {
                   <div className="text-center">
                     <h1 className="text-xl font-bold">{t('messages.title')}</h1>
                     <p className="text-xs text-muted-foreground">
-                      {profile?.user_type === 'agency' 
-                        ? t('messages.manageTenantInquiries')
-                        : t('messages.conversationsWithAgencies')
-                      }
+                       {(profile?.user_type === 'agency' || profile?.user_type === 'private')
+                         ? t('messages.manageTenantInquiries')
+                         : t('messages.conversationsWithAgencies')
+                       }
                     </p>
                   </div>
                 </div>
@@ -88,7 +88,7 @@ export default function Messages() {
                   <ConversationList 
                     onSelectConversation={handleSelectConversation}
                     selectedConversationId={selectedConversation ? 
-                      (profile?.user_type === 'agency' 
+                      ((profile?.user_type === 'agency' || profile?.user_type === 'private')
                         ? `${selectedConversation.listing.id}-${selectedConversation.studentSenderId}`
                         : selectedConversation.listing.id) : undefined}
                     key={refreshConversations}
@@ -143,10 +143,10 @@ export default function Messages() {
               <div className="text-center">
                 <h1 className="text-3xl font-bold">{t('messages.title')}</h1>
                 <p className="text-muted-foreground">
-                  {profile?.user_type === 'agency' 
-                    ? t('messages.manageTenantInquiries')
-                    : t('messages.conversationsWithAgencies')
-                  }
+                   {(profile?.user_type === 'agency' || profile?.user_type === 'private')
+                     ? t('messages.manageTenantInquiries')
+                     : t('messages.conversationsWithAgencies')
+                   }
                 </p>
               </div>
             </div>
@@ -158,7 +158,7 @@ export default function Messages() {
                 <ConversationList 
                   onSelectConversation={handleSelectConversation}
                   selectedConversationId={selectedConversation ? 
-                    (profile?.user_type === 'agency' 
+                    ((profile?.user_type === 'agency' || profile?.user_type === 'private')
                       ? `${selectedConversation.listing.id}-${selectedConversation.studentSenderId}`
                       : selectedConversation.listing.id) : undefined}
                   key={refreshConversations}

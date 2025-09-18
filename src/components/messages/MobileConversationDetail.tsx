@@ -34,13 +34,13 @@ export function MobileConversationDetail({
     fetchMessages();
     markMessagesAsRead();
     
-    // Fetch student profile details if agency is viewing
-    if (profile?.user_type === 'agency') {
+    // Fetch student profile details if agency or private landlord is viewing
+    if (profile?.user_type === 'agency' || profile?.user_type === 'private') {
       fetchStudentProfile();
     }
 
     // Set up real-time subscription for new messages
-    const channelName = profile?.user_type === 'agency' 
+    const channelName = (profile?.user_type === 'agency' || profile?.user_type === 'private')
       ? `messages-${conversation.listing.id}-${conversation.studentSenderId}`
       : `messages-${conversation.listing.id}`;
     
@@ -57,8 +57,8 @@ export function MobileConversationDetail({
         (payload) => {
           const newMessage = payload.new as Message;
           
-          // For agency users, filter messages to only show messages in their specific conversation
-          if (profile?.user_type === 'agency') {
+          // For agency and private landlord users, filter messages to only show messages in their specific conversation
+          if (profile?.user_type === 'agency' || profile?.user_type === 'private') {
             const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
             if (newMessage.sender_id !== studentId && newMessage.sender_id !== user?.id) {
               return; // Not part of this conversation
@@ -108,7 +108,7 @@ export function MobileConversationDetail({
         .select('*')
         .eq('listing_id', conversation.listing.id);
 
-      if (profile?.user_type === 'agency') {
+      if (profile?.user_type === 'agency' || profile?.user_type === 'private') {
         const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
         query = query.or(`sender_id.eq.${studentId},sender_id.eq.${user?.id}`);
       }
@@ -313,8 +313,8 @@ export function MobileConversationDetail({
       <div className="flex-1 flex flex-col min-h-0">
         <ScrollArea className="flex-1 px-4">
           <div className="space-y-3 py-4">
-            {/* Student Contact Info at top of messages for Agencies */}
-            {profile?.user_type === 'agency' && (studentProfile || conversation.studentName || conversation.lastMessage.sender_university || conversation.lastMessage.sender_phone) && (
+            {/* Student Contact Info at top of messages for Agencies and Private Landlords */}
+            {(profile?.user_type === 'agency' || profile?.user_type === 'private') && (studentProfile || conversation.studentName || conversation.lastMessage.sender_university || conversation.lastMessage.sender_phone) && (
               <div className="p-3 rounded-lg bg-blue-50 border border-blue-200 max-w-[85%]">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
@@ -391,7 +391,7 @@ export function MobileConversationDetail({
         <div className="border-t p-4 flex-shrink-0 bg-background">
           <div className="flex gap-2">
             <Textarea
-              placeholder={profile?.user_type === 'agency' ? "Type your reply..." : "Type your message..."}
+              placeholder={(profile?.user_type === 'agency' || profile?.user_type === 'private') ? "Type your reply..." : "Type your message..."}
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
               className="resize-none flex-1"

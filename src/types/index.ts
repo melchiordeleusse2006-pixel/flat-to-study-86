@@ -1,4 +1,4 @@
-export type UserRole = 'STUDENT' | 'AGENCY' | 'ADMIN';
+export type UserRole = 'STUDENT' | 'AGENCY' | 'PRIVATE' | 'ADMIN';
 
 export type ListingType = 'room' | 'studio' | 'apartment';
 

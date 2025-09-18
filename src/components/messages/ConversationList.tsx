@@ -244,7 +244,7 @@ export function ConversationList({ onSelectConversation, selectedConversationId 
         <div className="text-center text-muted-foreground">
           <p className="text-lg font-medium mb-2">{t('messages.noConversationsYet')}</p>
           <p className="text-sm">
-            {profile?.user_type === 'agency' 
+            {(profile?.user_type === 'agency' || profile?.user_type === 'private')
               ? t('messages.noConversationsDesc')
               : 'Send a message to an agency through a listing to start a conversation.'
             }
@@ -259,8 +259,8 @@ export function ConversationList({ onSelectConversation, selectedConversationId 
       <ScrollArea className="h-full">
         <div className="p-4 space-y-2">
           {conversations.map((conversation) => {
-            // For agencies, use listing + student ID as key, for students use listing ID
-            const conversationKey = profile?.user_type === 'agency' 
+            // For agencies and private landlords, use listing + student ID as key, for students use listing ID
+            const conversationKey = (profile?.user_type === 'agency' || profile?.user_type === 'private')
               ? `${conversation.listing.id}-${conversation.studentSenderId}`
               : conversation.listing.id;
             

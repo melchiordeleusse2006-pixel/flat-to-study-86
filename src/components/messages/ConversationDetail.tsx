@@ -32,18 +32,18 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
     // Mark messages as read immediately when conversation opens
     setTimeout(() => markMessagesAsRead(), 500);
     
-    // Fetch student profile details if agency is viewing
-    if (profile?.user_type === 'agency') {
+    // Fetch student profile details if agency or private landlord is viewing
+    if (profile?.user_type === 'agency' || profile?.user_type === 'private') {
       fetchStudentProfile();
     }
 
     // Create truly unique channel names to prevent cross-conversation pollution
-    const channelName = profile?.user_type === 'agency' 
+    const channelName = (profile?.user_type === 'agency' || profile?.user_type === 'private')
       ? `agency-${profile.id}-student-${conversation.studentSenderId}-listing-${conversation.listing.id}`
       : `student-${user?.id}-listing-${conversation.listing.id}`;
     
     // Generate a conversation ID to ensure proper message isolation
-    const conversationId = profile?.user_type === 'agency' 
+    const conversationId = (profile?.user_type === 'agency' || profile?.user_type === 'private')
       ? `listing-${conversation.listing.id}-student-${conversation.studentSenderId}`
       : `listing-${conversation.listing.id}-student-${user?.id}`;
 
@@ -62,7 +62,7 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
           const newMessage = payload.new as Message;
           
           // Strict conversation isolation
-          if (profile?.user_type === 'agency') {
+          if (profile?.user_type === 'agency' || profile?.user_type === 'private') {
             const studentId = conversation.studentSenderId || conversation.lastMessage.sender_id;
             
             // For agencies: only accept messages that are either:
@@ -161,7 +161,7 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
   const fetchMessages = async () => {
     try {
       // Generate conversation ID for filtering
-      const conversationId = profile?.user_type === 'agency' 
+      const conversationId = (profile?.user_type === 'agency' || profile?.user_type === 'private')
         ? `listing-${conversation.listing.id}-student-${conversation.studentSenderId}`
         : `listing-${conversation.listing.id}-student-${user?.id}`;
 
@@ -450,8 +450,8 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
         <CardContent className="flex-1 flex flex-col min-h-0 p-0">
           <ScrollArea className="flex-1 px-6" ref={scrollAreaRef}>
             <div className="space-y-4 py-4">
-              {/* Student Contact Info at top of messages for Agencies */}
-              {profile?.user_type === 'agency' && (studentProfile || conversation.studentName || conversation.lastMessage.sender_university || conversation.lastMessage.sender_phone) && (
+              {/* Student Contact Info at top of messages for Agencies and Private Landlords */}
+              {(profile?.user_type === 'agency' || profile?.user_type === 'private') && (studentProfile || conversation.studentName || conversation.lastMessage.sender_university || conversation.lastMessage.sender_phone) && (
                 <div className="p-4 rounded-lg bg-blue-50 border border-blue-200 max-w-[80%]">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
@@ -528,7 +528,7 @@ export function ConversationDetail({ conversation, onMessagesRead }: Conversatio
           <div className="border-t p-6 flex-shrink-0">
             <div className="space-y-3">
               <Textarea
-                placeholder={profile?.user_type === 'agency' ? "Type your reply..." : "Type your message..."}
+                placeholder={(profile?.user_type === 'agency' || profile?.user_type === 'private') ? "Type your reply..." : "Type your message..."}
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
                 className="resize-none"

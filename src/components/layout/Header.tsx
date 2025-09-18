@@ -144,7 +144,7 @@ export default function Header() {
                       )}
                     </Link>
                   </DropdownMenuItem>
-                  {profile?.user_type === 'agency' && (
+                  {(profile?.user_type === 'agency' || profile?.user_type === 'private') && (
                     <DropdownMenuItem asChild>
                       <Link to="/my-listings" className="flex items-center">
                         <Settings className="h-4 w-4 mr-2" />
