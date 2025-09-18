@@ -6,10 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Loader2, ArrowLeft, Upload, User, Check, ChevronsUpDown } from 'lucide-react';
+import { Loader2, ArrowLeft, Check, ChevronsUpDown } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { countries, getPriorityCountries, getOtherCountries } from '@/data/countries';
 
@@ -21,29 +21,15 @@ export default function SignupStudent() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   
-  const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [phone, setPhone] = useState('');
   const [countryCode, setCountryCode] = useState('+39');
   const [countryCodeOpen, setCountryCodeOpen] = useState(false);
   const [email, setEmail] = useState('');
-  const [university, setUniversity] = useState('');
-  const [proofOfEnrollment, setProofOfEnrollment] = useState<File | null>(null);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setProfilePicture(e.target.files[0]);
-    }
-  };
-
-  const handleProofOfEnrollmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setProofOfEnrollment(e.target.files[0]);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,12 +49,6 @@ export default function SignupStudent() {
       return;
     }
 
-    if (!university) {
-      setError(t('signup.student.selectUniversity'));
-      setLoading(false);
-      return;
-    }
-
     if (!phone.trim()) {
       setError('Phone number is required');
       setLoading(false);
@@ -79,10 +59,7 @@ export default function SignupStudent() {
     const fullPhoneNumber = `${countryCode}${phone}`;
     const additionalData = {
       user_type: 'student',
-      phone: fullPhoneNumber,
-      university,
-      profile_picture: profilePicture ? profilePicture.name : null,
-      proof_of_enrollment: proofOfEnrollment ? proofOfEnrollment.name : null
+      phone: fullPhoneNumber
     };
 
     const { error } = await signUp(email, password, 'student', fullName, additionalData);
@@ -135,40 +112,6 @@ export default function SignupStudent() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Profile Picture */}
-              <div className="space-y-2">
-                <Label>{t('signup.student.profilePicture')}</Label>
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-                    {profilePicture ? (
-                      <img
-                        src={URL.createObjectURL(profilePicture)}
-                        alt="Profile"
-                        className="w-16 h-16 rounded-full object-cover"
-                      />
-                    ) : (
-                      <User className="h-8 w-8 text-muted-foreground" />
-                    )}
-                  </div>
-                  <div>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleProfilePictureChange}
-                      className="hidden"
-                      id="profile-picture"
-                    />
-                    <Label htmlFor="profile-picture" className="cursor-pointer">
-                      <Button type="button" variant="outline" size="sm" asChild>
-                        <span>
-                          <Upload className="h-4 w-4 mr-2" />
-                          {t('signup.student.uploadPhoto')}
-                        </span>
-                      </Button>
-                    </Label>
-                  </div>
-                </div>
-              </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -282,45 +225,6 @@ export default function SignupStudent() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="university">{t('signup.student.university')}</Label>
-                <Select value={university} onValueChange={setUniversity} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('signup.student.universityPlaceholder')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="bocconi">{t('university.bocconi')}</SelectItem>
-                    <SelectItem value="politecnico">{t('university.politecnico')}</SelectItem>
-                    <SelectItem value="cattolica">{t('university.cattolica')}</SelectItem>
-                    <SelectItem value="statale">{t('university.statale')}</SelectItem>
-                    <SelectItem value="other">{t('university.other')}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Proof of Enrollment */}
-              <div className="space-y-2">
-                <Label>{t('signup.student.proofOfEnrollment')}</Label>
-                <div className="flex items-center space-x-4">
-                  <div className="flex-1">
-                    <Input
-                      type="file"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={handleProofOfEnrollmentChange}
-                      className="hidden"
-                      id="proof-of-enrollment"
-                    />
-                    <Label htmlFor="proof-of-enrollment" className="cursor-pointer">
-                      <Button type="button" variant="outline" size="sm" asChild>
-                        <span>
-                          <Upload className="h-4 w-4 mr-2" />
-                          {proofOfEnrollment ? proofOfEnrollment.name : t('signup.student.uploadDocument')}
-                        </span>
-                      </Button>
-                    </Label>
-                  </div>
-                </div>
-              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="password">{t('auth.password')}</Label>
