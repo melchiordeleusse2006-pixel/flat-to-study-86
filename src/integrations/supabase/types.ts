@@ -140,6 +140,60 @@ export type Database = {
         }
         Relationships: []
       }
+      bookings: {
+        Row: {
+          check_in_date: string
+          check_out_date: string
+          contract_signed_at: string | null
+          contract_url: string | null
+          created_at: string
+          id: string
+          landlord_id: string
+          listing_id: string
+          monthly_rent: number
+          security_deposit: number
+          status: string
+          stripe_payment_intent_id: string | null
+          tenant_id: string
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          check_in_date: string
+          check_out_date: string
+          contract_signed_at?: string | null
+          contract_url?: string | null
+          created_at?: string
+          id?: string
+          landlord_id: string
+          listing_id: string
+          monthly_rent: number
+          security_deposit: number
+          status?: string
+          stripe_payment_intent_id?: string | null
+          tenant_id: string
+          total_amount: number
+          updated_at?: string
+        }
+        Update: {
+          check_in_date?: string
+          check_out_date?: string
+          contract_signed_at?: string | null
+          contract_url?: string | null
+          created_at?: string
+          id?: string
+          landlord_id?: string
+          listing_id?: string
+          monthly_rent?: number
+          security_deposit?: number
+          status?: string
+          stripe_payment_intent_id?: string | null
+          tenant_id?: string
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       credit_transactions: {
         Row: {
           agency_id: string
@@ -194,6 +248,33 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_availability: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          is_available: boolean
+          listing_id: string
+          price_override: number | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          is_available?: boolean
+          listing_id: string
+          price_override?: number | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          is_available?: boolean
+          listing_id?: string
+          price_override?: number | null
+        }
+        Relationships: []
+      }
       listing_views: {
         Row: {
           created_at: string
@@ -227,6 +308,7 @@ export type Database = {
       listings: {
         Row: {
           address_line: string | null
+          advance_booking_days: number | null
           agency_fee: string | null
           agency_id: string
           amenities: Json | null
@@ -235,6 +317,7 @@ export type Database = {
           bathrooms: number | null
           bedrooms: number | null
           bills_included: boolean | null
+          booking_enabled: boolean | null
           city: string | null
           country: string | null
           created_at: string | null
@@ -248,10 +331,13 @@ export type Database = {
           furnished: boolean | null
           id: string
           images: Json | null
+          instant_booking: boolean | null
           last_credit_deducted_at: string | null
           lat: number
           lease_end_date: string | null
           lng: number
+          maximum_stay_days: number | null
+          minimum_stay_days: number | null
           price_history: Json | null
           published_at: string | null
           rent_monthly_eur: number | null
@@ -265,6 +351,7 @@ export type Database = {
         }
         Insert: {
           address_line?: string | null
+          advance_booking_days?: number | null
           agency_fee?: string | null
           agency_id: string
           amenities?: Json | null
@@ -273,6 +360,7 @@ export type Database = {
           bathrooms?: number | null
           bedrooms?: number | null
           bills_included?: boolean | null
+          booking_enabled?: boolean | null
           city?: string | null
           country?: string | null
           created_at?: string | null
@@ -286,10 +374,13 @@ export type Database = {
           furnished?: boolean | null
           id?: string
           images?: Json | null
+          instant_booking?: boolean | null
           last_credit_deducted_at?: string | null
           lat: number
           lease_end_date?: string | null
           lng: number
+          maximum_stay_days?: number | null
+          minimum_stay_days?: number | null
           price_history?: Json | null
           published_at?: string | null
           rent_monthly_eur?: number | null
@@ -303,6 +394,7 @@ export type Database = {
         }
         Update: {
           address_line?: string | null
+          advance_booking_days?: number | null
           agency_fee?: string | null
           agency_id?: string
           amenities?: Json | null
@@ -311,6 +403,7 @@ export type Database = {
           bathrooms?: number | null
           bedrooms?: number | null
           bills_included?: boolean | null
+          booking_enabled?: boolean | null
           city?: string | null
           country?: string | null
           created_at?: string | null
@@ -324,10 +417,13 @@ export type Database = {
           furnished?: boolean | null
           id?: string
           images?: Json | null
+          instant_booking?: boolean | null
           last_credit_deducted_at?: string | null
           lat?: number
           lease_end_date?: string | null
           lng?: number
+          maximum_stay_days?: number | null
+          minimum_stay_days?: number | null
           price_history?: Json | null
           published_at?: string | null
           rent_monthly_eur?: number | null
@@ -455,6 +551,42 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_schedules: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string
+          due_date: string
+          id: string
+          paid_at: string | null
+          payment_type: string
+          status: string
+          stripe_payment_intent_id: string | null
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string
+          due_date: string
+          id?: string
+          paid_at?: string | null
+          payment_type: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string
+          due_date?: string
+          id?: string
+          paid_at?: string | null
+          payment_type?: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           agency_name: string | null
@@ -529,6 +661,10 @@ export type Database = {
         Args: { agency_profile_id: string }
         Returns: boolean
       }
+      check_availability: {
+        Args: { p_check_in: string; p_check_out: string; p_listing_id: string }
+        Returns: boolean
+      }
       deduct_agency_credits: {
         Args: {
           agency_profile_id: string
@@ -541,6 +677,10 @@ export type Database = {
       generate_conversation_id: {
         Args: { p_listing_id: string; p_student_id: string }
         Returns: string
+      }
+      generate_listing_availability: {
+        Args: { p_end_date: string; p_listing_id: string; p_start_date: string }
+        Returns: undefined
       }
       get_agency_business_info: {
         Args: { agency_id_param: string }
