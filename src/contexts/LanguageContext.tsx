@@ -134,7 +134,7 @@ const translations = {
     'userType.realtorTitle': 'For property manager, real estate agency and company',
     'userType.realtorDescription': 'Real estate professionals managing multiple properties',
     'userType.realtorFeatures': 'List and manage properties, connect with potential tenants, track inquiries',
-    'userType.privateTitle': 'For private landlord',
+    'userType.privateTitle': 'For private landlords and property managers',
     'userType.privateDescription': 'Individual property owners renting their properties',
     'userType.privateFeatures': 'List and manage properties, connect with potential tenants, track inquiries',
     'userType.studentTitle': 'For Apartment Seekers',
