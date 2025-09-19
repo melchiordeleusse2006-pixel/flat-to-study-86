@@ -71,6 +71,11 @@ export interface Listing {
   status: ListingStatus;
   expiresAt?: string;
   distance?: number; // Distance to selected university in km
+  booking_enabled?: boolean;
+  instant_booking?: boolean;
+  minimum_stay_days?: number;
+  maximum_stay_days?: number;
+  advance_booking_days?: number;
 }
 
 export interface Favorite {

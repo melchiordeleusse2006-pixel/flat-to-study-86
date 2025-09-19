@@ -31,7 +31,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TranslateButton from '@/components/listings/TranslateButton';
-
+import { BookingForm } from '@/components/booking/BookingForm';
 import { ImageLightbox } from '@/components/ui/image-lightbox';
 
 // Helper function to get text in current language
