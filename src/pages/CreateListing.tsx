@@ -46,7 +46,7 @@ export default function CreateListing() {
 
   // Handle authentication and authorization
   useEffect(() => {
-    if (!loading && user && profile?.user_type !== 'agency') {
+    if (!loading && user && profile?.user_type !== 'agency' && profile?.user_type !== 'private') {
       navigate('/');
     }
   }, [user, profile, loading, navigate]);
@@ -68,8 +68,8 @@ export default function CreateListing() {
     );
   }
 
-  // Show access denied for non-agency users
-  if (user && profile?.user_type !== 'agency') {
+  // Show access denied for non-agency and non-private users
+  if (user && profile?.user_type !== 'agency' && profile?.user_type !== 'private') {
     return null; // Will redirect via useEffect
   }
 
