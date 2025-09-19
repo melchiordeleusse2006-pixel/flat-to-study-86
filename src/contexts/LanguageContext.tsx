@@ -131,7 +131,7 @@ const translations = {
     'userType.backToHome': 'Back to Home',
     'userType.title': 'Get Started with Flat2Study',
     'userType.description': 'Choose your profile type to create an account',
-    'userType.realtorTitle': 'For property manager, real estate agency and company',
+    'userType.realtorTitle': 'For real estate agencies',
     'userType.realtorDescription': 'Real estate professionals managing multiple properties',
     'userType.realtorFeatures': 'List and manage properties, connect with potential tenants, track inquiries',
     'userType.privateTitle': 'For private landlords and property managers',
